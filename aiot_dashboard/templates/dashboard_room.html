@@ -1,0 +1,163 @@
+{% extends "base.html"%}
+
+{% load static %}
+
+
+{% block content %}
+<div id="placeholder" class="demo-placeholder" style="width: 100%; height:400px;"></div>
+<table class="table table-zebra table-bordered" id="data_list">
+    <thead>
+        <tr>
+            <th data-col="datetime">Timestamp</th>
+            <th data-col="temp">Temp</th>
+            <th data-col="co2">Co2</th>
+            <th data-col="db">DB</th>
+            <th data-col="lux">LUX</th>
+            <th data-col="movement">Movement</th>
+            <th data-col="moist">Moist</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+{% endblock %}
+
+{% block javascript %}
+<script language="javascript" type="text/javascript" src="{% static 'js/flot/jquery.flot.js' %}"></script>
+<script type="text/javascript">
+$(function() {
+    function updateList() {
+    	var $list = $('#data_list');
+    	$.ajax({
+		url: "{% url 'dashboard_room' room_id %}",
+    		type: 'GET',
+    		dataType: 'json',
+    		success: function(data) {
+    			$list.find('.record').remove();
+
+    			$.each(data, function(k, v) {
+    				rowHtml = "<tr class='record'>";
+    				$list.find('th').each(function() {
+    					col = $(this).attr('data-col');
+    					rowHtml += "<td>" + v[col] + "</td>";
+    				});
+    				rowHtml += "</tr>";
+    				$list.append(rowHtml);
+    			});
+    		}
+    	});
+    }
+    setInterval(updateList, 2000);
+
+	var options = {
+		lines: {
+			show: true
+		},
+		points: {
+			show: true
+		},
+		xaxis: {
+			tickDecimals: 0,
+			tickSize: 1
+		}
+	};
+
+	var data = [];
+
+	$.plot("#placeholder", data, options);
+
+	// Fetch one series, adding to what we already have
+
+	var alreadyFetched = {};
+
+	$("button.fetchSeries").click(function () {
+
+		var button = $(this);
+
+		// Find the URL in the link right next to us, then fetch the data
+
+		var dataurl = button.siblings("a").attr("href");
+
+		function onDataReceived(series) {
+
+			// Extract the first coordinate pair; jQuery has parsed it, so
+			// the data is now just an ordinary JavaScript object
+
+			var firstcoordinate = "(" + series.data[0][0] + ", " + series.data[0][1] + ")";
+			button.siblings("span").text("Fetched " + series.label + ", first point: " + firstcoordinate);
+
+			// Push the new data onto our existing data array
+
+			if (!alreadyFetched[series.label]) {
+				alreadyFetched[series.label] = true;
+				data.push(series);
+			}
+
+			$.plot("#placeholder", data, options);
+		}
+
+		$.ajax({
+			url: dataurl,
+			type: "GET",
+			dataType: "json",
+			success: onDataReceived
+		});
+	});
+
+	// Initiate a recurring data update
+
+	$("button.dataUpdate").click(function () {
+
+		data = [];
+		alreadyFetched = {};
+
+		$.plot("#placeholder", data, options);
+
+		var iteration = 0;
+
+		function fetchData() {
+
+			++iteration;
+
+			function onDataReceived(series) {
+
+				// Load all the data in one pass; if we only got partial
+				// data we could merge it with what we already have.
+
+				data = [ series ];
+				$.plot("#placeholder", data, options);
+			}
+
+			// Normally we call the same URL - a script connected to a
+			// database - but in this case we only have static example
+			// files, so we need to modify the URL.
+
+			$.ajax({
+				url: "data-eu-gdp-growth-" + iteration + ".json",
+				type: "GET",
+				dataType: "json",
+				success: onDataReceived
+			});
+
+			if (iteration < 5) {
+				setTimeout(fetchData, 1000);
+			} else {
+				data = [];
+				alreadyFetched = {};
+			}
+		}
+
+		setTimeout(fetchData, 1000);
+	});
+
+	// Load the first series by default, so we don't have an empty plot
+
+	$("button.fetchSeries:first").click();
+
+	// Add the Flot version string to the footer
+
+	$("#footer").prepend("Flot " + $.plot.version + " &ndash; ");
+
+});
+</script>
+{% endblock %}

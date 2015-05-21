@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+    <div id="viewer-container" style="width: 100%; height: 100%; min-height: 800px;"></div>
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript" src="https://api.bimsync.com/1.0/js/viewer.js"></script>
+<script type="text/javascript">
+    // Load the Viewer API
+    bimsync.load();
+
+    // Set a callback to run when the Viewer API is loaded
+    bimsync.setOnLoadCallback(createViewer);
+
+    // Callback that loads a viewer access token URL
+    function createViewer() {
+        $('#viewer-container').viewer('loadurl', 'https://api.bimsync.com/1.0/viewer/access?token={{ token }}');
+        
+        // Make model translucent, otherwise we can't actually see much
+        $('#viewer-container').bind('viewer.load', function() {
+            $('#viewer-container').viewer('translucentall');
+            console.log && console.log('Content loaded ...');
+            
+            // Hook into the SSE feed
+            var source = new EventSource("{{ update_url }}");
+            source.onmessage = function(event) {
+                var data = JSON.parse(event.data);
+                
+                // Set color based on movement (green = movement)
+	    	var col = data.s_movement ? '#00FF00' : '#6666FF';
+                
+                $('#viewer-container').viewer('color', col, data.room_key);
+                $('#viewer-container').viewer('show', data.room_key);
+                
+                console.log && console.log("Set room " + data.room_key + " to " + col);
+            };
+        });
+    }
+    
+    /*setTimeout(function() {
+    	// We can get a list of objects in this model
+    	console.log("Getting ids...");
+    	$('#viewer-container').viewer('each', function(id) {
+    		console.log(id);
+    	});
+    }, 45000);*/
+</script>
+{% endblock %}
