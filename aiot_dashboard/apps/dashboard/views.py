@@ -99,6 +99,7 @@ def room_state_for_graph(request, room_id):
     data = {
         'co2': [],
         'moist': [],
+        'light': [],
     }
     for rs in RoomState.objects.filter(room=room_id).order_by('datetime'):
         datetime_epoch = to_epoch_mili(rs.datetime)
@@ -106,6 +107,8 @@ def room_state_for_graph(request, room_id):
             data['co2'].append([datetime_epoch, rs.s_co2])
         if rs.s_moist < 10000:
             data['moist'].append([datetime_epoch, rs.s_moist])
+
+        data['light'].append([datetime_epoch, rs.s_light])
 
     return HttpResponse(json.dumps(data), 'application/json')
 
