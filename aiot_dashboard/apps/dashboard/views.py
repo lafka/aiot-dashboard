@@ -93,9 +93,25 @@ class RoomOverviewView(TemplateView):
 
 # Room View
 
-def room_state(request, room_id):
+def room_state_for_graph(request, room_id):
+    to_epoch_mili = lambda d: int(d.strftime('%s')) * 1000
+
+    data = {
+        'co2': [],
+        'moist': [],
+    }
+    for rs in RoomState.objects.filter(room=room_id).order_by('datetime'):
+        datetime_epoch = to_epoch_mili(rs.datetime)
+        if rs.s_co2 > 100:
+            data['co2'].append([datetime_epoch, rs.s_co2])
+        if rs.s_moist < 10000:
+            data['moist'].append([datetime_epoch, rs.s_moist])
+
+    return HttpResponse(json.dumps(data), 'application/json')
+
+def room_state(request, room_id, limit):
     data = []
-    for rs in RoomState.objects.filter(room=room_id).order_by('-datetime')[:10]:
+    for rs in RoomState.objects.filter(room=room_id).order_by('-datetime')[:limit]:
         data.append({
             'temp': rs.s_temperature,
             'co2': rs.s_co2,
