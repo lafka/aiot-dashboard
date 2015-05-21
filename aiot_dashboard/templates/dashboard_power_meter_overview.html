@@ -5,7 +5,8 @@
     <thead>
         <tr>
             <th data-col="name">Power Meter</th>
-            <th data-col="pulses">Pulses</th>
+            <th data-col="kwm">kWm last minute</th>
+            <th data-col="kwh">kWh last hour</th>
         </tr>
     </thead>
     <tbody>
@@ -19,25 +20,25 @@ $(function() {
     function updateList() {
     	var $list = $('#data_list');
     	$.ajax({
-    		url: "{% url 'dashboard_power_meter_overview_state' %}",
+    		url: '{% url "dashboard_power_meter_overview_state" %}',
     		type: 'GET',
     		dataType: 'json',
     		success: function(data) {
     			$list.find('.record').remove();
 
     			$.each(data, function(k, v) {
-    				rowHtml = "<tr class='record'>";
+    				rowHtml = '<tr class="record">';
 
     				$list.find('th').each(function() {
     					col = $(this).attr('data-col');
                         if (col == 'name') {
-                            rowHtml += "<td><a href=\"" + v['room'] + "\">" + v[col] + "</a></td>";
+                            rowHtml += '<td><a href="' + v['device_key'] + '/">' + v[col] + '</a></td>';
                         }
                         else {
-                            rowHtml += "<td>" + v[col] + "</td>";
+                            rowHtml += '<td>' + v[col] + '</td>';
                         }
     				});
-    				rowHtml += "</tr>";
+    				rowHtml += '</tr>';
     				$list.append(rowHtml);
     			});
     		}
