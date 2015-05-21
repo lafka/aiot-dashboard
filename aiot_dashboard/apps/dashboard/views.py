@@ -11,6 +11,8 @@ from django.views.generic.base import TemplateView, View
 
 from aiot_dashboard.apps.devices.models import RoomState
 
+# Dashboard Home
+
 class DashboardView(TemplateView):
     template_name = "dashboard.html"
 
@@ -19,6 +21,7 @@ class DashboardView(TemplateView):
         data['token'] = settings.BIMSYNC_TOKEN
         data['update_url'] = reverse('dashboard_updates')
         return data
+
 
 class UpdateSseView(View):
     last_poll = datetime.datetime(2010, 1, 1)
@@ -62,6 +65,8 @@ class UpdateSseView(View):
                 db.reset_queries()
 
 
+# Room Overview
+
 def room_overview_state(request):
     data = []
     room_ids = []
@@ -85,23 +90,26 @@ def room_overview_state(request):
 class RoomOverviewView(TemplateView):
     template_name = "dashboard_room_overview.html"
 
+
+# Room View
+
+def room_state(request, room_id):
+    data = []
+    for rs in RoomState.objects.filter(room=room_id).order_by('-datetime')[:10]:
+        data.append({
+            'temp': rs.s_temperature,
+            'co2': rs.s_co2,
+            'db': rs.s_db,
+            'lux': rs.s_light,
+            'moist': rs.s_moist,
+            'movement': 'Y' if rs.s_movement else 'N',
+            'datetime': str(rs.datetime),
+        })
+
+    return HttpResponse(json.dumps(data), 'application/json')
+
 class RoomView(TemplateView):
     template_name = "dashboard_room.html"
-
-    def _get_ajax_data(self):
-        data = []
-        for rs in RoomState.objects.filter(room = self.kwargs['room_id']).order_by('-datetime')[:10]:
-            data.append({
-                'temp': rs.s_temperature,
-                'co2': rs.s_co2,
-                'db': rs.s_db,
-                'lux': rs.s_light,
-                'moist': rs.s_moist,
-                'movement': 'Y' if rs.s_movement else 'N',
-                'datetime': str(rs.datetime),
-            })
-
-        return HttpResponse(json.dumps(data), 'application/json')
 
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
