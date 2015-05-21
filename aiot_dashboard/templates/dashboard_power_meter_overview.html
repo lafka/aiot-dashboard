@@ -1,0 +1,50 @@
+{% extends "base.html"%}
+
+{% block content %}
+<table class="table table-zebra table-bordered" id="data_list">
+    <thead>
+        <tr>
+            <th data-col="name">Power Meter</th>
+            <th data-col="pulses">Pulses</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+$(function() {
+    function updateList() {
+    	var $list = $('#data_list');
+    	$.ajax({
+    		url: "{% url 'dashboard_power_meter_overview_state' %}",
+    		type: 'GET',
+    		dataType: 'json',
+    		success: function(data) {
+    			$list.find('.record').remove();
+
+    			$.each(data, function(k, v) {
+    				rowHtml = "<tr class='record'>";
+
+    				$list.find('th').each(function() {
+    					col = $(this).attr('data-col');
+                        if (col == 'name') {
+                            rowHtml += "<td><a href=\"" + v['room'] + "\">" + v[col] + "</a></td>";
+                        }
+                        else {
+                            rowHtml += "<td>" + v[col] + "</td>";
+                        }
+    				});
+    				rowHtml += "</tr>";
+    				$list.append(rowHtml);
+    			});
+    		}
+    	});
+    }
+
+    setInterval(updateList, 2000);
+});
+</script>
+{% endblock %}

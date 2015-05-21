@@ -7,6 +7,7 @@ class Device(models.Model):
     key = models.TextField(primary_key=True)
     room = models.TextField(blank=True, null=True)
     name = models.TextField(blank=True, null=True)
+    type = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -45,3 +46,13 @@ class RoomState(models.Model):
         cursor.close()
 
         return cls.objects.filter(datetime__in=datetimes)
+
+class PowerMeterTimeseries(models.Model):
+    id = models.IntegerField(primary_key=True)
+    device = models.ForeignKey(Device, db_column='device_key')
+    datetime = models.DateTimeField()
+    pulses = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'power_meter_timeseries'

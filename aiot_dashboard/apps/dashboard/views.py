@@ -9,7 +9,7 @@ from django.http.response import HttpResponse
 from django.utils import timezone
 from django.views.generic.base import TemplateView, View
 
-from aiot_dashboard.apps.devices.models import RoomState
+from aiot_dashboard.apps.devices.models import RoomState, PowerMeterTimeseries, Device
 
 # Dashboard Home
 
@@ -115,3 +115,19 @@ class RoomView(TemplateView):
         if request.is_ajax():
             return self._get_ajax_data()
         return TemplateView.get(self, request, *args, **kwargs)
+
+
+# Room Overview
+
+def power_meter_overview_state(request):
+    data = []
+    for device in Device.objects.filter(type='power-meter').order_by('name'):
+        pulses = 0
+        data.append({
+            'name': device.name,
+            'pulses': pulses,
+        })
+    return HttpResponse(json.dumps(data), 'application/json')
+
+class PowerMeterOverviewView(TemplateView):
+    template_name = "dashboard_power_meter_overview.html"
