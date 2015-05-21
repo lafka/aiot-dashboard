@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import json
 import time
 
@@ -24,7 +24,7 @@ class DashboardView(TemplateView):
 
 
 class UpdateSseView(View):
-    last_poll = datetime.datetime(2010, 1, 1)
+    last_poll = datetime(2010, 1, 1)
 
     def dispatch(self, request):
         response = http.StreamingHttpResponse(streaming_content=self.iterator(request=request), content_type="text/event-stream")
@@ -130,23 +130,47 @@ def room_state(request, room_id, limit):
 class RoomView(TemplateView):
     template_name = "dashboard_room.html"
 
-    def get(self, request, *args, **kwargs):
-        if request.is_ajax():
-            return self._get_ajax_data()
-        return TemplateView.get(self, request, *args, **kwargs)
 
-
-# Room Overview
+# Power Meter Overview
 
 def power_meter_overview_state(request):
     data = []
-    for device in Device.objects.filter(type='power-meter').order_by('name'):
-        pulses = 0
+    for device in Device.objects.filter(type='power-meter'):
+        kwm = PowerMeterTimeseries.get_latest_kwm(device)
+        kwh = PowerMeterTimeseries.get_latest_kwh(device)
         data.append({
+            'device_key': device.key,
             'name': device.name,
-            'pulses': pulses,
+            'kwm': kwm,
+            'kwh': kwh,
         })
+    data.sort(key=lambda i: i['name'])
     return HttpResponse(json.dumps(data), 'application/json')
 
 class PowerMeterOverviewView(TemplateView):
     template_name = "dashboard_power_meter_overview.html"
+
+# Power Meter View
+
+def power_meter_state(request, device_key):
+    device = Device.objects.get(key=device_key)
+    to_datetime = datetime.now()
+    from_datetime = datetime(to_datetime.year, to_datetime.month, to_datetime.day)
+
+    timeseries = PowerMeterTimeseries.get_kwh_timeseries(device, from_datetime, to_datetime)
+
+    to_epoch_mili = lambda d: int((d - datetime(1970, 1, 1)).total_seconds() * 1000)
+    flot_data = [[to_epoch_mili(timestamp), kwh] for timestamp, kwh in timeseries.items()]
+
+    return HttpResponse(json.dumps(flot_data), 'application/json')
+
+class PowerMeterView(TemplateView):
+    template_name = "dashboard_power_meter.html"
+
+    def get_context_data(self, device_key):
+        return {
+            'device_key': device_key,
+        }
+
+    def get(self, request, *args, **kwargs):
+        return TemplateView.get(self, request, *args, **kwargs)

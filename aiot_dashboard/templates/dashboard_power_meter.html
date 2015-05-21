@@ -1,0 +1,52 @@
+{% extends "base.html"%}
+
+{% load static %}
+
+
+{% block content %}
+<div id="placeholder" class="demo-placeholder" style="width: 100%; height:400px;"></div>
+{% endblock %}
+
+{% block javascript %}
+<script language="javascript" type="text/javascript" src="{% static 'js/flot/jquery.flot.js' %}"></script>
+<script language="javascript" type="text/javascript" src="{% static 'js/flot/jquery.flot.time.js' %}"></script>
+<script type="text/javascript">
+$(function() {
+    var flot_options = {
+        lines: {
+            show: true
+        },
+        points: {
+            show: true
+        },
+        xaxis: {
+            tickDecimals: 0,
+            tickSize: 1
+        }
+    };
+
+    var alreadyFetched = {};
+
+    function do_it() {
+        $.getJSON('{% url "dashboard_power_meter_state" device_key %}', function(series) {
+            $.plot('#placeholder', [series], {
+                xaxis: {
+                    mode: 'time',
+                    minTickSize: [1, 'hour'],
+                    fill: true
+                },
+                yaxis: {
+                    tickFormatter: function(v, axis) {
+                        return v + ' kWh';
+                    }
+                }
+            })
+        });
+
+        setInterval(do_it, 5000);
+    }
+
+    do_it();
+});
+</script>
+{% endblock %}
