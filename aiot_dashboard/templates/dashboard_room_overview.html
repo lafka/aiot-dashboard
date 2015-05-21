@@ -25,7 +25,7 @@ $(function() {
     function updateList() {
     	var $list = $('#data_list');
     	$.ajax({
-    		url: "{% url 'dashboard_room_overview' %}",
+    		url: "{% url 'dashboard_room_overview_state' %}",
     		type: 'GET',
     		dataType: 'json',
     		success: function(data) {

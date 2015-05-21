@@ -1,12 +1,11 @@
 from django.conf.urls import include, url, patterns
 from django.conf import settings
-
-from aiot_dashboard.apps.dashboard.views import DashboardView
+from django.views.generic.base import RedirectView
 
 urlpatterns = [
     #url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', DashboardView.as_view(), name='dashboard_home'),
-    url(r'^dash/', include('aiot_dashboard.apps.dashboard.urls')),
+    url(r'^$', RedirectView.as_view(pattern_name='dashboard_home'), name='frontpage'),
+    url(r'^dashboard/', include('aiot_dashboard.apps.dashboard.urls')),
 ]
 
 if settings.DEBUG:

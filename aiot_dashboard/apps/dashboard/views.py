@@ -62,33 +62,28 @@ class UpdateSseView(View):
                 db.reset_queries()
 
 
+def room_overview_state(request):
+    data = []
+    room_ids = []
+    for rs in RoomState.get_latest_per_room().order_by('-datetime'):
+        if rs.room.key not in room_ids:
+            data.append({
+                'room': rs.room.key,
+                'name': rs.room.name,
+                'temp': rs.s_temperature,
+                'co2': rs.s_co2,
+                'db': rs.s_db,
+                'lux': rs.s_light,
+                'moist': rs.s_moist,
+                'movement': 'Y' if rs.s_movement else 'N',
+            })
+            room_ids.append(rs.room.key)
+
+    data.sort(key=lambda i: i['name'])
+    return HttpResponse(json.dumps(data), 'application/json')
+
 class RoomOverviewView(TemplateView):
     template_name = "dashboard_room_overview.html"
-
-    def _get_ajax_data(self):
-        data = []
-        room_ids = []
-        for rs in RoomState.get_latest_per_room().order_by('-datetime'):
-            if rs.room.key not in room_ids:
-                data.append({
-                    'room': rs.room.key,
-                    'name': rs.room.name,
-                    'temp': rs.s_temperature,
-                    'co2': rs.s_co2,
-                    'db': rs.s_db,
-                    'lux': rs.s_light,
-                    'moist': rs.s_moist,
-                    'movement': 'Y' if rs.s_movement else 'N',
-                })
-                room_ids.append(rs.room.key)
-
-        data.sort(key=lambda i: i['name'])
-        return HttpResponse(json.dumps(data), 'application/json')
-
-    def get(self, request, *args, **kwargs):
-        if request.is_ajax():
-            return self._get_ajax_data()
-        return TemplateView.get(self, request, *args, **kwargs)
 
 class RoomView(TemplateView):
     template_name = "dashboard_room.html"
