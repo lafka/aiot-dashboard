@@ -94,7 +94,7 @@ class RoomOverviewView(TemplateView):
 # Room View
 
 def room_state_for_graph(request, room_id):
-    to_epoch_mili = lambda d: int(d.strftime('%s')) * 1000
+    to_epoch_mili = lambda d: int(d.strftime('%s')) * 1000 + (3600000 * 3)
 
     data = {
         'co2': [],
@@ -158,10 +158,12 @@ def power_meter_state(request, device_key):
     to_datetime = datetime.now()
     from_datetime = datetime(to_datetime.year, to_datetime.month, to_datetime.day)
 
-    timeseries = PowerMeterTimeseries.get_kwh_timeseries(device, from_datetime, to_datetime)
+    timeseries = PowerMeterTimeseries.get_kwm_timeseries(device, from_datetime, to_datetime)
 
-    to_epoch_mili = lambda d: int((d - datetime(1970, 1, 1)).total_seconds() * 1000)
+    #to_epoch_mili = lambda d: int((d - datetime(1970, 1, 1)).total_seconds() * 1000)
+    to_epoch_mili = lambda d: int(d.strftime('%s')) * 1000 + (3600000 * 3)
     flot_data = [[to_epoch_mili(timestamp), kwh] for timestamp, kwh in timeseries.items()]
+    flot_data.reverse()
 
     return HttpResponse(json.dumps(flot_data), 'application/json')
 
