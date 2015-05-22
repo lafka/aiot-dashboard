@@ -29,10 +29,17 @@ $(function() {
 
     function do_it() {
         $.getJSON('{% url "dashboard_power_meter_state" device_key %}', function(series) {
-            $.plot('#placeholder', [series], {
+            $.plot('#placeholder', [{
+                data: series,
+                label: 'kWm',
+                shadowSize: 2,
+                lines: {
+                    steps: false
+                }
+            }], {
                 xaxis: {
                     mode: 'time',
-                    minTickSize: [1, 'hour'],
+                    minTickSize: [1, 'minute'],
                     fill: true
                 },
                 yaxis: {
@@ -42,8 +49,7 @@ $(function() {
                 }
             })
         });
-
-        setInterval(do_it, 5000);
+        setTimeout(do_it, 5000);
     }
 
     do_it();
