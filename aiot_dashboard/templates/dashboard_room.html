@@ -58,11 +58,11 @@ $(function() {
                     rowHtml += '</tr>';
                     $list.append(rowHtml);
                 });
-
-                setTimeout(updateList, 2000);
             }
         });
+        setTimeout(updateList, 5000);
     }
+    updateList();
 
     function updateGraph() {
         $.ajax({
@@ -83,10 +83,9 @@ $(function() {
                 }
             }
         });
-        setTimeout(updateGraph, 10000);
+        setTimeout(updateGraph, 5000);
     };
     updateGraph();
-    updateList();
 });
 
 </script>
