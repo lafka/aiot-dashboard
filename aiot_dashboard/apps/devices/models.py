@@ -110,3 +110,23 @@ class PowerMeterTimeseries(models.Model):
 
 
         return kwh_per_hour
+
+    @classmethod
+    def get_kwm_timeseries(cls, device, from_datetime, to_datetime):
+        measures = cls.objects.filter(device=device).order_by('-datetime')
+
+        if measures.count() < 2:
+            return None
+
+        measures = list(measures)
+
+        ret = OrderedDict()
+        for last, next_to_last in zip(measures, measures[1:]):
+            time_diff = last.datetime - next_to_last.datetime
+
+            multiplier = 60. / time_diff.total_seconds()
+            calibration_factor = 10000.0
+            ret[last.datetime] = last.pulses * multiplier / calibration_factor
+
+
+        return ret
