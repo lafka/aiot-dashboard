@@ -5,14 +5,19 @@
 {% block content %}
 <h3>Co2</h3>
 <div id="placeholder_co2" class="demo-placeholder" style="width: 100%; height:400px;"></div>
+
 <h3>Moist</h3>
 <div id="placeholder_moist" class="demo-placeholder" style="width: 100%; height:400px;"></div>
+
 <h3>Lux</h3>
 <div id="placeholder_lux" class="demo-placeholder" style="width: 100%; height:400px;"></div>
+
 <h3>Temperature</h3>
 <div id="placeholder_temp" class="demo-placeholder" style="width: 100%; height:400px;"></div>
+
 <h3>Decibel</h3>
 <div id="placeholder_db" class="demo-placeholder" style="width: 100%; height:400px;"></div>
+
 <table class="table table-zebra table-bordered" id="data_list">
     <thead>
         <tr>
@@ -36,49 +41,50 @@
 <script type="text/javascript">
 $(function() {
     function updateList() {
-    	var $list = $('#data_list');
-    	$.ajax({
-		url: "{% url 'dashboard_room_state' room_id 10 %}",
-    		type: 'GET',
-    		dataType: 'json',
-    		success: function(data) {
-    			$list.find('.record').remove();
-			
-    			$.each(data, function(k, v) {
-				//list
-    				rowHtml = "<tr class='record'>";
-    				$list.find('th').each(function() {
-    					col = $(this).attr('data-col');
-    					rowHtml += "<td>" + v[col] + "</td>";
-    				});
-    				rowHtml += "</tr>";
-    				$list.append(rowHtml);
-    			});
-    		}
-    	});
-    }
-    function updateGraph() {
-    	$.ajax({
-		url: "{% url 'dashboard_room_state_for_graph' room_id %}",
-    		type: 'GET',
-    		dataType: 'json',
-    		success: function(series) {
-			var flot_options = {
-				xaxis: {
-					mode: 'time'	
-				}
-			}
-			for (k in series) {
-				if (series.hasOwnProperty(k)) {
-					$.plot("#placeholder_" + k, [series[k]], flot_options);
-				}
-			}
-    		}
-    	});
+        var $list = $('#data_list');
+        $.ajax({
+            url: "{% url 'dashboard_room_state' room_id 20 %}",
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                $list.find('.record').remove();
+            
+                $.each(data, function(k, v) {
+                    rowHtml = '<tr class="record">';
+                    $list.find('th').each(function() {
+                        col = $(this).attr('data-col');
+                        rowHtml += '<td>' + v[col] + '</td>';
+                    });
+                    rowHtml += '</tr>';
+                    $list.append(rowHtml);
+                });
 
+                setTimeout(updateList, 2000);
+            }
+        });
+    }
+
+    function updateGraph() {
+        $.ajax({
+            url: "{% url 'dashboard_room_state_for_graph' room_id %}",
+            type: 'GET',
+            dataType: 'json',
+            success: function(series) {
+                var flot_options = {
+                    xaxis: {
+                        mode: 'time'    
+                    }
+                }
+
+                for (k in series) {
+                    if (series.hasOwnProperty(k)) {
+                        $.plot('#placeholder_' + k, [series[k]], flot_options);
+                    }
+                }
+            }
+        });
+        setTimeout(updateGraph, 10000);
     };
-    setInterval(updateList, 2000);
-    setInterval(updateGraph, 10000);
     updateGraph();
     updateList();
 });
