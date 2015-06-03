@@ -36,7 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'aiot_dashboard.apps.devices',
+    'aiot_dashboard.apps.db',
     'aiot_dashboard.apps.dashboard',
 )
 
