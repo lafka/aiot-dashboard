@@ -9,7 +9,7 @@ from django.http.response import HttpResponse
 from django.utils import timezone
 from django.views.generic.base import TemplateView, View
 
-from aiot_dashboard.apps.devices.models import RoomState, PowerMeterTimeseries, Device
+from aiot_dashboard.apps.db.models import Device
 
 # Dashboard Home
 
@@ -34,10 +34,12 @@ class UpdateSseView(View):
     def _get_new_room_states(self):
         data = []
         room_ids = []
-        for rs in RoomState.get_latest_per_room().order_by('-datetime'):
-            if rs.room.key not in room_ids:
-                room_ids.append(rs.room.key)
-                data.append(rs)
+
+# TODO: This needs to pull data from the new Ts models
+#         for rs in RoomState.get_latest_per_room().order_by('-datetime'):
+#             if rs.room.key not in room_ids:
+#                 room_ids.append(rs.room.key)
+#                 data.append(rs)
 
         self.last_poll = timezone.now()
         return data
@@ -70,19 +72,21 @@ class UpdateSseView(View):
 def room_overview_state(request):
     data = []
     room_ids = []
-    for rs in RoomState.get_latest_per_room().order_by('-datetime'):
-        if rs.room.key not in room_ids:
-            data.append({
-                'room': rs.room.key,
-                'name': rs.room.name,
-                'temp': rs.s_temperature,
-                'co2': rs.s_co2,
-                'db': rs.s_db,
-                'lux': rs.s_light,
-                'moist': rs.s_moist,
-                'movement': 'Y' if rs.s_movement else 'N',
-            })
-            room_ids.append(rs.room.key)
+
+# TODO: Use new ts models
+#     for rs in RoomState.get_latest_per_room().order_by('-datetime'):
+#         if rs.room.key not in room_ids:
+#             data.append({
+#                 'room': rs.room.key,
+#                 'name': rs.room.name,
+#                 'temp': rs.s_temperature,
+#                 'co2': rs.s_co2,
+#                 'db': rs.s_db,
+#                 'lux': rs.s_light,
+#                 'moist': rs.s_moist,
+#                 'movement': 'Y' if rs.s_movement else 'N',
+#             })
+#             room_ids.append(rs.room.key)
 
     data.sort(key=lambda i: i['name'])
     return HttpResponse(json.dumps(data), 'application/json')
@@ -103,31 +107,35 @@ def room_state_for_graph(request, room_id):
         'temp': [],
         'db': [],
     }
-    for rs in RoomState.objects.filter(room=room_id).order_by('datetime'):
-        datetime_epoch = to_epoch_mili(rs.datetime)
-        if 0 < rs.s_co2 < 3000:
-            data['co2'].append([datetime_epoch, rs.s_co2])
-        if rs.s_moist > 0:
-            data['moist'].append([datetime_epoch, rs.s_moist])
-        if rs.s_temperature > -40:
-            data['temp'].append([datetime_epoch, rs.s_temperature])
-        data['lux'].append([datetime_epoch, rs.s_light])
-        data['db'].append([datetime_epoch, rs.s_db])
+
+# TODO: Use new ts models
+#     for rs in RoomState.objects.filter(room=room_id).order_by('datetime'):
+#         datetime_epoch = to_epoch_mili(rs.datetime)
+#         if 0 < rs.s_co2 < 3000:
+#             data['co2'].append([datetime_epoch, rs.s_co2])
+#         if rs.s_moist > 0:
+#             data['moist'].append([datetime_epoch, rs.s_moist])
+#         if rs.s_temperature > -40:
+#             data['temp'].append([datetime_epoch, rs.s_temperature])
+#         data['lux'].append([datetime_epoch, rs.s_light])
+#         data['db'].append([datetime_epoch, rs.s_db])
 
     return HttpResponse(json.dumps(data), 'application/json')
 
 def room_state(request, room_id, limit):
     data = []
-    for rs in RoomState.objects.filter(room=room_id).order_by('-datetime')[:limit]:
-        data.append({
-            'temp': rs.s_temperature,
-            'co2': rs.s_co2,
-            'db': rs.s_db,
-            'lux': rs.s_light,
-            'moist': rs.s_moist,
-            'movement': 'Y' if rs.s_movement else 'N',
-            'datetime': str(rs.datetime),
-        })
+    
+# TODO: Use new ts models
+#     for rs in RoomState.objects.filter(room=room_id).order_by('-datetime')[:limit]:
+#         data.append({
+#             'temp': rs.s_temperature,
+#             'co2': rs.s_co2,
+#             'db': rs.s_db,
+#             'lux': rs.s_light,
+#             'moist': rs.s_moist,
+#             'movement': 'Y' if rs.s_movement else 'N',
+#             'datetime': str(rs.datetime),
+#         })
 
     return HttpResponse(json.dumps(data), 'application/json')
 
@@ -139,15 +147,18 @@ class RoomView(TemplateView):
 
 def power_meter_overview_state(request):
     data = []
-    for device in Device.objects.filter(type='power-meter'):
-        kwm = PowerMeterTimeseries.get_latest_kwm(device)
-        kwh = PowerMeterTimeseries.get_latest_kwh(device)
-        data.append({
-            'device_key': device.key,
-            'name': device.name,
-            'kwm': kwm,
-            'kwh': kwh,
-        })
+    
+# TODO: Convert to use new models
+#     for device in Device.objects.filter(type='power-meter'):
+#         kwm = PowerMeterTimeseries.get_latest_kwm(device)
+#         kwh = PowerMeterTimeseries.get_latest_kwh(device)
+#         data.append({
+#             'device_key': device.key,
+#             'name': device.name,
+#             'kwm': kwm,
+#             'kwh': kwh,
+#         })
+
     data.sort(key=lambda i: i['name'])
     return HttpResponse(json.dumps(data), 'application/json')
 
@@ -161,14 +172,16 @@ def power_meter_state(request, device_key):
     to_datetime = datetime.now()
     from_datetime = datetime(to_datetime.year, to_datetime.month, to_datetime.day)
 
-    timeseries = PowerMeterTimeseries.get_kwm_timeseries(device, from_datetime, to_datetime)
+# TODO: Convert to use new models
+#     timeseries = PowerMeterTimeseries.get_kwm_timeseries(device, from_datetime, to_datetime)
+# 
+#     #to_epoch_mili = lambda d: int((d - datetime(1970, 1, 1)).total_seconds() * 1000)
+#     to_epoch_mili = lambda d: int(d.strftime('%s')) * 1000 + (3600000 * 3)
+#     flot_data = [[to_epoch_mili(timestamp), kwh] for timestamp, kwh in timeseries.items()]
+#     flot_data.reverse()
 
-    #to_epoch_mili = lambda d: int((d - datetime(1970, 1, 1)).total_seconds() * 1000)
-    to_epoch_mili = lambda d: int(d.strftime('%s')) * 1000 + (3600000 * 3)
-    flot_data = [[to_epoch_mili(timestamp), kwh] for timestamp, kwh in timeseries.items()]
-    flot_data.reverse()
-
-    return HttpResponse(json.dumps(flot_data), 'application/json')
+#     return HttpResponse(json.dumps(flot_data), 'application/json')
+    return HttpResponse(json.dumps([]), 'application/json')
 
 class PowerMeterView(TemplateView):
     template_name = "dashboard_power_meter.html"
