@@ -35,7 +35,7 @@ echo "start on vagrant-mounted
 stop on shutdown
 
 script
-su - vagrant -c \"cd /home/vagrant/aiot/aiot_dashboard/; exec uwsgi --http :8000 --async 100 --ugreen --module core.wsgi --py-autoreload=3\"
+su - vagrant -c \"cd /home/vagrant/aiot/aiot_dashboard/; exec uwsgi --http :8000 --async 100 --ugreen --module aiot_dashboard.core.wsgi --py-autoreload=3\"
 end script" > /etc/init/django.conf
 
 initctl start django
