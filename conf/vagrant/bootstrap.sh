@@ -24,7 +24,7 @@ su - vagrant -c "pip install -r /home/vagrant/aiot/requirements/dev.txt"
 su -c "psql -c \"CREATE DATABASE aiot;\"" -m "postgres"
 su -c "psql -d aiot </home/vagrant/aiot/conf/vagrant/schema.sql" -m "postgres"
 
-if [ ! -f /aiot/aiot_dashboard/settings/sensitive_settings.py ]; then
+if [ ! -f aiot/aiot_dashboard/settings/sensitive_settings.py ]; then
   su - vagrant -c "cd aiot/aiot_dashboard/settings; cp sensitive_settings.py.sample sensitive_settings.py"
   su - vagrant -c "cd aiot/aiot_dashboard; ./manage.py migrate"
 fi
