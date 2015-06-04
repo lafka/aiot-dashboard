@@ -24,6 +24,7 @@ CREATE TABLE power_circuit (
 
 -- Many-to-many
 CREATE TABLE map_device_room (
+    id SERIAL PRIMARY KEY,
     device_key TEXT REFERENCES device (key) NOT NULL,
     room_key TEXT REFERENCES room (key) NOT NULL
 );
@@ -33,6 +34,7 @@ ON
     map_device_room (device_key, room_key);
 
 CREATE TABLE map_device_power_circuit (
+    id SERIAL PRIMARY KEY,
     device_key TEXT REFERENCES device (key) NOT NULL,
     power_circuit_id INTEGER REFERENCES power_circuit (id) NOT NULL
 );
