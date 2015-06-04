@@ -36,7 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'aiot_dashboard.apps.devices',
+    'aiot_dashboard.apps.db',
     'aiot_dashboard.apps.dashboard',
 )
 
@@ -56,7 +56,7 @@ ROOT_URLCONF = 'aiot_dashboard.core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [os.path.join(PROJECT_ROOT, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
