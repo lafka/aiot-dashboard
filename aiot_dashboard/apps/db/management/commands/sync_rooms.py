@@ -1,11 +1,11 @@
 import requests
-import json
 import random
+import json
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from aiot_dashboard.apps.db.models import Room, Device, MapDeviceRoom, RoomType
+from aiot_dashboard.apps.db.models import Room, RoomType
 
 class Command(BaseCommand):
     help = 'Contact the bimsync API and pull a list of rooms'
