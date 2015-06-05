@@ -15,7 +15,7 @@ class Command(BaseCommand):
                          headers={'Authorization': settings.BIMSYNC_API_AUTH_HEADER,
                                   'Accept': 'application/json',
                                   'Content-Type': 'application/x-www-form-urlencode'},
-                         data={"type": [ "IfcSpace" ]})
+                         data={"type": ["IfcSpace"]})
         if r.status_code == 200:
             return r.json()
         raise Exception('API request returned %s' % r.status_code)
@@ -49,6 +49,7 @@ class Command(BaseCommand):
     def _create_room(self, data):
         obj, _ = Room.objects.get_or_create(key=data['objectId'])
         obj.name = data['name']
+        obj.area = random.randrange(5.0, 50.0)
 
         details = self._get_room_details(obj)[0]
         longname = self._get_attribute_by_path(details['attributes'], 'LongName')
