@@ -54,6 +54,7 @@ class Room(models.Model):
     key = models.TextField(primary_key=True)
     name = models.TextField()
     room_type = models.ForeignKey('RoomType', blank=True, null=True)
+    area = models.DecimalField(max_digits=6, decimal_places=2)
     devices = models.ManyToManyField('Device', through='MapDeviceRoom')
 
     class Meta:
