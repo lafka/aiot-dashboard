@@ -51,11 +51,11 @@ class StatsSseView(SseUpdateView):
             data[room.key] = {
                 'name': room.name,
                 'occupied': room.is_occupied(),
-                'productivity': 0,
-                'deviation': {
-                    'temperature': 0,
-                    'co2': 0,
-                    'humidity': 0
+                'productivity': "%s%%" % room.current_productivity(),
+                'deviations': {
+                    'temperature': room.deviation_minutes('temperature'),
+                    'co2': room.deviation_minutes('co2'),
+                    'humidity': room.deviation_minutes('humidity')
                 }
             }
 

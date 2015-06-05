@@ -23,6 +23,7 @@ class Device(models.Model):
         db_table = 'device'
 
 
+
 class MapDevicePowerCircuit(models.Model):
     device_key = models.ForeignKey(Device, db_column='device_key')
     power_circuit = models.ForeignKey('PowerCircuit')
@@ -63,15 +64,30 @@ class Room(models.Model):
 
     @classmethod
     def get_active_rooms(cls):
-        return cls.objects.exclude(devices=None)
+        return cls.objects.exclude(devices=None).select_related('room_type').prefetch_related('devices')
 
     def get_latest_ts(self, cls):
-        print cls.objects.filter(device_key__in=self.devices.all()).order_by('-datetime').first().datetime
-        return None
+        try:
+            return cls.objects.filter(device_key__in=self.devices.all()).order_by('-datetime').first()
+        except AttributeError:
+            return None
 
     def is_occupied(self):
+        return self.current_manminutes() > 0.0
+
+    def current_manminutes(self):
         ts = self.get_latest_ts(TsPersonsInside)
-        return False
+        if ts:
+            return ts.value
+        return 0
+
+    def current_productivity(self):
+        return int((self.current_manminutes() / self.room_type.manminutes_capacity) * 100)
+
+    def deviation_minutes(self, deviation_type):
+        return Deviations.objects.filter(device_key__in=self.devices.all(),
+                                         deviation_type=deviation_type).count()
+
 
 class RoomType(models.Model):
     description = models.TextField()
