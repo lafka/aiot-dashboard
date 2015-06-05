@@ -1,38 +1,67 @@
 import requests
 import random
+import json
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from aiot_dashboard.apps.db.models import Room, Device, MapDeviceRoom, RoomType
+from aiot_dashboard.apps.db.models import Room, RoomType
 
 class Command(BaseCommand):
     help = 'Contact the bimsync API and pull a list of rooms'
 
     def _get_spaces_in_revision(self, model_id, revision_id, page_id=1, per_page=1000):
         r = requests.get('https://api.bimsync.com/1.0/revision/products?model_id=%s&revision_id=%s&page=%s&per_page=%s' % (model_id, revision_id, page_id, per_page),
-                          headers={'Authorization': settings.BIMSYNC_API_AUTH_HEADER,
-                                   'Accept': 'application/json',
-                                   'Content-Type': 'application/x-www-form-urlencode'})
+                         headers={'Authorization': settings.BIMSYNC_API_AUTH_HEADER,
+                                  'Accept': 'application/json',
+                                  'Content-Type': 'application/x-www-form-urlencode'},
+                         data={"type": [ "IfcSpace" ]})
         if r.status_code == 200:
             return r.json()
         raise Exception('API request returned %s' % r.status_code)
 
-    def _create_object(self, cls, data):
-        obj, _ = cls.objects.get_or_create(key=data['objectId'])
+    def _get_room_details(self, obj):
+        r = requests.post('https://api.bimsync.com/ifc/products',
+                          headers={'Authorization': settings.BIMSYNC_API_AUTH_HEADER,
+                                   'Content-Type': 'application/json'},
+                          data=json.dumps({"products": [int(obj.key)],
+                                           "format": "FLAT"
+                                           }))
+        if r.status_code == 200:
+            return r.json()
+        raise Exception('API request returned %s' % r.status_code)
+
+    def _get_attribute_by_path(self, data, path):
+        for rec in data:
+            if '/'.join(rec['path']) == path:
+                return rec['value']
+        return None
+
+    def _get_room_type(self, value, occupancy):
+        try:
+            return RoomType.objects.get(description=value)
+        except RoomType.DoesNotExist:
+            rt = RoomType(description=value)
+            rt.manminutes_capacity = occupancy
+            rt.save()
+            return rt
+
+    def _create_room(self, data):
+        obj, _ = Room.objects.get_or_create(key=data['objectId'])
         obj.name = data['name']
-        obj.type = RoomType.objects.order_by('?').first()
+
+        details = self._get_room_details(obj)[0]
+        longname = self._get_attribute_by_path(details['attributes'], 'LongName')
+        occupancy = self._get_attribute_by_path(details['propertySets'], 'Pset_SpaceOccupancyRequirements/OccupancyNumber')
+        if longname:
+            if not occupancy:
+                occupancy = random.randint(5, 100)
+            obj.room_type = self._get_room_type(longname, occupancy)
+
         obj.save()
         return obj
 
-    def _create_random_room_types(self):
-        while RoomType.objects.all().count() < 10:
-            RoomType(description="Random room type %d" % RoomType.objects.all().count(),
-                     manminutes_capacity=random.randint(5, 100)).save()
-
     def handle(self, *args, **options):
-        self._create_random_room_types()
-
         more = True
         page = 1
         room_count = 0
@@ -43,7 +72,7 @@ class Command(BaseCommand):
 
             for o in res:
                 if o['type'] == 'IfcSpace':
-                    self._create_object(Room, o)
+                    self._create_room(o)
                     room_count += 1
 
             page += 1
