@@ -1,11 +1,11 @@
 import datetime
 import time
+import json
 
 from django import http, db
 from django.conf import settings
 from django.views.generic.base import TemplateView, View
 from django.utils import timezone
-import json
 from aiot_dashboard.apps.db.models import Room
 
 
@@ -40,33 +40,24 @@ class SseUpdateView(View):
 
 
 class StatsSseView(SseUpdateView):
-    room_poll = []
-
-    def _build_room_poll(self):
-        for room in Room.objects.all().only('key'):
-            self.room_poll.append([room.key, None])
-
-    def _get_room_data(self, room_key):
-        room = Room.objects.get(key=room_key)
-        return {
-            'name': room.name
-        }
+    rooms = []
 
     def get_updates(self):
-        if len(self.room_poll) == 0:
-            self._build_room_poll()
+        if len(self.rooms) == 0:
+            self.rooms = Room.get_active_rooms()
 
         data = {}
-        for i in range(len(self.room_poll)):
-            room_key, last_poll = self.room_poll[i]
+        for room in self.rooms:
+            data[room.key] = {
+                'name': room.name,
+                'occupied': room.is_occupied(),
+                'productivity': 0,
+                'deviation': {
+                    'temperature': 0,
+                    'co2': 0,
+                    'humidity': 0
+                }
+            }
 
-            # TODO: See if there's an update ... if there is, show it.
-            # if the last poll is None show it anyway (also get rid of last_poll, record a hash or something for the record)
-
-            if not last_poll:
-                data[room_key] = self._get_room_data(room_key)
-
-                self.room_poll[i][1] = datetime.datetime.now()
-
-        time.sleep(1)
+        time.sleep(10)
         return data

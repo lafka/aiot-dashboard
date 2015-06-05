@@ -54,11 +54,23 @@ class Room(models.Model):
     key = models.TextField(primary_key=True)
     name = models.TextField()
     room_type = models.ForeignKey('RoomType', blank=True, null=True)
+    devices = models.ManyToManyField('Device', through='MapDeviceRoom')
 
     class Meta:
         managed = False
         db_table = 'room'
 
+    @classmethod
+    def get_active_rooms(cls):
+        return cls.objects.exclude(devices=None)
+
+    def get_latest_ts(self, cls):
+        print cls.objects.filter(device_key__in=self.devices.all()).order_by('-datetime').first().datetime
+        return None
+
+    def is_occupied(self):
+        ts = self.get_latest_ts(TsPersonsInside)
+        return False
 
 class RoomType(models.Model):
     description = models.TextField()

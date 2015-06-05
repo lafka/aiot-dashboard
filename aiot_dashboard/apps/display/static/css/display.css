@@ -11,3 +11,5 @@ html, body {
 	border-radius: 8px;
 	float: left;
 }
+#stats ul { list-style: none; padding: 0px; margin: 0px; }
+#stats li { display: inline-block; }
