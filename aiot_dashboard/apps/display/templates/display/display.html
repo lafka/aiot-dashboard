@@ -26,10 +26,8 @@
     </head>
     <body class="">
         <div class="box" id="model" data-token="{{ model_token }}">
-            Model
         </div>
         <div class="box" id="stats">
-            Stats
         </div>
         <div class="box" id="graphs">
             Graphs
@@ -47,6 +45,8 @@
 
     <script type="text/javascript" src="https://api.bimsync.com/1.0/js/viewer.js"></script>
     <script type="text/javascript" src="{% static 'js/display_model.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'js/update_feed.js' %}"></script>
     {% endblock %}
 
     </body>

@@ -44,7 +44,7 @@ class SseUpdateView(View):
         return None
 
 
-class StatsSseView(SseUpdateView):
+class DataSseView(SseUpdateView):
     rooms = []
 
     def get_updates(self):

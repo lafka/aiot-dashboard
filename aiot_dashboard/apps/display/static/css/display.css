@@ -12,6 +12,27 @@ html, body {
     padding: 10px;
     float: left;
 }
+.box .legend {
+	position: absolute;
+	margin: 10px;
+	background: #fff;
+	border-radius: 8px;
+	border: 1px solid #eee;
+	opacity: 0.8;
+}
+.box .legend ul {
+	list-type: none;
+	padding: 0px; margin: 0px;
+}
+.box .legend li {
+	display: inline-block;
+	padding: 4px;
+}
+.box .legend .color_block {
+	display: inline-block;
+	width: 20px;
+	height: 8px;
+}
 #stats { overflow-y: hidden; }
 #stats ul { list-style: none; padding: 0px; margin: 0px; font-size: 16px; line-height: 16px; }
 #stats li { float: left; width: 50%; padding: 2px; }
