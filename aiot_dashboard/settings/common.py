@@ -36,8 +36,11 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django_js_reverse',
+
     'aiot_dashboard.apps.db',
     'aiot_dashboard.apps.dashboard',
+    'aiot_dashboard.apps.display',
 )
 
 MIDDLEWARE_CLASSES = (

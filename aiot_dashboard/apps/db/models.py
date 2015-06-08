@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.utils import timezone
 
 
 class Deviations(models.Model):
@@ -21,6 +22,7 @@ class Device(models.Model):
     class Meta:
         managed = False
         db_table = 'device'
+
 
 
 class MapDevicePowerCircuit(models.Model):
@@ -55,10 +57,39 @@ class Room(models.Model):
     name = models.TextField()
     room_type = models.ForeignKey('RoomType', blank=True, null=True)
     area = models.DecimalField(max_digits=6, decimal_places=2)
+    devices = models.ManyToManyField('Device', through='MapDeviceRoom')
 
     class Meta:
         managed = False
         db_table = 'room'
+
+    @classmethod
+    def get_active_rooms(cls):
+        return cls.objects.exclude(devices=None).select_related('room_type').prefetch_related('devices')
+
+    def get_latest_ts(self, cls):
+        try:
+            return cls.objects.filter(device_key__in=self.devices.all()).order_by('-datetime').first()
+        except AttributeError:
+            return None
+
+    def is_occupied(self):
+        return self.current_manminutes() > 0.0
+
+    def current_manminutes(self):
+        ts = self.get_latest_ts(TsPersonsInside)
+        if ts:
+            return ts.value
+        return 0
+
+    def current_productivity(self):
+        return int((self.current_manminutes() / self.room_type.manminutes_capacity) * 100)
+
+    def deviation_minutes(self, deviation_type):
+        today = timezone.now().replace(hour=0, minute=0, second=0)
+        return Deviations.objects.filter(device_key__in=self.devices.all(),
+                                         deviation_type=deviation_type,
+                                         datetime__gte=today).count()
 
 
 class RoomType(models.Model):
