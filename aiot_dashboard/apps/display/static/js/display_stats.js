@@ -22,7 +22,6 @@ $(function() {
     }
     
     function updateRoom(room, data) {
-        console.log(data);
         room.find('.room_name').html(data.name);
         
         if(data.occupied) {

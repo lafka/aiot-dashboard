@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.utils import timezone
 
 
 class Deviations(models.Model):
@@ -85,8 +86,10 @@ class Room(models.Model):
         return int((self.current_manminutes() / self.room_type.manminutes_capacity) * 100)
 
     def deviation_minutes(self, deviation_type):
+        today = timezone.now().replace(hour=0, minute=0, second=0)
         return Deviations.objects.filter(device_key__in=self.devices.all(),
-                                         deviation_type=deviation_type).count()
+                                         deviation_type=deviation_type,
+                                         datetime__gte=today).count()
 
 
 class RoomType(models.Model):

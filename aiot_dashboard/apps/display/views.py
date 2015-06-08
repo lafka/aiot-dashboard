@@ -59,5 +59,5 @@ class StatsSseView(SseUpdateView):
                 }
             }
 
-        time.sleep(10)
+        time.sleep(1)
         return data
