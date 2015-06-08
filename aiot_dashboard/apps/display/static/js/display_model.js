@@ -12,7 +12,7 @@ $(function() {
             'margin-left': '-300px'
         }, 500, function() {
             $legend.html('<div class="icon"></div><ul></ul>');
-            if(mode == 0) {
+            if(mode === 0) {
                 $legend.find('.icon').html("<i class='fa fa-users'></i>");
                 $legend.find('ul')
                     .append('<li><div class="color_block" style="background-color: #f00;"></div> opptatt</li>')
@@ -41,7 +41,7 @@ $(function() {
         var token = $box.attr('data-token');
 
         $box.html('<div class="spinner"><i class="fa fa-spin fa-spinner"></i></div><div class="legend"></div><div id="viewer-container" style="width: 100%; height: 100%;"></div>');
-        $legend = $box.find('.legend:first')
+        $legend = $box.find('.legend:first');
         $legend.css('margin-left', '-300px');
 
         // Load the Viewer API
@@ -96,21 +96,21 @@ $(function() {
                     $.each(data, function(k, v) {
                         var room_key = k;
 
-                        if(mode == 0) {
+                        if(mode === 0) {
                             // Set color based on occupied (red = movement, green = not movement)
-                            var col = v.occupied ? '#FF0000' : '#00FF00';
+                            col = v.occupied ? '#FF0000' : '#00FF00';
 
                             $('#viewer-container').viewer('color', col, room_key);
                             $('#viewer-container').viewer('show', room_key);
                         } else if(mode == 1) {
-                            var col = v.co2 < 1000 ? '#0f0' : '#ff0';
+                            col = v.co2 < 1000 ? '#0f0' : '#ff0';
                             if(v.co2 > 1500)
                                 col = '#f00';
 
                             $('#viewer-container').viewer('color', col, room_key);
                             $('#viewer-container').viewer('show', room_key);
                         } else {
-                            var col = v.temperature < 20 ? '#00f' : '#0f0';
+                            col = v.temperature < 20 ? '#00f' : '#0f0';
                             if(v.co2 > 23)
                                 col = '#f00';
 
