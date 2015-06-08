@@ -13,25 +13,26 @@ html, body {
     float: left;
 }
 .box .legend {
-	position: absolute;
-	margin: 10px;
-	background: #fff;
-	border-radius: 8px;
-	border: 1px solid #eee;
-	opacity: 0.8;
+    position: absolute;
+    margin: 10px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    opacity: 0.8;
+    width: 270px;
 }
 .box .legend ul {
-	list-type: none;
-	padding: 0px; margin: 0px;
+    list-type: none;
+    padding: 0px; margin: 0px;
 }
 .box .legend li {
-	display: inline-block;
-	padding: 4px;
+    display: inline-block;
+    padding: 4px;
 }
 .box .legend .color_block {
-	display: inline-block;
-	width: 20px;
-	height: 8px;
+    display: inline-block;
+    width: 20px;
+    height: 8px;
 }
 #stats { overflow-y: hidden; }
 #stats ul { list-style: none; padding: 0px; margin: 0px; font-size: 16px; line-height: 16px; }
@@ -49,12 +50,27 @@ html, body {
     padding-left: 22px;
     height: 18px;
 }
-#stats li .temperature {
+#stats li .temperature, .icon .temperature {
     background: url('../images/display/icon-temperature.png') left center no-repeat;
 }
-#stats li .co2 {
+#stats li .co2, .icon .co2 {
     background: url('../images/display/icon-co2.png') left bottom no-repeat;
 }
 #stats li .humidity {
     background: url('../images/display/icon-humidity.png') left center no-repeat;
 }
+#model .spinner {
+    font-size: 60px;
+    position: relative;
+    left: 50%;
+    top: 50%; /* 68 */
+    color: #aaa;
+}
+#model .spinner i {
+    position: relative;
+    left: -34px;
+    top: -34px;
+}
+#model .icon { float: left; }
+#model .icon div, #model .icon i { width: 22px; height: 22px; margin-top: 2px; background-position: center; text-align: center; display: inline-block; margin-right: 8px; }
+#model .icon i { margin-top: 6px; color: #aaa; }

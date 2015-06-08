@@ -56,6 +56,8 @@ class DataSseView(SseUpdateView):
             data[room.key] = {
                 'name': room.name,
                 'occupied': room.is_occupied(),
+                'co2': room.current_co2(),
+                'temperature': room.current_temperature(),
                 'productivity': "%s%%" % room.current_productivity(),
                 'deviations': {
                     'temperature': room.deviation_minutes('temperature'),
@@ -63,6 +65,5 @@ class DataSseView(SseUpdateView):
                     'humidity': room.deviation_minutes('humidity')
                 }
             }
-
         time.sleep(1)
         return data
