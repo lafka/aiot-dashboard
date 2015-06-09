@@ -54,7 +54,7 @@ class Room(models.Model):
     key = models.TextField(primary_key=True)
     name = models.TextField()
     room_type = models.ForeignKey('RoomType', blank=True, null=True)
-    area = models.DecimalField(max_digits=6, decimal_places=2)
+    area = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     devices = models.ManyToManyField('Device', through='MapDeviceRoom')
 
     class Meta:
@@ -113,6 +113,18 @@ class Room(models.Model):
 
         return ret
 
+    def current_co2(self):
+        ts = self.get_latest_ts(TsCo2)
+        if ts:
+            return ts.value
+        return 0
+
+    def current_temperature(self):
+        ts = self.get_latest_ts(TsTemperature)
+        if ts:
+            return ts.value
+        return 0
+
 
 class MapDeviceRoom(models.Model):
     device_key = models.ForeignKey('Device', db_column='device_key')
@@ -122,7 +134,6 @@ class MapDeviceRoom(models.Model):
         managed = False
         db_table = 'map_device_room'
         unique_together = (('device_key', 'room_key'),)
-
 
 class RoomType(models.Model):
     description = models.TextField()

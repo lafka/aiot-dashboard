@@ -41,3 +41,12 @@ su - vagrant -c \"cd /home/vagrant/aiot/; exec uwsgi --http :8000 --async 100 --
 end script" > /etc/init/django.conf
 
 initctl start django
+
+## AFTER INSTALL
+# vagrant ssh
+# cd aiot/connector/aiot_connector
+# python connector.py
+#
+# cd aiot/aiot_dashboard
+# ./manage.py sync_rooms
+# sudo su -c "psql -d aiot </home/vagrant/aiot/conf/vagrant/test_mapping.sql" -m "postgres" 

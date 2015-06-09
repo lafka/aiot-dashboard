@@ -12,6 +12,11 @@ from aiot_dashboard.apps.db.models import Room
 class DisplayView(TemplateView):
     template_name = "display/display.html"
 
+    def get_context_data(self, **kwargs):
+        data = TemplateView.get_context_data(self, **kwargs)
+        data['model_token'] = settings.BIMSYNC_TOKEN
+        return data
+
 
 # Base class for server side event update streams.
 class SseUpdateView(View):
@@ -39,7 +44,7 @@ class SseUpdateView(View):
         return None
 
 
-class StatsSseView(SseUpdateView):
+class DataSseView(SseUpdateView):
     rooms = []
 
     def get_updates(self):
@@ -51,6 +56,8 @@ class StatsSseView(SseUpdateView):
             data[room.key] = {
                 'name': room.name,
                 'occupied': room.is_occupied(),
+                'co2': room.current_co2(),
+                'temperature': room.current_temperature(),
                 'productivity': "%s%%" % room.current_productivity(),
                 'deviations': {
                     'temperature': room.deviation_minutes('temperature'),
@@ -58,6 +65,5 @@ class StatsSseView(SseUpdateView):
                     'humidity': room.deviation_minutes('humidity')
                 }
             }
-
         time.sleep(1)
         return data

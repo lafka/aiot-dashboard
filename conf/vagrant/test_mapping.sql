@@ -1,3 +1,4 @@
+DELETE FROM map_device_room;
 INSERT INTO map_device_room (device_key, room_key) VALUES ('22hBnpfut3', '1549044333');
 INSERT INTO map_device_room (device_key, room_key) VALUES ('csv4LNZko', '1549044331');
 INSERT INTO map_device_room (device_key, room_key) VALUES ('y6VzAaCrR', '1549044343');
@@ -17,7 +18,10 @@ INSERT INTO map_device_room (device_key, room_key) VALUES ('3xqiFKTuUX', '154904
 INSERT INTO map_device_room (device_key, room_key) VALUES ('2RgFa5cB7X', '1549044350');
 INSERT INTO map_device_room (device_key, room_key) VALUES ('TglwFPpsA', '1549044322');
 
+DELETE FROM power_circuit;
 INSERT INTO power_circuit (name) VALUES ('Strømtavle 1'), ('Strømtavle 2'), ('Strømtavle 3'), ('Strømtavle 4');
+
+DELETE FROM map_device_power_circuit;
 INSERT INTO map_device_power_circuit (device_key, power_circuit_id) VALUES
     ('1kpteGU0Nw', (select id from power_circuit where name = 'Strømtavle 1')),
     ('1DtLin87nq', (select id from power_circuit where name = 'Strømtavle 2')),

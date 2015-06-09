@@ -25,11 +25,9 @@
         {% endblock %}
     </head>
     <body class="">
-        <div class="box" id="model">
-            Model
+        <div class="box" id="model" data-token="{{ model_token }}">
         </div>
         <div class="box" id="stats">
-            Stats
         </div>
         <div class="box" id="graphs">
             Graphs
@@ -41,8 +39,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
+
     {% block javascript %}
     <script type="text/javascript" src="{% static 'js/display_stats.js' %}"></script>
+
+    <script type="text/javascript" src="https://api.bimsync.com/1.0/js/viewer.js"></script>
+    <script type="text/javascript" src="{% static 'js/display_model.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'js/update_feed.js' %}"></script>
     {% endblock %}
 
     </body>

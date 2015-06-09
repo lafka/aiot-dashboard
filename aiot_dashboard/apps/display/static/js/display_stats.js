@@ -40,18 +40,14 @@ $(function() {
         $box.html('<ul></ul>');
         $box_list = $box.find('ul:first');
         
-        var source = new EventSource(Urls.display_stats_update());
-        source.onmessage = function(event) {
-            var data = JSON.parse(event.data);
-
+        $box.data('updateFunc', function(data) {
             $.each(data, function(k, v) {
                 var room_key = k;
                 var room = getOrCreateRoom(room_key);
                 
                 updateRoom(room, v);
             });
-        };
-
+        });
     }
     
     initStatsBox();

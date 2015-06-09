@@ -46,6 +46,7 @@ ON
 
 -- "Raw" time series
 CREATE TABLE ts_co2 (
+    id SERIAL PRIMARY KEY,
     datetime TIMESTAMP WITH TIME ZONE,
     device_key TEXT REFERENCES device (key) NOT NULL,
     value DOUBLE PRECISION NOT NULL,
@@ -53,6 +54,7 @@ CREATE TABLE ts_co2 (
 );
 
 CREATE TABLE ts_decibel (
+    id SERIAL PRIMARY KEY,
     datetime TIMESTAMP WITH TIME ZONE,
     device_key TEXT REFERENCES device (key) NOT NULL,
     value DOUBLE PRECISION NOT NULL,
@@ -60,6 +62,7 @@ CREATE TABLE ts_decibel (
 );
 
 CREATE TABLE ts_movement (
+    id SERIAL PRIMARY KEY,
     datetime TIMESTAMP WITH TIME ZONE,
     device_key TEXT REFERENCES device (key) NOT NULL,
     value BOOLEAN NOT NULL,
@@ -67,6 +70,7 @@ CREATE TABLE ts_movement (
 );
 
 CREATE TABLE ts_temperature (
+    id SERIAL PRIMARY KEY,
     datetime TIMESTAMP WITH TIME ZONE,
     device_key TEXT REFERENCES device (key) NOT NULL,
     value DOUBLE PRECISION NOT NULL,
@@ -74,6 +78,7 @@ CREATE TABLE ts_temperature (
 );
 
 CREATE TABLE ts_moist (
+    id SERIAL PRIMARY KEY,
     datetime TIMESTAMP WITH TIME ZONE,
     device_key TEXT REFERENCES device (key) NOT NULL,
     value DOUBLE PRECISION NOT NULL,
@@ -81,6 +86,7 @@ CREATE TABLE ts_moist (
 );
 
 CREATE TABLE ts_light (
+    id SERIAL PRIMARY KEY,
     datetime TIMESTAMP WITH TIME ZONE,
     device_key TEXT REFERENCES device (key) NOT NULL,
     value DOUBLE PRECISION NOT NULL,
@@ -88,6 +94,7 @@ CREATE TABLE ts_light (
 );
 
 CREATE TABLE ts_pulses (
+    id SERIAL PRIMARY KEY,
     datetime TIMESTAMP WITH TIME ZONE,
     device_key TEXT REFERENCES device (key) NOT NULL,
     value INTEGER NOT NULL,
@@ -99,6 +106,7 @@ CREATE TABLE ts_pulses (
 
 -- Calculated from `ts_pulses`
 CREATE TABLE ts_kwm (
+    id SERIAL PRIMARY KEY,
     datetime TIMESTAMP WITH TIME ZONE,
     device_key TEXT REFERENCES device (key) NOT NULL,
     value DOUBLE PRECISION NOT NULL
@@ -106,6 +114,7 @@ CREATE TABLE ts_kwm (
 
 -- Calculated from `ts_kwm`
 CREATE TABLE ts_kwh (
+    id SERIAL PRIMARY KEY,
     datetime TIMESTAMP WITH TIME ZONE,
     device_key TEXT REFERENCES device (key) NOT NULL,
     value DOUBLE PRECISION NOT NULL
@@ -126,6 +135,28 @@ CREATE TABLE ts_energy_productivity (
     device_key TEXT REFERENCES device(key),
     value DOUBLE PRECISION NOT NULL
 );
+
+-- View for room productivity calculations
+CREATE VIEW
+    ts_room_productivity
+AS
+    SELECT
+        ts_persons_inside.datetime, ts_persons_inside.device_key, (ts_persons_inside.value / room_type.manminutes_capacity) AS value
+    FROM
+        ts_persons_inside
+    INNER JOIN
+        map_device_room
+    ON
+        ts_persons_inside.device_key = map_device_room.device_key
+    INNER JOIN
+        room
+    ON
+        room.key = map_device_room.room_key
+    INNER JOIN
+        room_type
+    ON
+        room.room_type_id = room_type.id;
+
 
 -- Deviations
 CREATE TABLE deviations (
