@@ -51,9 +51,11 @@ class DataSseView(SseUpdateView):
         if len(self.rooms) == 0:
             self.rooms = Room.get_active_rooms()
 
-        data = {}
+        data = []
         for room in self.rooms:
-            data[room.key] = {
+            data.append({
+                'type': 'room',
+                'key': room.key,
                 'name': room.name,
                 'occupied': room.is_occupied(),
                 'co2': room.current_co2(),
@@ -64,6 +66,6 @@ class DataSseView(SseUpdateView):
                     'co2': room.deviation_minutes('co2'),
                     'humidity': room.deviation_minutes('humidity')
                 }
-            }
+            })
         time.sleep(1)
         return data
