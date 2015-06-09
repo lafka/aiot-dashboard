@@ -61,9 +61,8 @@ class RoomEventsSseView(View):
         start = timezone.now()
         while timezone.now() - start < settings.SSE_MAX_TIME:
             data = self.get_updates()
-            if data:
-                yield "data: %s\n" % json.dumps(data)
-                yield "\n"
+            yield "data: %s\n" % json.dumps(data)
+            yield "\n"
 
             time.sleep(1)
 
