@@ -24,7 +24,6 @@ class Device(models.Model):
         db_table = 'device'
 
 
-
 class MapDevicePowerCircuit(models.Model):
     device_key = models.ForeignKey(Device, db_column='device_key')
     power_circuit = models.ForeignKey('PowerCircuit')
@@ -46,6 +45,7 @@ class MapDeviceRoom(models.Model):
 
 class PowerCircuit(models.Model):
     name = models.TextField()
+    devices = models.ManyToManyField('Device', through='MapDevicePowerCircuit')
 
     class Meta:
         managed = False
