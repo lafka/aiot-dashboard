@@ -28,13 +28,19 @@
                 <div class="col-xs-2"></div>
                 <div class="col-xs-offset-2 col-xs-10">
             <div class="navbar-header">
-              <a href="{% url "dashboard_home" %}" class="navbar-brand">Dashboard</a>
+              <a href="#" class="navbar-brand">Operations Dashboard</a>
+            </div>
+            <div class="navbar-header">
+              <a href="{% url "display" %}" class="navbar-brand">Display</a>
+            </div>
+            <div class="navbar-header">
+              <a href="{% url "room_overview" %}" class="navbar-brand">Room Overview</a>
+            </div>
+            <div class="navbar-header">
+              <a href="{% url "power_meters_overview" %}" class="navbar-brand">Power Meters</a>
             </div>
             <nav class="collapse navbar-collapse bs-navbar-collapse">
               <ul class="nav navbar-nav">
-                <li><a href="#">Deviations</a></li>
-                <li><a href="{% url "dashboard_room_overview" %}">Room Overview</a></li>
-                <li><a href="{% url "dashboard_power_meter_overview" %}">Power Meters Overview</a></li>
                 <li><a href="#">Configuration</a></li>
               </ul>
               <ul class="nav navbar-nav navbar-right">
@@ -107,6 +113,7 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
     {% block javascript %}
     {% endblock %}
 

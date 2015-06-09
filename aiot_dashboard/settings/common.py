@@ -39,7 +39,8 @@ INSTALLED_APPS = (
     'django_js_reverse',
 
     'aiot_dashboard.apps.db',
-    'aiot_dashboard.apps.dashboard',
+    'aiot_dashboard.apps.rooms',
+    'aiot_dashboard.apps.power_meters',
     'aiot_dashboard.apps.display',
 )
 

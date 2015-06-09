@@ -1,0 +1,21 @@
+{% extends "base.html"%}
+
+{% load static %}
+
+{% block content %}
+<div id="graph" style="width: 100%; height:400px;"></div>
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'js/flot/jquery.flot.js' %}"></script>
+<script src="{% static 'js/flot/jquery.flot.time.js' %}"></script>
+<script src="{% static 'js/rooms/detail.js' %}"></script>
+<script>
+    aiot.room.detail.initialize({
+        'room_key': {{ room_key|safe }},
+        'events': {{ events|safe }},
+        'stream': {{ stream|safe }},
+        'last_datetime': {{ last_datetime|safe }}
+    });
+</script>
+{% endblock %}
