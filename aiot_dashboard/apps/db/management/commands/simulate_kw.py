@@ -33,9 +33,14 @@ class Command(BaseCommand):
             TsKwh.objects.all().update(value=0)
 
         for rec in qs.order_by('datetime'):
-            hour = datetime.datetime(rec.datetime.year, rec.datetime.month, rec.datetime.day, rec.datetime.hour)
-            kwh, _ = TsKwh.objects.get_or_create(device_key=rec.device_key,
-                                                 datetime=hour)
+            hour = datetime.datetime(rec.datetime.year, rec.datetime.month, rec.datetime.day, rec.datetime.hour).replace(tzinfo=rec.datetime.tzinfo)
+            try:
+                kwh = TsKwh.objects.get(device_key=rec.device_key,
+                                        datetime=hour)
+            except TsKwh.DoesNotExist:
+                kwh = TsKwh(device_key=rec.device_key,
+                            datetime=hour,
+                            value=0)
             kwh.value += rec.value
             kwh.save()
 
