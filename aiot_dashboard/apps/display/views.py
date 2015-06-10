@@ -8,8 +8,10 @@ from django import http, db
 from django.conf import settings
 from django.views.generic.base import TemplateView, View
 from django.utils import timezone
-from aiot_dashboard.apps.db.models import Room, PowerCircuit, TsKwm, TsKwh
-from django.db.models.aggregates import Sum, Max
+from aiot_dashboard.apps.db.models import Room, PowerCircuit, TsKwm, TsKwh,\
+    TsEnergyProductivity
+from django.db.models.aggregates import Sum, Max, Avg
+from aiot_dashboard.core.utils import get_today
 
 
 class DisplayView(TemplateView):
@@ -48,6 +50,9 @@ class SseUpdateView(View):
 
 
 class DataSseView(SseUpdateView):
+    GRAPH_HOUR_START = 7
+    GRAPH_HOUR_END = 18
+
     rooms = []
     last_power = None
 
@@ -84,7 +89,8 @@ class DataSseView(SseUpdateView):
             for circuit in PowerCircuit.objects.all().prefetch_related('devices'):
                 circuits.append({
                     'name': circuit.name,
-                    'kwh': self._build_kwh_for_devices(circuit.devices.all())
+                    'kwh': self._build_kwh_for_devices(circuit.devices.all()),
+                    'productivity': self._build_productivity_for_devices(circuit.devices.all())
                 })
             data.append({
                 'type': 'power',
@@ -95,30 +101,48 @@ class DataSseView(SseUpdateView):
             self.last_power = datetime.datetime.utcnow()
         return data
 
-    def _get_today(self):
-        now = timezone.now()
-        return datetime.datetime(now.year, now.month, now.day).replace(tzinfo=now.tzinfo)
-
     def _build_kwh_for_devices(self, devices=None):
-        today = self._get_today()
+        today = get_today()
         data = []
 
-        for h in range(7, 18):
+        for h in range(self.GRAPH_HOUR_START, self.GRAPH_HOUR_END):
             dte = today + datetime.timedelta(hours=h)
             qs = TsKwm.objects.filter(datetime__gte=dte,
                                       datetime__lt=dte + datetime.timedelta(hours=1))
             if devices:
                 qs = qs.filter(device_key__in=devices)
-            val = qs.aggregate(Sum('value'))['value__sum']
-            if not val:
-                val = 0
-            data.append([h, val])
+            data.append([h, self._get_aggregate_sum(qs)])
         return data
 
     def _build_max_kwh(self):
-        today = self._get_today()
+        today = get_today()
         month_start = datetime.datetime(today.year, today.month, 1)
         qs = TsKwh.objects.filter(datetime__gte=month_start,
                                   datetime__lt=month_start + relativedelta(months=1))
         val = qs.aggregate(Max('value'))['value__max']
         return val if val else 0
+
+    def _build_productivity_for_devices(self, devices):
+        today = get_today()
+        data = []
+
+        for h in range(self.GRAPH_HOUR_START, self.GRAPH_HOUR_END):
+            dte = today + datetime.timedelta(hours=h)
+            qs = TsEnergyProductivity.objects.filter(datetime__gte=dte,
+                                                     datetime__lt=dte + datetime.timedelta(hours=1))
+            if devices:
+                qs = qs.filter(device_key__in=devices)
+            data.append([h, self._get_aggregate_avg(qs)])
+        return data
+
+    def _get_aggregate(self, qs, func=Sum, key='value__sum'):
+        val = qs.aggregate(func('value'))[key]
+        if not val:
+            val = 0
+        return val
+
+    def _get_aggregate_sum(self, qs):
+        return self._get_aggregate(qs, Sum, 'value__sum')
+
+    def _get_aggregate_avg(self, qs):
+        return self._get_aggregate(qs, Avg, 'value__avg')
