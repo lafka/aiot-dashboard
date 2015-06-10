@@ -12,6 +12,7 @@ from aiot_dashboard.apps.db.models import Room, PowerCircuit, TsKwm, TsKwh,\
     TsEnergyProductivity
 from django.db.models.aggregates import Sum, Max, Avg
 from aiot_dashboard.core.utils import get_today
+import math
 
 
 class DisplayView(TemplateView):
@@ -55,17 +56,19 @@ class DataSseView(SseUpdateView):
 
     rooms = []
     last_power = None
+    last_current_kwh = None
 
     def get_updates(self):
         if len(self.rooms) == 0:
             self.rooms = Room.get_active_rooms()
 
-        data = self._build_rooms([])
-        data = self._build_power(data)
+        data = self._build_rooms_msg([])
+        data = self._build_graph_msg(data)
+        data = self._build_current_kwh_msg(data)
         time.sleep(1)
         return data
 
-    def _build_rooms(self, data=[]):
+    def _build_rooms_msg(self, data=[]):
         for room in self.rooms:
             data.append({
                 'type': 'room',
@@ -83,7 +86,7 @@ class DataSseView(SseUpdateView):
             })
         return data
 
-    def _build_power(self, data=[]):
+    def _build_graph_msg(self, data=[]):
         if not self.last_power or datetime.datetime.utcnow() - self.last_power > datetime.timedelta(minutes=1):
             circuits = []
             for circuit in PowerCircuit.objects.all().prefetch_related('devices'):
@@ -93,11 +96,20 @@ class DataSseView(SseUpdateView):
                     'productivity': self._build_productivity_for_devices(circuit.devices.all())
                 })
             data.append({
-                'type': 'power',
+                'type': 'graph',
                 'circuits': circuits,
                 'total': self._build_kwh_for_devices(None),
                 'max_month': self._build_max_kwh(),
                 'current_kwh': self._build_current_kwh()
+            })
+            self.last_power = datetime.datetime.utcnow()
+        return data
+
+    def _build_current_kwh_msg(self, data=[]):
+        if not self.last_current_kwh or datetime.datetime.utcnow() - self.last_current_kwh > datetime.timedelta(seconds=10):
+            data.append({
+                'type': 'current_kwh',
+                'data': self._build_current_kwh()
             })
             self.last_power = datetime.datetime.utcnow()
         return data
@@ -155,7 +167,11 @@ class DataSseView(SseUpdateView):
         }
 
     def _get_max_kwh_for_current_period(self):
-        return 20
+        today = get_today()
+        val = TsKwm.objects.filter(datetime__gte=today,
+                                   datetime__lt=today + datetime.timedelta(days=1)).aggregate(Max('value'))['value__max']
+        return math.ceil(val * 60) if val else 0
 
     def _get_current_kwh_for_current_period(self):
-        return 10
+        val = TsKwm.objects.filter(id__in=TsKwm.objects.all().order_by('-datetime')[:10]).aggregate(Avg('value'))['value__avg']
+        return math.ceil(val * 60) if val else 0

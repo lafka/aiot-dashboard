@@ -29,7 +29,7 @@ $(function() {
         $box_kwh.data('updateFunc', function(data) {
             $(data).each(function(i) {
             	var rec = data[i];
-            	if(rec['type'] !== 'power')
+            	if(rec['type'] !== 'graph')
             		return;
             	
             	graph_data = [];
@@ -81,7 +81,7 @@ $(function() {
         $box_prod.data('updateFunc', function(data) {
             $(data).each(function(i) {
             	var rec = data[i];
-            	if(rec['type'] !== 'power')
+            	if(rec['type'] !== 'graph')
             		return;
             	
             	graph_data = [];
@@ -123,14 +123,13 @@ $(function() {
     		title: "nåværende kWh"
     	});
     	
-        $box_prod.data('updateFunc', function(data) {
+        $box_max_kwh.data('updateFunc', function(data) {
             $(data).each(function(i) {
             	var rec = data[i];
-            	if(rec['type'] !== 'power')
+            	if(rec['type'] !== 'current_kwh')
             		return;
 
-            	g.refresh(rec['current_kwh']['current'], rec['current_kwh']['max']);
-            	
+            	g.refresh(rec['data']['current'], rec['data']['max']);
             });
         });
     }
