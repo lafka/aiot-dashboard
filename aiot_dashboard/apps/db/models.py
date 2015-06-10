@@ -1,7 +1,16 @@
 from __future__ import unicode_literals
 
+from datetime import datetime, timedelta
+
 from django.db import models
 from django.utils import timezone
+
+class TimeSeriesMixin(object):
+    @classmethod
+    def get_ts_between(cls, start, end, room):
+        #TODO: Remember, there might be multiple devices in a room in the future
+        device = room.devices.all()[0]
+        return cls.objects.filter(datetime__gte=start, datetime__lte=end, device_key=device.key)
 
 
 class Deviations(models.Model):
@@ -31,16 +40,6 @@ class MapDevicePowerCircuit(models.Model):
     class Meta:
         managed = False
         db_table = 'map_device_power_circuit'
-
-
-class MapDeviceRoom(models.Model):
-    device_key = models.ForeignKey(Device, db_column='device_key')
-    room_key = models.ForeignKey('Room', db_column='room_key')
-
-    class Meta:
-        managed = False
-        db_table = 'map_device_room'
-        unique_together = (('device_key', 'room_key'),)
 
 
 class PowerCircuit(models.Model):
@@ -91,6 +90,30 @@ class Room(models.Model):
                                          deviation_type=deviation_type,
                                          datetime__gte=today).count()
 
+    def get_latest_room_state(self):
+        sensor_map = {
+            'co2': TsCo2,
+            'temp': TsTemperature,
+            'db': TsDecibel,
+            'moist': TsMoist,
+            'movement': TsMovement,
+            'lux': TsLight,
+        }
+
+        ret = {}
+
+        for key, klass in sensor_map.items():
+            instance = klass.objects.filter(device_key=self.devices.all()[0].key, datetime__gt=(datetime.now() -
+                timedelta(hours=1))).latest(field_name='datetime') #TODO: Remember, there might be multiple devices in a room in the future
+
+            ret[key] = instance.value if instance else None
+
+        # todo
+        ret['name'] = self.name
+        ret['key'] = self.key
+
+        return ret
+
     def current_co2(self):
         ts = self.get_latest_ts(TsCo2)
         if ts:
@@ -104,6 +127,15 @@ class Room(models.Model):
         return 0
 
 
+class MapDeviceRoom(models.Model):
+    device_key = models.ForeignKey('Device', db_column='device_key')
+    room_key = models.ForeignKey('Room', db_column='room_key')
+
+    class Meta:
+        managed = False
+        db_table = 'map_device_room'
+        unique_together = (('device_key', 'room_key'),)
+
 class RoomType(models.Model):
     description = models.TextField()
     manminutes_capacity = models.IntegerField()
@@ -113,7 +145,7 @@ class RoomType(models.Model):
         db_table = 'room_type'
 
 
-class TsCo2(models.Model):
+class TsCo2(models.Model, TimeSeriesMixin):
     datetime = models.DateTimeField(blank=True, null=True)
     device_key = models.ForeignKey(Device, db_column='device_key')
     value = models.FloatField()
@@ -122,9 +154,9 @@ class TsCo2(models.Model):
     class Meta:
         managed = False
         db_table = 'ts_co2'
+        ordering = ['-datetime']
 
-
-class TsDecibel(models.Model):
+class TsDecibel(models.Model, TimeSeriesMixin):
     datetime = models.DateTimeField(blank=True, null=True)
     device_key = models.ForeignKey(Device, db_column='device_key')
     value = models.FloatField()
@@ -133,9 +165,10 @@ class TsDecibel(models.Model):
     class Meta:
         managed = False
         db_table = 'ts_decibel'
+        ordering = ['-datetime']
 
 
-class TsEnergyProductivity(models.Model):
+class TsEnergyProductivity(models.Model, TimeSeriesMixin):
     datetime = models.DateTimeField(blank=True, null=True)
     device_key = models.ForeignKey(Device, db_column='device_key', blank=True, null=True)
     value = models.FloatField()
@@ -143,9 +176,10 @@ class TsEnergyProductivity(models.Model):
     class Meta:
         managed = False
         db_table = 'ts_energy_productivity'
+        ordering = ['-datetime']
 
 
-class TsKwh(models.Model):
+class TsKwh(models.Model, TimeSeriesMixin):
     datetime = models.DateTimeField(blank=True, null=True)
     device_key = models.ForeignKey(Device, db_column='device_key')
     value = models.FloatField()
@@ -153,9 +187,10 @@ class TsKwh(models.Model):
     class Meta:
         managed = False
         db_table = 'ts_kwh'
+        ordering = ['-datetime']
 
 
-class TsKwm(models.Model):
+class TsKwm(models.Model, TimeSeriesMixin):
     datetime = models.DateTimeField(blank=True, null=True)
     device_key = models.ForeignKey(Device, db_column='device_key')
     value = models.FloatField()
@@ -163,9 +198,10 @@ class TsKwm(models.Model):
     class Meta:
         managed = False
         db_table = 'ts_kwm'
+        ordering = ['-datetime']
 
 
-class TsLight(models.Model):
+class TsLight(models.Model, TimeSeriesMixin):
     datetime = models.DateTimeField(blank=True, null=True)
     device_key = models.ForeignKey(Device, db_column='device_key')
     value = models.FloatField()
@@ -174,9 +210,10 @@ class TsLight(models.Model):
     class Meta:
         managed = False
         db_table = 'ts_light'
+        ordering = ['-datetime']
 
 
-class TsMoist(models.Model):
+class TsMoist(models.Model, TimeSeriesMixin):
     datetime = models.DateTimeField(blank=True, null=True)
     device_key = models.ForeignKey(Device, db_column='device_key')
     value = models.FloatField()
@@ -185,9 +222,10 @@ class TsMoist(models.Model):
     class Meta:
         managed = False
         db_table = 'ts_moist'
+        ordering = ['-datetime']
 
 
-class TsMovement(models.Model):
+class TsMovement(models.Model, TimeSeriesMixin):
     datetime = models.DateTimeField(blank=True, null=True)
     device_key = models.ForeignKey(Device, db_column='device_key')
     value = models.BooleanField()
@@ -196,9 +234,10 @@ class TsMovement(models.Model):
     class Meta:
         managed = False
         db_table = 'ts_movement'
+        ordering = ['-datetime']
 
 
-class TsPersonsInside(models.Model):
+class TsPersonsInside(models.Model, TimeSeriesMixin):
     datetime = models.DateTimeField(blank=True, null=True)
     device_key = models.ForeignKey(Device, db_column='device_key', blank=True, null=True)
     value = models.FloatField()
@@ -206,9 +245,10 @@ class TsPersonsInside(models.Model):
     class Meta:
         managed = False
         db_table = 'ts_persons_inside'
+        ordering = ['-datetime']
 
 
-class TsPulses(models.Model):
+class TsPulses(models.Model, TimeSeriesMixin):
     datetime = models.DateTimeField(blank=True, null=True)
     device_key = models.ForeignKey(Device, db_column='device_key')
     value = models.IntegerField()
@@ -217,9 +257,10 @@ class TsPulses(models.Model):
     class Meta:
         managed = False
         db_table = 'ts_pulses'
+        ordering = ['-datetime']
 
 
-class TsTemperature(models.Model):
+class TsTemperature(models.Model, TimeSeriesMixin):
     datetime = models.DateTimeField(blank=True, null=True)
     device_key = models.ForeignKey(Device, db_column='device_key')
     value = models.FloatField()
@@ -228,3 +269,4 @@ class TsTemperature(models.Model):
     class Meta:
         managed = False
         db_table = 'ts_temperature'
+        ordering = ['-datetime']
