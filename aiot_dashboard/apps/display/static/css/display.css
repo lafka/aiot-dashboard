@@ -13,7 +13,7 @@ html, body {
     float: left;
 }
 .box.third {
-	width: 33%;
+    width: 33%;
 }
 .box .legend {
     position: absolute;

@@ -1,6 +1,7 @@
 import datetime
 import time
 import json
+import math
 
 from dateutil.relativedelta import relativedelta
 
@@ -11,8 +12,8 @@ from django.utils import timezone
 from aiot_dashboard.apps.db.models import Room, PowerCircuit, TsKwm, TsKwh,\
     TsEnergyProductivity
 from django.db.models.aggregates import Sum, Max, Avg
+
 from aiot_dashboard.core.utils import get_today
-import math
 
 
 class DisplayView(TemplateView):

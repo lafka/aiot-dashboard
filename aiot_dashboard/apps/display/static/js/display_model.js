@@ -83,7 +83,7 @@ $(function() {
                 $box.data('updateFunc', function(data) {
                     ts = new Date().getTime();
                     if (last_mode_change === 0)
-                    	last_mode_change = ts;
+                        last_mode_change = ts;
                     if ((ts - last_mode_change) / 1000 > mode_interval) {
                         last_mode_change = ts;
 
@@ -94,11 +94,11 @@ $(function() {
                     }
 
                     $(data).each(function(i) {
-                    	var rec = data[i];
-                    	if(rec['type'] !== 'room')
-                    		return;
-                    	
-                        var room_key = rec['key'];
+                        var rec = data[i];
+                        if(rec.type !== 'room')
+                            return;
+                        
+                        var room_key = rec.key;
 
                         if(mode === 0) {
                             // Set color based on occupied (red = movement, green = not movement)

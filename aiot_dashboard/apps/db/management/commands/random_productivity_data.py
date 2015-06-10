@@ -1,10 +1,11 @@
 import random
 
+from datetime import timedelta
+
 from django.core.management.base import BaseCommand
 
 from aiot_dashboard.apps.db.models import TsEnergyProductivity, PowerCircuit
 from aiot_dashboard.core.utils import get_today
-from datetime import timedelta
 
 class Command(BaseCommand):
     help = 'Generates a bunch of random energy productivity readings'
