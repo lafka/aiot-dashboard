@@ -96,7 +96,8 @@ class DataSseView(SseUpdateView):
                 'type': 'power',
                 'circuits': circuits,
                 'total': self._build_kwh_for_devices(None),
-                'max_month': self._build_max_kwh()
+                'max_month': self._build_max_kwh(),
+                'current_kwh': self._build_current_kwh()
             })
             self.last_power = datetime.datetime.utcnow()
         return data
@@ -107,7 +108,7 @@ class DataSseView(SseUpdateView):
 
         for h in range(self.GRAPH_HOUR_START, self.GRAPH_HOUR_END):
             dte = today + datetime.timedelta(hours=h)
-            qs = TsKwm.objects.filter(datetime__gte=dte,
+            qs = TsKwh.objects.filter(datetime__gte=dte,
                                       datetime__lt=dte + datetime.timedelta(hours=1))
             if devices:
                 qs = qs.filter(device_key__in=devices)
@@ -146,3 +147,15 @@ class DataSseView(SseUpdateView):
 
     def _get_aggregate_avg(self, qs):
         return self._get_aggregate(qs, Avg, 'value__avg')
+
+    def _build_current_kwh(self):
+        return {
+            'max': self._get_max_kwh_for_current_period(),
+            'current': self._get_current_kwh_for_current_period()
+        }
+
+    def _get_max_kwh_for_current_period(self):
+        return 20
+
+    def _get_current_kwh_for_current_period(self):
+        return 10
