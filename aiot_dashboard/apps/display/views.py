@@ -162,14 +162,15 @@ class DataSseView(SseUpdateView):
 
     def _build_current_kwh(self):
         return {
-            'max': self._get_max_kwh_for_current_period(),
+            'max': self._get_max_kwh_for_current_month(),
             'current': self._get_current_kwh_for_current_period()
         }
 
-    def _get_max_kwh_for_current_period(self):
+    def _get_max_kwh_for_current_month(self):
         today = get_today()
-        val = TsKwm.objects.filter(datetime__gte=today,
-                                   datetime__lt=today + datetime.timedelta(days=1)).aggregate(Max('value'))['value__max']
+        month_start = datetime.datetime(today.year, today.month, 1)
+        val = TsKwm.objects.filter(datetime__gte=month_start,
+                                   datetime__lt=month_start + relativedelta(months=1)).aggregate(Max('value'))['value__max']
         return math.ceil(val * 60) if val else 0
 
     def _get_current_kwh_for_current_period(self):
