@@ -1,5 +1,5 @@
 $(function() {
-    var $box = $('#graphs');
+    var $box_kwh = $('#kwh_graph');
     
     String.prototype.lpad = function(padString, length) {
         var str = this;
@@ -8,14 +8,14 @@ $(function() {
         return str;
     }
 
-    function initChartBox() {
-        $box.html('<div id="graph" style="width: 100%; height: 90%;"></div>');
+    function initGraphs() {
+        $box_kwh.html('<div class="graph" style="width: 100%; height: 90%;"></div>');
         
         var time_ticks = [];
         for(h = 7; h < 18; h++) {
         	time_ticks.push([h, ("" + h).lpad("0", 2) + ":00"]);
         }
-        $box.data('updateFunc', function(data) {
+        $box_kwh.data('updateFunc', function(data) {
             $(data).each(function(i) {
             	var rec = data[i];
             	if(rec['type'] !== 'power')
@@ -42,7 +42,7 @@ $(function() {
         			}
             	})
             	
-                $.plot("#graph", graph_data, {
+                $.plot($box_kwh.find(".graph:first"), graph_data, {
                 	series: {
         				stack: true,
         				lines: {
@@ -67,5 +67,5 @@ $(function() {
         });
     }
     
-    initChartBox();
+    initGraphs();
 });
