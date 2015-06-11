@@ -2,6 +2,21 @@
 
 {% load static %}
 
+{% block filters %}
+<ul>
+    <li>
+        Time:<br>
+        &ndash; <a><b>Last Activity</b></a><br>
+        &ndash; <a>Today</a><br>
+        &ndash; <a>Yesterday</a><br>
+        &ndash; <a>Last Week</a><br>
+        &ndash; <a>Custom Timerange</a><br>
+        <hr />
+    </li>
+</ul>
+{% endblock %}
+
+
 {% block content %}
 <div id="graph" style="width: 100%; height:400px;"></div>
 {% endblock %}
