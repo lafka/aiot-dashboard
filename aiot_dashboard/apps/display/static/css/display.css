@@ -52,6 +52,7 @@ html, body {
 #stats li .temperature, #stats li .co2, #stats li .humidity {
     padding-left: 22px;
     height: 18px;
+    min-width: 46px;
 }
 #stats li .temperature, .icon .temperature {
     background: url('../images/display/icon-temperature.png') left center no-repeat;
