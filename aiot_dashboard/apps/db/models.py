@@ -44,6 +44,7 @@ class MapDevicePowerCircuit(models.Model):
 
 class PowerCircuit(models.Model):
     name = models.TextField()
+    devices = models.ManyToManyField('Device', through='MapDevicePowerCircuit')
 
     class Meta:
         managed = False

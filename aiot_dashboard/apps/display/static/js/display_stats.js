@@ -41,11 +41,15 @@ $(function() {
         $box_list = $box.find('ul:first');
         
         $box.data('updateFunc', function(data) {
-            $.each(data, function(k, v) {
-                var room_key = k;
-                var room = getOrCreateRoom(room_key);
+            $(data).each(function(i) {
+                rec = data[i];
                 
-                updateRoom(room, v);
+                if(rec.type == 'room') {
+                    var room_key = rec.key;
+                    var room = getOrCreateRoom(room_key);
+                    
+                    updateRoom(room, rec);
+                }
             });
         });
     }

@@ -83,7 +83,7 @@ $(function() {
                 $box.data('updateFunc', function(data) {
                     ts = new Date().getTime();
                     if (last_mode_change === 0)
-                    	last_mode_change = ts;
+                        last_mode_change = ts;
                     if ((ts - last_mode_change) / 1000 > mode_interval) {
                         last_mode_change = ts;
 
@@ -93,25 +93,29 @@ $(function() {
                         setMode(mode);
                     }
 
-                    $.each(data, function(k, v) {
-                        var room_key = k;
+                    $(data).each(function(i) {
+                        var rec = data[i];
+                        if(rec.type !== 'room')
+                            return;
+                        
+                        var room_key = rec.key;
 
                         if(mode === 0) {
                             // Set color based on occupied (red = movement, green = not movement)
-                            col = v.occupied ? '#FF0000' : '#00FF00';
+                            col = rec.occupied ? '#FF0000' : '#00FF00';
 
                             $('#viewer-container').viewer('color', col, room_key);
                             $('#viewer-container').viewer('show', room_key);
                         } else if(mode == 1) {
-                            col = v.co2 < 1000 ? '#0f0' : '#ff0';
-                            if(v.co2 > 1500)
+                            col = rec.co2 < 1000 ? '#0f0' : '#ff0';
+                            if(rec.co2 > 1500)
                                 col = '#f00';
 
                             $('#viewer-container').viewer('color', col, room_key);
                             $('#viewer-container').viewer('show', room_key);
                         } else {
-                            col = v.temperature < 20 ? '#00f' : '#0f0';
-                            if(v.co2 > 23)
+                            col = rec.temperature < 20 ? '#00f' : '#0f0';
+                            if(rec.co2 > 23)
                                 col = '#f00';
 
                             $('#viewer-container').viewer('color', col, room_key);
