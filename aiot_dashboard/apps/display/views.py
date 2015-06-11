@@ -99,7 +99,6 @@ class DataSseView(SseUpdateView):
             data.append({
                 'type': 'graph',
                 'circuits': circuits,
-                'total': self._build_kwh_for_devices(None),
                 'max_month': self._build_max_kwh(),
                 'current_kwh': self._build_current_kwh()
             })
@@ -125,6 +124,7 @@ class DataSseView(SseUpdateView):
                                       datetime__lt=dte + datetime.timedelta(hours=1))
             if devices:
                 qs = qs.filter(device_key__in=devices)
+            print qs
             data.append([h, self._get_aggregate_sum(qs)])
         return data
 

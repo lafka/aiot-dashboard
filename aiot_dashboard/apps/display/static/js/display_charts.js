@@ -42,12 +42,9 @@ $(function() {
                     });
                 });
                 graph_data.push({
-                    label: 'Total',
-                    data: rec.total
-                });
-                graph_data.push({
                     label: 'Max',
                     data: [[7, rec.max_month], [17, rec.max_month]],
+                    stack: false,
                     lines: {
                         fill: false
                     }
@@ -59,6 +56,7 @@ $(function() {
                         lines: {
                             show: true,
                             fill: true,
+                            steps: true,
                         },
                     },
                     xaxis: {
@@ -74,6 +72,7 @@ $(function() {
                         backgroundOpacity: 0.5,
                     }
                 });
+                
             });
         });
     }
