@@ -28,7 +28,7 @@ $(function() {
     var alreadyFetched = {};
 
     function do_it() {
-        $.getJSON('{% url "dashboard_power_meter_state" device_key %}', function(series) {
+        $.getJSON('{% url "power_meters_detail_state" device_key %}', function(series) {
             $.plot('#placeholder', [{
                 data: series,
                 label: 'kWm',

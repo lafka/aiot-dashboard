@@ -3,6 +3,7 @@ import json
 from django.http.response import HttpResponse
 from django.views.generic.base import TemplateView
 
+from aiot_dashboard.apps.db.models import PowerCircuit
 
 # Power Meter Overview
 
@@ -11,8 +12,15 @@ class PowerMetersOverviewView(TemplateView):
 
 def power_meters_overview_state(request):
     data = []
-    
-    data.sort(key=lambda i: i['name'])
+    for circuit in PowerCircuit.objects.all():
+        last_kwh = circuit.get_last_kwh()
+        last_kwm = circuit.get_last_kwm()
+
+        data.append({
+            'name': circuit.name,
+            'kwm': '%.2f' % last_kwm,
+            'kwh': '%.2f' % last_kwh,
+        })
     return HttpResponse(json.dumps(data), 'application/json')
 
 

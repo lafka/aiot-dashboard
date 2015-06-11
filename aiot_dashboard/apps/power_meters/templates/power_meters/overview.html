@@ -19,8 +19,9 @@
 $(function() {
     function updateList() {
     	var $list = $('#data_list');
+
     	$.ajax({
-    		url: '{% url "dashboard_power_meter_overview_state" %}',
+    		url: '{% url "power_meters_overview_state" %}',
     		type: 'GET',
     		dataType: 'json',
     		success: function(data) {
