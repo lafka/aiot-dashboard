@@ -15,20 +15,20 @@ class RoomOverviewView(TemplateView):
     template_name = "rooms/overview.html"
 
     def get_context_data(self):
-        events_url = reverse('room_overview_events')
+        events_url = reverse('room_overview_events') + '?stream=true'
         return  {
             'events_url': json.dumps(events_url),
         }
 
 class RoomOverviewEventsView(EventsSseView):
     def get_events(self):
-        data = {}
+        data = []
 
         for room in Room.get_active_rooms():
             room_state = room.get_latest_room_state()
             room_state['name'] = room.name
             room_state['url'] = reverse('room_detail', args=(room.key,))
-            data[room.name] = room_state
+            data.append(room_state)
 
         return [data]
 

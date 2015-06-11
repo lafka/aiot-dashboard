@@ -1,5 +1,5 @@
 var aiot = aiot || {};
-aiot.rooms = aiot.room || {};
+aiot.rooms = aiot.rooms || {};
 aiot.rooms.overview = {};
 
 (function(ns) {
