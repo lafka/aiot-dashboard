@@ -29,7 +29,7 @@ class PowerMetersOverviewEventsView(EventsSseView):
 
             data.append({
                 'name': circuit.name,
-                'id': circuit.id,
+                'url': reverse('power_meters_detail', args=(circuit.pk,)),
                 'kwm': '%.2f' % last_kwm,
                 'kwh': '%.2f' % last_kwh,
             })
