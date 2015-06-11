@@ -131,8 +131,7 @@ class DataSseView(SseUpdateView):
         today = get_today()
         month_start = datetime.datetime(today.year, today.month, 1)
         try:
-            max_rec = TsKwh.objects.filter(datetime__gte=month_start,
-                                           datetime__lt=month_start + relativedelta(months=1)).order_by('-value')[0]
+            max_rec = TsKwh.get_max_record_for_period(month_start, month_start + relativedelta(months=1))
             return TsKwh.objects.filter(datetime=max_rec.datetime).aggregate(Sum('value'))['value__sum']
         except IndexError:
             pass
@@ -173,10 +172,20 @@ class DataSseView(SseUpdateView):
     def _get_max_kwh_for_current_month(self):
         today = get_today()
         month_start = datetime.datetime(today.year, today.month, 1)
-        val = TsKwm.objects.filter(datetime__gte=month_start,
-                                   datetime__lt=month_start + relativedelta(months=1)).aggregate(Max('value'))['value__max']
-        return math.ceil(val * 60) if val else 0
+
+        try:
+            max_rec = TsKwh.get_max_record_for_period(month_start, month_start + relativedelta(months=1))
+            return math.ceil(TsKwh.objects.filter(datetime=max_rec.datetime).aggregate(Sum('value'))['value__sum'])
+        except IndexError:
+            pass
+
+        return 0
 
     def _get_current_kwh_for_current_period(self):
-        val = TsKwm.objects.filter(id__in=TsKwm.objects.all().order_by('-datetime')[:10]).aggregate(Avg('value'))['value__avg']
-        return math.ceil(val * 60) if val else 0
+        # Get last 10 TsKwm for each circuit
+        total = 0
+        for circuit in PowerCircuit.objects.all().prefetch_related('devices'):
+            val = TsKwm.objects.filter(id__in=TsKwm.objects.filter(device_key__in=circuit.devices.all())\
+                                       .order_by('-datetime')[:10]).aggregate(Avg('value'))['value__avg']
+            total += val
+        return math.ceil(total * 60) if total else 0

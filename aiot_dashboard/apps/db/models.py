@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from django.db import models
 from django.utils import timezone
+from django.db.models.aggregates import Sum
 
 class TimeSeriesMixin(object):
     @classmethod
@@ -188,6 +189,11 @@ class TsKwh(models.Model, TimeSeriesMixin):
         managed = False
         db_table = 'ts_kwh'
         ordering = ['-datetime']
+
+    @classmethod
+    def get_max_record_for_period(cls, start, end):
+        return cls.objects.filter(datetime__gte=start,
+                                  datetime__lt=end).order_by('-value')[0]
 
 
 class TsKwm(models.Model, TimeSeriesMixin):
