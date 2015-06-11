@@ -1,12 +1,10 @@
 var aiot = aiot || {};
-aiot.room = aiot.room || {};
-aiot.room.detail = {};
+aiot.rooms = aiot.room || {};
+aiot.rooms.detail = {};
 
 (function(ns) {
 
 var flot_timeseries_by_type = {};
-
-window.fts = flot_timeseries_by_type; // debug
 
 function get_timeseries_by_type(type) {
     var timeseries = flot_timeseries_by_type[type];
@@ -25,7 +23,7 @@ function get_timeseries_by_type(type) {
 function plot_graph(types) {
     var flot_timeseries = [];
     var yaxis = 1;
-    $.each(types, function(k, type) {
+    $.each(types, function(i, type) {
         if (flot_timeseries_by_type[type]) {
             var timeseries = get_timeseries_by_type(type);
             timeseries.yaxis = yaxis++;
@@ -40,34 +38,17 @@ function plot_graph(types) {
     });
 }
 
-function add_events(events) {
-    $.each(events, function(k, event) {
-        var timeseries = get_timeseries_by_type(event.type);
+function on_event(event) {
+    var timeseries = get_timeseries_by_type(event.type);
+    timeseries.data.push([event.epoch, event.value]);
+}
 
-        timeseries.data.push([event.epoch, event.value]);
-    });
-
+function on_after_events() {
     var types = ['lux', 'moist', 'co2', 'db', 'temp'];
     plot_graph(types);
 }
 
-function initialize_room_event_stream(room_key, last_datetime) {
-    var url = Urls.room_detail_events(room_key);
-    url += '?last_datetime=' + encodeURIComponent(last_datetime);
+ns.on_after_events = on_after_events;
+ns.on_event = on_event;
 
-    var source = new EventSource(url);
-    source.onmessage = function(event) {
-        var data = JSON.parse(event.data);
-        add_events(data);
-    };
-}
-
-ns.initialize = function(config) {
-    add_events(config.events);
-
-    if (config.stream) {
-        initialize_room_event_stream(config.room_key, config.last_datetime);
-    }
-};
-
-})(aiot.room.detail);
+})(aiot.rooms.detail);
