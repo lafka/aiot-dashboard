@@ -1,6 +1,6 @@
 import json
 
-from django.http.response import HttpResponse
+from django.core.urlresolvers import reverse
 from django.views.generic.base import TemplateView
 
 from aiot_dashboard.apps.db.models import PowerCircuit
@@ -14,20 +14,26 @@ from .utils import get_events
 class PowerMetersOverviewView(TemplateView):
     template_name = "power_meters/overview.html"
 
-def power_meters_overview_state(request):
-    data = []
-    for circuit in PowerCircuit.objects.all():
-        last_kwh = circuit.get_last_kwh()
-        last_kwm = circuit.get_last_kwm()
+    def get_context_data(self):
+        events_url = reverse('power_meters_overview_events') + '?stream=true'
+        return  {
+            'events_url': json.dumps(events_url),
+        }
 
-        data.append({
-            'name': circuit.name,
-            'id': circuit.id,
-            'kwm': '%.2f' % last_kwm,
-            'kwh': '%.2f' % last_kwh,
-        })
-    return HttpResponse(json.dumps(data), 'application/json')
+class PowerMetersOverviewEventsView(EventsSseView):
+    def get_events(self):
+        data = []
+        for circuit in PowerCircuit.objects.all():
+            last_kwh = circuit.get_last_kwh()
+            last_kwm = circuit.get_last_kwm()
 
+            data.append({
+                'name': circuit.name,
+                'id': circuit.id,
+                'kwm': '%.2f' % last_kwm,
+                'kwh': '%.2f' % last_kwh,
+            })
+        return [data]
 
 # Power Meter View
 
@@ -51,10 +57,10 @@ class PowerMetersDetailView(TemplateView):
     def get(self, request, *args, **kwargs):
         return TemplateView.get(self, request, *args, **kwargs)
 
-class PowerMetersEventsSseView(EventsSseView):
+class PowerMetersDetailEventsSseView(EventsSseView):
     def dispatch(self, request, power_circuit_id):
         self.power_circuit = PowerCircuit.objects.get(key=power_circuit_id)
-        super(PowerMetersEventsSseView, self).dispatch(request)
+        super(PowerMetersDetailEventsSseView, self).dispatch(request)
 
     def get_events(self, datetime_from, datetime_to):
         return get_events(self.power_circuit, datetime_from, datetime_to)
