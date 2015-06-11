@@ -41,20 +41,35 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
 
-    {% block javascript %}
-    <script type="text/javascript" src="{% static 'js/display_stats.js' %}"></script>
+{% block javascript %}
+<script type="text/javascript" src="{% static 'js/display_stats.js' %}"></script>
 
-    <script type="text/javascript" src="https://api.bimsync.com/1.0/js/viewer.js"></script>
-    <script type="text/javascript" src="{% static 'js/display_model.js' %}"></script>
-    
-    <script src="{% static 'justGage.1.0.1/raphael.2.1.0.min.js' %}"></script>
-    <script src="{% static 'justGage.1.0.1/justgage.dev.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/display_charts.js' %}"></script>
+<script type="text/javascript" src="https://api.bimsync.com/1.0/js/viewer.js"></script>
+<script type="text/javascript" src="{% static 'js/display_model.js' %}"></script>
 
-    <script language="javascript" type="text/javascript" src="{% static 'js/flot/jquery.flot.js' %}"></script>
-    <script language="javascript" type="text/javascript" src="{% static 'js/flot/jquery.flot.stack.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/update_feed.js' %}"></script>
-    {% endblock %}
+<script type="text/javascript" src="{% static 'justGage.1.0.1/raphael.2.1.0.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'justGage.1.0.1/justgage.dev.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/display_charts.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/flot/jquery.flot.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/flot/jquery.flot.stack.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/events/event_manager.js' %}"></script>
+<script type="text/javascript">
+$(function() {
+    var event_manager = new aiot.events.EventManager({
+        on_event: function(event) {
+            $('.box').each(function() {
+                if($(this).data('updateFunc') !== undefined)
+                    $(this).data('updateFunc')(event);
+            });
+        },
+        url: Urls.display_data_update()
+    });
+    event_manager.start();
+});
+</script>
+{% endblock %}
 
     </body>
 </html>

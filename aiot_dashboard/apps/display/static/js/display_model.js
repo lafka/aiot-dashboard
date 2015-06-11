@@ -80,7 +80,7 @@ $(function() {
                 });
 
                 setMode(2);
-                $box.data('updateFunc', function(data) {
+                $box.data('updateFunc', function(rec) {
                     ts = new Date().getTime();
                     if (last_mode_change === 0)
                         last_mode_change = ts;
@@ -93,35 +93,32 @@ $(function() {
                         setMode(mode);
                     }
 
-                    $(data).each(function(i) {
-                        var rec = data[i];
-                        if(rec.type !== 'room')
-                            return;
-                        
-                        var room_key = rec.key;
+                    if(rec.type !== 'room')
+                        return;
+                    
+                    var room_key = rec.key;
 
-                        if(mode === 0) {
-                            // Set color based on occupied (red = movement, green = not movement)
-                            col = rec.occupied ? '#FF0000' : '#00FF00';
+                    if(mode === 0) {
+                        // Set color based on occupied (red = movement, green = not movement)
+                        col = rec.occupied ? '#FF0000' : '#00FF00';
 
-                            $('#viewer-container').viewer('color', col, room_key);
-                            $('#viewer-container').viewer('show', room_key);
-                        } else if(mode == 1) {
-                            col = rec.co2 < 1000 ? '#0f0' : '#ff0';
-                            if(rec.co2 > 1500)
-                                col = '#f00';
+                        $('#viewer-container').viewer('color', col, room_key);
+                        $('#viewer-container').viewer('show', room_key);
+                    } else if(mode == 1) {
+                        col = rec.co2 < 1000 ? '#0f0' : '#ff0';
+                        if(rec.co2 > 1500)
+                            col = '#f00';
 
-                            $('#viewer-container').viewer('color', col, room_key);
-                            $('#viewer-container').viewer('show', room_key);
-                        } else {
-                            col = rec.temperature < 20 ? '#00f' : '#0f0';
-                            if(rec.temperature > 23)
-                                col = '#f00';
+                        $('#viewer-container').viewer('color', col, room_key);
+                        $('#viewer-container').viewer('show', room_key);
+                    } else {
+                        col = rec.temperature < 20 ? '#00f' : '#0f0';
+                        if(rec.temperature > 23)
+                            col = '#f00';
 
-                            $('#viewer-container').viewer('color', col, room_key);
-                            $('#viewer-container').viewer('show', room_key);
-                        }
-                    });
+                        $('#viewer-container').viewer('color', col, room_key);
+                        $('#viewer-container').viewer('show', room_key);
+                    }
                 });
             });
         }
