@@ -124,17 +124,20 @@ class DataSseView(SseUpdateView):
                                       datetime__lt=dte + datetime.timedelta(hours=1))
             if devices:
                 qs = qs.filter(device_key__in=devices)
-            print qs
             data.append([h, self._get_aggregate_sum(qs)])
         return data
 
     def _build_max_kwh(self):
         today = get_today()
         month_start = datetime.datetime(today.year, today.month, 1)
-        qs = TsKwh.objects.filter(datetime__gte=month_start,
-                                  datetime__lt=month_start + relativedelta(months=1))
-        val = qs.aggregate(Max('value'))['value__max']
-        return val if val else 0
+        try:
+            max_rec = TsKwh.objects.filter(datetime__gte=month_start,
+                                           datetime__lt=month_start + relativedelta(months=1)).order_by('-value')[0]
+            return TsKwh.objects.filter(datetime=max_rec.datetime).aggregate(Sum('value'))['value__sum']
+        except IndexError:
+            pass
+
+        return 0
 
     def _build_productivity_for_devices(self, devices):
         today = get_today()

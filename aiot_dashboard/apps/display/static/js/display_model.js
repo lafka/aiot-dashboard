@@ -4,7 +4,6 @@ $(function() {
     var mode = 0; // 0 = Occupied, 1 = Co2, 2 = Temp
     var last_mode_change = 0;
     var mode_interval = 15;
-    return;
     
     function setMode(new_mode) {
         mode = new_mode;
@@ -19,13 +18,13 @@ $(function() {
                     .append('<li><div class="color_block" style="background-color: #f00;"></div> opptatt</li>')
                     .append('<li><div class="color_block" style="background-color: #0f0;"></div> tom</li>');
             } else if(mode == 1) {
-                $legend.find('.icon').html("<div class='temperature'></div>");
+                $legend.find('.icon').html("<div class='co2'></div>");
                 $legend.find('ul')
                     .append('<li><div class="color_block" style="background-color: #0f0;"></div> < 1000</li>')
                     .append('<li><div class="color_block" style="background-color: #ff0;"></div> 1000 - 1500</li>')
                     .append('<li><div class="color_block" style="background-color: #f00;"></div> > 1500</li>');
             } else {
-                $legend.find('.icon').html("<div class='co2'></div>");
+                $legend.find('.icon').html("<div class='temperature'></div>");
                 $legend.find('ul')
                     .append('<li><div class="color_block" style="background-color: #00f;"></div> < 20</li>')
                     .append('<li><div class="color_block" style="background-color: #0f0;"></div> 20 - 23</li>')
@@ -116,7 +115,7 @@ $(function() {
                             $('#viewer-container').viewer('show', room_key);
                         } else {
                             col = rec.temperature < 20 ? '#00f' : '#0f0';
-                            if(rec.co2 > 23)
+                            if(rec.temperature > 23)
                                 col = '#f00';
 
                             $('#viewer-container').viewer('color', col, room_key);
