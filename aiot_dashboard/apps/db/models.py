@@ -105,18 +105,12 @@ class Room(models.Model):
         }
 
         ret = {}
-
         for key, klass in sensor_map.items():
             # TODO: Remember, there might be multiple devices in a room in the future
-            instance = klass.objects.filter(device_key=self.devices.all()[0].key,
-                                            datetime__gt=(datetime.now() - timedelta(hours=1))).latest()
+            instance = klass.objects.filter(device_key=self.devices.first().key,
+                                            datetime__gt=(timezone.now() - timedelta(hours=1))).latest()
 
             ret[key] = instance.value if instance else None
-
-        # todo
-        ret['name'] = self.name
-        ret['key'] = self.key
-
         return ret
 
     def current_co2(self):

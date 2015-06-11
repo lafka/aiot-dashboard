@@ -8,10 +8,12 @@ function EventManager(config) {
 }
 
 EventManager.prototype.initialize_stream = function() {
+    var self = this;
+
     var source = new EventSource(this.config.url);
     source.onmessage = function(event) {
         var events = JSON.parse(event.data);
-        this.add_events(events);
+        self.add_events(events);
     };
 
     /* TODO: Handle errors gracefully here .. */
@@ -28,9 +30,12 @@ EventManager.prototype.add_events = function(events) {
     var self = this;
 
     this.trigger_callback('on_before_events');
+    this.trigger_callback('on_events' [events]);
+
     $.each(events, function(k, event) {
         self.trigger_callback('on_event', [event]);
     });
+
     this.trigger_callback('on_after_events');
 };
 

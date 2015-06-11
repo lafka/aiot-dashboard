@@ -5,9 +5,9 @@ from . import views
 urlpatterns = [
     # room overview
     url(r'^$', views.RoomOverviewView.as_view(), name='room_overview'),
-    url(r'^updates/$', views.room_overview_state, name='room_overview_state'),
+    url(r'^events/$', views.RoomOverviewEventsView.as_view(), name='room_overview_events'),
 
     # room detail
-    url(r'^(?P<room_key>\d+)/$', views.RoomView.as_view(), name='room_detail'),
-    url(r'^(?P<room_key>\d+)/updates/$', views.RoomEventsSseView.as_view(), name='room_detail_events'),
+    url(r'^(?P<room_key>\d+)/$', views.RoomDetailView.as_view(), name='room_detail'),
+    url(r'^(?P<room_key>\d+)/events/$', views.RoomDetailEventsView.as_view(), name='room_detail_events'),
 ]

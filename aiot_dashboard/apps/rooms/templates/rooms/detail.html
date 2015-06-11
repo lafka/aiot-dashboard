@@ -27,19 +27,10 @@
 <script src="{% static 'js/events/event_manager.js' %}"></script>
 <script src="{% static 'js/rooms/detail.js' %}"></script>
 <script>
-    var stream = {{ stream|safe }};
-    var url;
-
-    if (stream) {
-        var url = Urls.room_detail_events({{ room_key|safe }});
-        url += '?last_datetime=' + encodeURIComponent({{ last_datetime|safe }});
-    }
-
     var event_manager = new aiot.events.EventManager({
         on_event: aiot.rooms.detail.on_event,
         on_after_events: aiot.rooms.detail.on_after_events,
-        url: url,
-        initial_events: {{ events|safe }},
+        url: {{ events_url|safe }}
     });
     event_manager.start();
 </script>
