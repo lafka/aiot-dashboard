@@ -90,7 +90,6 @@ DATABASES = {
     }
 }
 
-
 LANGUAGE_CODE = 'nb-no'
 TIME_ZONE = 'Europe/Oslo'
 
