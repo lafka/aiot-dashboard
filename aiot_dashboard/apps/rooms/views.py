@@ -1,16 +1,14 @@
 # coding: utf-8
 import json
-import time
 
-from django import http, db
-from django.conf import settings
 from django.http.response import HttpResponse
-from django.utils import timezone, dateparse
-from django.views.generic.base import TemplateView, View
+from django.views.generic.base import TemplateView
 
 from aiot_dashboard.apps.db.models import Room
+from aiot_dashboard.core.filters import get_datetimes_from_filters
+from aiot_dashboard.core.sse import EventsSseView
 
-from .utils import get_events, get_datetimes_from_filters
+from .utils import get_events
 
 # Room Overview
 
@@ -37,6 +35,7 @@ class RoomView(TemplateView):
     def get_context_data(self, room_key):
         room = Room.objects.get(key=room_key)
         datetimes_from_filter = get_datetimes_from_filters(self.request)
+
         events = get_events(room, datetimes_from_filter['from'], datetimes_from_filter['to'])
         last_datetime = datetimes_from_filter['to'].isoformat()
 
@@ -47,31 +46,10 @@ class RoomView(TemplateView):
             'last_datetime': json.dumps(last_datetime),
         }
 
-class RoomEventsSseView(View):
+class RoomEventsSseView(EventsSseView):
     def dispatch(self, request, room_key):
-        self.last_datetime = dateparse.parse_datetime(request.GET['last_datetime'])
         self.room = Room.objects.get(key=room_key)
+        super(RoomEventsSseView, self).dispatch(request)
 
-        response = http.StreamingHttpResponse(streaming_content=self.iterator(request=request),
-                                              content_type="text/event-stream")
-        response['Cache-Control'] = 'no-cache'
-        return response
-
-    def iterator(self, request):
-        start = timezone.now()
-        while timezone.now() - start < settings.SSE_MAX_TIME:
-            data = self.get_updates()
-            yield "data: %s\n" % json.dumps(data)
-            yield "\n"
-
-            time.sleep(1)
-
-            if settings.DEBUG:
-                # Prevents a memory leak on dev
-                db.reset_queries()
-
-    def get_updates(self):
-        now = timezone.now()
-        data = get_events(self.room, self.last_datetime, now)
-        self.last_datetime = now
-        return data
+    def get_events(self, datetime_from, datetime_to):
+        return get_events(self.room, datetime_from, datetime_to)

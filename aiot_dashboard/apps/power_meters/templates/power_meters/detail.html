@@ -27,8 +27,9 @@ $(function() {
 
     var alreadyFetched = {};
 
-    function do_it() {
-        $.getJSON('{% url "power_meters_detail_state" device_key %}', function(series) {
+    function do_it(events) {
+        console.log(events);
+        $.getJSON('{% url "power_meters_detail_state" power_circuit.pk %}', function(series) {
             $.plot('#placeholder', [{
                 data: series,
                 label: 'kWm',
@@ -52,7 +53,7 @@ $(function() {
         setTimeout(do_it, 5000);
     }
 
-    do_it();
+    do_it({{ events|safe }});
 });
 </script>
 {% endblock %}

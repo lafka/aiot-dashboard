@@ -4,6 +4,10 @@ from django.http.response import HttpResponse
 from django.views.generic.base import TemplateView
 
 from aiot_dashboard.apps.db.models import PowerCircuit
+from aiot_dashboard.core.filters import get_datetimes_from_filters
+from aiot_dashboard.core.sse import EventsSseView
+
+from .utils import get_events
 
 # Power Meter Overview
 
@@ -18,6 +22,7 @@ def power_meters_overview_state(request):
 
         data.append({
             'name': circuit.name,
+            'id': circuit.id,
             'kwm': '%.2f' % last_kwm,
             'kwh': '%.2f' % last_kwh,
         })
@@ -29,14 +34,27 @@ def power_meters_overview_state(request):
 class PowerMetersDetailView(TemplateView):
     template_name = "power_meters/detail.html"
 
-    def get_context_data(self, device_key):
+    def get_context_data(self, power_circuit_id):
+        power_circuit = PowerCircuit.objects.get(pk=power_circuit_id)
+        datetimes_from_filter = get_datetimes_from_filters(self.request)
+
+        events = get_events(power_circuit, datetimes_from_filter['from'], datetimes_from_filter['to'])
+        last_datetime = datetimes_from_filter['to'].isoformat()
+
         return {
-            'device_key': device_key,
+            'power_circuit': power_circuit,
+            'events': json.dumps(events),
+            'stream': json.dumps(datetimes_from_filter['stream']),
+            'last_datetime': json.dumps(last_datetime),
         }
 
     def get(self, request, *args, **kwargs):
         return TemplateView.get(self, request, *args, **kwargs)
 
-def power_meters_detail_state(request, device_key):
-    # TODO: Finn ut. Husk timezone. Bruk Sse.
-    return HttpResponse(json.dumps([]), 'application/json')
+class PowerMetersEventsSseView(EventsSseView):
+    def dispatch(self, request, power_circuit_id):
+        self.power_circuit = PowerCircuit.objects.get(key=power_circuit_id)
+        super(PowerMetersEventsSseView, self).dispatch(request)
+
+    def get_events(self, datetime_from, datetime_to):
+        return get_events(self.power_circuit, datetime_from, datetime_to)

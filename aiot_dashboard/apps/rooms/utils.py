@@ -1,19 +1,5 @@
-from datetime import timedelta
-
-from django.utils import timezone
-
 from aiot_dashboard.apps.db.models import TsCo2, TsMoist, TsLight, TsTemperature, TsDecibel
 from aiot_dashboard.core.utils import to_epoch_mili
-
-def get_datetimes_from_filters(request):
-    # Parse chosen filters from request.GET, return period to fetch data from.
-    # If there is no specified `datetime_to` (e.g. "so far today .."), it should return
-    # `timezone.now()` instead, and return `stream = True`.
-    return {
-        'from': timezone.now() - timedelta(days=1),
-        'to': timezone.now(),
-        'stream': True,
-    }
 
 def get_events(room, datetime_from, datetime_to):
     # Example return:
@@ -32,7 +18,7 @@ def get_events(room, datetime_from, datetime_to):
 
     data = []
     for key, cls in map_measurement_type_to_ts_class.items():
-        for measure in cls.get_ts_between(datetime_from, datetime_to, room):
+        for measure in cls.get_ts_between(datetime_from, datetime_to, room.devices.first()):
             data.append({
                 'type': key,
                 'value': measure.value,

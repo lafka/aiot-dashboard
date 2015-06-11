@@ -7,12 +7,7 @@ from django.utils import timezone
 
 class TimeSeriesMixin(object):
     @classmethod
-    def get_ts_between(cls, start, end, room):
-        # TODO: Remember, there might be multiple devices in a room in the future
-        device = room.devices.first()
-        if not device:
-            return
-
+    def get_ts_between(cls, start, end, device):
         return cls.objects.filter(datetime__gte=start, datetime__lte=end, device_key=device.key)
 
 

@@ -44,12 +44,7 @@ function add_events(events) {
     $.each(events, function(k, event) {
         var timeseries = get_timeseries_by_type(event.type);
 
-        if (timeseries.data.length) {
-            console.log('first', timeseries.data[0]);
-            console.log('last', timeseries.data[timeseries.data.length -1]);
-        }
         timeseries.data.push([event.epoch, event.value]);
-        console.log('new last', timeseries.data[timeseries.data.length -1]);
     });
 
     var types = ['lux', 'moist', 'co2', 'db', 'temp'];
@@ -61,7 +56,6 @@ function initialize_room_event_stream(room_key, last_datetime) {
     url += '?last_datetime=' + encodeURIComponent(last_datetime);
 
     var source = new EventSource(url);
-
     source.onmessage = function(event) {
         var data = JSON.parse(event.data);
         add_events(data);

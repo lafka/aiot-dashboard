@@ -33,7 +33,7 @@ $(function() {
     				$list.find('th').each(function() {
     					col = $(this).attr('data-col');
                         if (col == 'name') {
-                            rowHtml += '<td><a href="' + v['device_key'] + '/">' + v[col] + '</a></td>';
+                            rowHtml += '<td><a href="' + v.id + '/">' + v[col] + '</a></td>';
                         }
                         else {
                             rowHtml += '<td>' + v[col] + '</td>';
