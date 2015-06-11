@@ -120,7 +120,7 @@ $(function() {
             value: 0,
             min: 0,
             max: 100,
-            title: "nåværende kWh"
+            title: "Energiforbruk (kWh)"
         });
         
         $box_max_kwh.data('updateFunc', function(data) {
