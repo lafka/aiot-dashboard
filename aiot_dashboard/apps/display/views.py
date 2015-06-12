@@ -1,17 +1,15 @@
 import datetime
-import time
 import math
 
 from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
+from django.db.models.aggregates import Sum, Avg
 from django.views.generic.base import TemplateView
-from aiot_dashboard.apps.db.models import Room, PowerCircuit, TsKwm, TsKwh,\
-    TsEnergyProductivity
-from django.db.models.aggregates import Sum, Max, Avg
 
-from aiot_dashboard.core.utils import get_today
+from aiot_dashboard.apps.db.models import Room, PowerCircuit, TsKwm, TsKwh, TsEnergyProductivity, Deviations, TsKwhNetwork
 from aiot_dashboard.core.sse import EventsSseView
+from aiot_dashboard.core.utils import get_today
 
 
 class DisplayView(TemplateView):
@@ -46,14 +44,14 @@ class DataSseView(EventsSseView):
                 'type': 'room',
                 'key': room.key,
                 'name': room.name,
-                'occupied': room.is_occupied(),
+                'occupied': room.current_movement(),
                 'co2': room.current_co2(),
                 'temperature': room.current_temperature(),
                 'productivity': "%s%%" % room.current_productivity(),
                 'deviations': {
-                    'temperature': room.deviation_minutes('temperature'),
-                    'co2': room.deviation_minutes('co2'),
-                    'humidity': room.deviation_minutes('humidity')
+                    'temperature': room.deviation_minutes_today(Deviations.DeviationType.TEMPERATURE),
+                    'co2': room.deviation_minutes_today(Deviations.DeviationType.CO2),
+                    'humidity': room.deviation_minutes_today(Deviations.DeviationType.HUMIDITY)
                 }
             })
         return data
