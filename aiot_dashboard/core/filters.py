@@ -1,7 +1,10 @@
-import urllib
+from copy import copy
 from datetime import timedelta
 
 from django.utils import timezone
+
+def trunc_day(dt):
+    return dt.replace(hour=0, minute=0, second=0, microsecond=0)
 
 def get_datetimes_from_filters(request):
     """
@@ -12,20 +15,32 @@ def get_datetimes_from_filters(request):
     For convenience, we also give out an `url` acceptable for the EventManager.
     """
 
-    ret = {
-        'from': timezone.now() - timedelta(days=1),
-        'to': timezone.now(),
-        'stream': True,
+    now = timezone.now()
+
+    map_time_to_datetimes = {
+        'last_activity': {
+            'from': now - timedelta(hours=1),
+            'to': now,
+            'stream': True
+        },
+        'today': {
+            'from': trunc_day(now),
+            'to': now,
+            'stream': True
+        },
+        'yesterday': {
+            'from': trunc_day(now - timedelta(days=1)),
+            'to': trunc_day(now),
+            'stream': False
+        },
+        'last_week': {
+            'from': trunc_day(now - timedelta(days=7)),
+            'to': now,
+            'stream': True
+        },
     }
 
-    url_params = {
-        'datetime_from': ret['from'].isoformat(),
-        'datetime_to': ret['to'].isoformat()
-    }
-    if ret['stream']:
-        url_params['stream'] = 'true'
-
-    ret['events_url_params'] = urllib.urlencode(url_params)
+    time_str =  request.GET.get('time', 'today')
+    ret = copy(map_time_to_datetimes[time_str])
 
     return ret
-

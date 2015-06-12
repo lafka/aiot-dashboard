@@ -7,25 +7,19 @@ function EventManager(config) {
     this.config = config;
 }
 
-EventManager.prototype.initialize_stream = function() {
-    var self = this;
+EventManager.prototype.build_url = function() {
+    var params = [];
+    if (this.config.datetime_from) {
+        params.push('datetime_from=' + encodeURIComponent(this.config.datetime_from));
+    }
+    if (this.config.datetime_to) {
+        params.push('datetime_to=' + encodeURIComponent(this.config.datetime_to));
+    }
+    if (this.config.stream) {
+        params.push('stream=true');
+    }
 
-    var source = new EventSource(this.config.url);
-    source.onmessage = function(e) {
-        self.trigger_callback('on_message', [e]);
-        var events = JSON.parse(e.data);
-        self.add_events(events);
-    };
-
-    source.onerror = function(e) {
-        self.trigger_callback('on_error', [e]);
-    };
-
-    source.onopen = function(e) {
-        self.trigger_callback('on_open', [e]);
-    };
-
-    /* TODO: Handle errors gracefully here .. */
+    return this.config.url + '?' + params.join('&');
 };
 
 EventManager.prototype.trigger_callback = function(callback_fn_name, args) {
@@ -38,24 +32,43 @@ EventManager.prototype.trigger_callback = function(callback_fn_name, args) {
 EventManager.prototype.add_events = function(events) {
     var self = this;
 
-    this.trigger_callback('on_before_events');
+    this.trigger_callback('on_before_events', [events]);
     this.trigger_callback('on_events' [events]);
 
     $.each(events, function(k, event) {
         self.trigger_callback('on_event', [event]);
     });
 
-    this.trigger_callback('on_after_events');
+    this.trigger_callback('on_after_events', [events]);
 };
 
 EventManager.prototype.start = function() {
-    if (this.config.initial_events) {
-        this.add_events(this.config.initial_events);
-    }
+    var self = this;
 
-    if (this.config.url) {
-        this.initialize_stream();
-    }
+    var url = this.build_url();
+
+    console.log(url);
+
+    var source = new EventSource(url);
+    source.onmessage = function(e) {
+        self.trigger_callback('on_message', [e]);
+        var events = JSON.parse(e.data);
+        self.add_events(events);
+
+        if (!self.config.stream) {
+            source.close();
+        }
+    };
+
+    source.onerror = function(e) {
+        self.trigger_callback('on_error', [e]);
+    };
+
+    source.onopen = function(e) {
+        self.trigger_callback('on_open', [e]);
+    };
+
+    /* TODO: Handle errors gracefully here .. */
 };
 
 ns.EventManager = EventManager;
