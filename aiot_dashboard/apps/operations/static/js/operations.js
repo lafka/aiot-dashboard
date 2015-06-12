@@ -5,6 +5,7 @@ $(function() {
     var z_index = 100;
     var max_z_index = 200;
     var focus_offset = 100;
+    var $focused_box = null;
 
     function calcSizes() {
         // Get the operations panel as big as we can
@@ -32,20 +33,31 @@ $(function() {
             
             i++;
         });
+        $focused_box = null;
     }
     function initBoxHover() {
         $operations.find('.box').each(function() {
             var $box = $(this);
 
-            $(this).mouseenter(function() {
-                focusBox($box);
-            });
-            $(this).mouseleave(function() {
-                unfocusBox($box);
+            $(this).click(function() {
+            	if($focused_box == null || $box.attr('id') != $focused_box.attr('id')) {
+            		unfocusOtherBoxes($box);
+            		focusBox($box);
+            	} else {
+            		$focused_box = null;
+            		unfocusBox($box);
+            	}
             });
         });
     }
+    function unfocusOtherBoxes($box) {
+    	$operations.find('.box').each(function() {
+    		if($box.attr('id') != $(this).attr('id'))
+    			unfocusBox($(this));
+    	});
+    }
     function focusBox($box) {
+    	$focused_box = $box;
         $box.css('z-index', z_index);
         z_index += 1;
         if(z_index > max_z_index)

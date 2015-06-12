@@ -6,7 +6,8 @@
     border-radius: 8px;
     background: #fff;
     overflow-y: hidden;
-    overflox-x: hidden;
+    overflow-x: hidden;
+    cursor: pointer;
 }
 #operations .box h2 {
 	padding: 0px; margin: 0px 0px 20px;
