@@ -3,14 +3,66 @@
 {% load static %}
 
 {% block filters %}
-<ul>
+<div class="block">
+    <div class="page-header"><h2>Filter</h2></div>
+</div>
+<ul id="filters">
     <li>
-        Time:<br>
-        &ndash; <a><b>Last Activity</b></a><br>
-        &ndash; <a>Today</a><br>
-        &ndash; <a>Yesterday</a><br>
-        &ndash; <a>Last Week</a><br>
-        &ndash; <a>Custom Timerange</a><br>
+        <h3>Time:</h3>
+        <div>
+            &ndash; <a href="?time=last_activity"> Last Activity</a>
+        </div>
+        <div>
+            &ndash; <a href="?time=today">Today</a>
+        </div>
+        <div>
+            &ndash; <a href="?time=yesterday">Yesterday</a>
+        </div>
+        <div>
+            &ndash; <a href="?time=last_week">Last Week</a>
+        </div>
+        <div>
+            &ndash; <a>Custom Timerange</a>
+        </div>
+        <hr />
+    </li>
+
+    <li id="sensor-type">
+        <h3>Sensor Type:</h3>
+        <table class="table" style="border: none">
+            <thead>
+                <tr>
+                    <th><i class="glyphicon glyphicon-eye-open" data-toggle="tooltip" data-placement="top" title="Which lines to show"></i></th>
+                    <th><i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Which unit to show in Y-axis"></i></th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tr>
+                <td><input type="checkbox" class="line" value="light" checked/></td>
+                <td><input name="yaxis" class="yaxis" type="radio" value="light" checked/></td>
+                <td>Light</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="line" value="humidity" checked/></td>
+                <td><input name="yaxis" class="yaxis" type="radio" value="humidity"/></td>
+                <td>Humidity</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="line" value="co2" checked/></td>
+                <td><input name="yaxis" class="yaxis" type="radio" value="co2"/></td>
+                <td>CO2</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="line" value="noise" checked/></td>
+                <td><input name="yaxis" class="yaxis" type="radio" value="noise"/></td>
+                <td>Noise</tD>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="line" value="temperature" checked/></td>
+                <td><input name="yaxis" class="yaxis" type="radio" value="temperature"/></td>
+                <td>Temperature</td>
+            </tr>
+        </table>
         <hr />
     </li>
 </ul>
@@ -18,20 +70,49 @@
 
 
 {% block content %}
+
+<h1>
+    {{ room.name }}
+</h1>
+
 <div id="graph" style="width: 100%; height:400px;"></div>
+
 {% endblock %}
 
 {% block javascript %}
 <script src="{% static 'js/flot/jquery.flot.js' %}"></script>
 <script src="{% static 'js/flot/jquery.flot.time.js' %}"></script>
+<script src="{% static 'js/flot/jquery.flot.navigate.js' %}"></script>
 <script src="{% static 'js/events/event_manager.js' %}"></script>
 <script src="{% static 'js/rooms/detail.js' %}"></script>
 <script>
     var event_manager = new aiot.events.EventManager({
         on_event: aiot.rooms.detail.on_event,
         on_after_events: aiot.rooms.detail.on_after_events,
-        url: {{ events_url|safe }}
+        on_open: aiot.rooms.detail.on_open,
+        url: {{ events_url|safe }},
+        stream: {% if filter_dts.stream %}true{% else %}false{% endif %},
+        datetime_from: '{{ filter_dts.from.isoformat }}',
+        datetime_to: '{{ filter_dts.to.isoformat }}'
     });
     event_manager.start();
+
+    $("#sensor-type .line").change(function() {
+        var parent = $(this).parents('tr:first');
+        var yaxis = parent.find('.yaxis');
+
+        var num_checked_sensor_types = $("#sensor-type .line:checked").size();
+        if (num_checked_sensor_types == 0) {
+            this.checked = true;
+            return;
+        }
+
+        if (!this.checked && yaxis.is(':checked')) {
+            console.log($("#sensor-type .yaxis:not(:disabled)").not(yaxis).first().prop('checked', true));
+        }
+
+        yaxis.prop('disabled', !this.checked);
+    });
+    $("#sensor-type :input").change(aiot.rooms.detail.plot_graph);
 </script>
 {% endblock %}

@@ -15,7 +15,7 @@ class PowerMetersOverviewView(TemplateView):
     template_name = "power_meters/overview.html"
 
     def get_context_data(self):
-        events_url = reverse('power_meters_overview_events') + '?stream=true'
+        events_url = reverse('power_meters_overview_events')
         return  {
             'events_url': json.dumps(events_url),
         }

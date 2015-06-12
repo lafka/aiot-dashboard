@@ -22,7 +22,8 @@
 <script>
     var event_manager = new aiot.events.EventManager({
         on_event: aiot.power_meters.overview.on_event,
-        url: {{ events_url|safe }}
+        url: {{ events_url|safe }},
+        stream: true
     });
     event_manager.start();
 </script>

@@ -64,7 +64,8 @@ $(function() {
                     $(this).data('updateFunc')(event);
             });
         },
-        url: Urls.display_data_update() + '?stream=true'
+        url: Urls.display_data_update(),
+        stream: true
     });
     event_manager.start();
 });

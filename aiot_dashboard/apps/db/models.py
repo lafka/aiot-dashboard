@@ -8,7 +8,7 @@ from django.utils import timezone
 class TimeSeriesMixin(object):
     @classmethod
     def get_ts_between(cls, start, end, device):
-        return cls.objects.filter(datetime__gte=start, datetime__lte=end, device_key=device.key)
+        return cls.objects.filter(datetime__gte=start, datetime__lt=end, device_key=device.key)
 
 
 class Deviations(models.Model):
