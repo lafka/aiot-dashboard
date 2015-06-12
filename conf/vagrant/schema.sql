@@ -117,7 +117,8 @@ CREATE TABLE ts_kwh (
     id SERIAL PRIMARY KEY,
     datetime TIMESTAMP WITH TIME ZONE,
     device_key TEXT REFERENCES device (key) NOT NULL,
-    value DOUBLE PRECISION NOT NULL
+    value DOUBLE PRECISION NOT NULL,
+    UNIQUE(datetime, device_key)
 );
 
 -- Calculated from sensor data
@@ -135,6 +136,19 @@ CREATE TABLE ts_energy_productivity (
     device_key TEXT REFERENCES device(key),
     value DOUBLE PRECISION NOT NULL
 );
+
+-- View for summed kwh for each power circuit
+CREATE VIEW
+    ts_kwh_network
+AS
+    SELECT
+        datetime, SUM(value) AS value
+    FROM
+        ts_kwh
+    GROUP BY
+        datetime
+    HAVING
+        count(*) = (SELECT COUNT(*) FROM power_circuit);
 
 -- View for room productivity calculations
 CREATE VIEW

@@ -218,7 +218,7 @@ class TsKwh(models.Model, TimeSeriesMixin):
 
 
 class TsKwhNetwork(models.Model, TimeSeriesMixin):
-    datetime = models.DateTimeField(blank=True, null=True, primary_key=True)
+    datetime = models.DateTimeField(primary_key=True)
     value = models.FloatField()
 
     class Meta:
