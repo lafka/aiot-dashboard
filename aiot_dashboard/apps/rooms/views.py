@@ -15,7 +15,7 @@ class RoomOverviewView(TemplateView):
     template_name = "rooms/overview.html"
 
     def get_context_data(self):
-        events_url = reverse('room_overview_events') + '?stream=true'
+        events_url = reverse('room_overview_events')
         return  {
             'events_url': json.dumps(events_url),
         }
