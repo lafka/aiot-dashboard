@@ -3,32 +3,34 @@ $(function() {
     var $box_prod = $('#prod_graph');
     var $box_max_kwh = $('#max_kwh_chart');
     var $all_boxes = $('#kwh_graph, #prod_graph');
-    
+
     var time_ticks = [];
-    
+
     String.prototype.lpad = function(padString, length) {
         var str = this;
-        while (str.length < length)
+        while (str.length < length) {
             str = padString + str;
+        }
         return str;
     };
 
     function initGraphs() {
         $all_boxes.html('<div class="graph" style="width: 100%; height: 90%;"></div>');
-        
+
         for(h = 7; h < 18; h++) {
             time_ticks.push([h, ("" + h).lpad("0", 2) + ":00"]);
         }
-        
+
         initKwhGraph();
         initProdGraph();
         initMaxKwhGauge();
     }
-    
+
     function initKwhGraph() {
         $box_kwh.data('updateFunc', function(rec) {
-            if(rec.type !== 'graph')
+            if (rec.type !== 'graph') {
                 return;
+            }
 
             graph_data = [];
             $(rec.circuits).each(function(ci) {
@@ -54,8 +56,8 @@ $(function() {
                     lines: {
                         show: true,
                         fill: true,
-                        steps: true,
-                    },
+                        steps: true
+                    }
                 },
                 xaxis: {
                     ticks: time_ticks
@@ -67,15 +69,16 @@ $(function() {
                 },
                 legend: {
                     show: true,
-                    backgroundOpacity: 0.5,
+                    backgroundOpacity: 0.5
                 }
             });
         });
     }
     function initProdGraph() {
         $box_prod.data('updateFunc', function(rec) {
-            if(rec.type !== 'graph')
+            if(rec.type !== 'graph') {
                 return;
+            }
 
             graph_data = [];
             $(rec.circuits).each(function(ci) {
@@ -92,15 +95,15 @@ $(function() {
                     stack: false,
                     lines: {
                         show: true,
-                        fill: false,
-                    },
+                        fill: false
+                    }
                 },
                 xaxis: {
                     ticks: time_ticks
                 },
                 legend: {
                     show: true,
-                    backgroundOpacity: 0.5,
+                    backgroundOpacity: 0.5
                 }
             });
         });
@@ -116,8 +119,9 @@ $(function() {
         });
 
         $box_max_kwh.data('updateFunc', function(rec) {
-            if(rec.type !== 'current_kwh')
+            if(rec.type !== 'current_kwh') {
                 return;
+            }
 
             g.refresh(rec.data.current, rec.data.max);
         });

@@ -4,7 +4,7 @@ $(function() {
     var mode = 0; // 0 = Occupied, 1 = Co2, 2 = Temp
     var last_mode_change = 0;
     var mode_interval = 15;
-    
+
     function setMode(new_mode) {
         mode = new_mode;
 
@@ -36,7 +36,7 @@ $(function() {
             }, 500);
         });
     }
-    
+
     function initModelBox() {
         var token = $box.attr('data-token');
 
@@ -68,7 +68,7 @@ $(function() {
                     location: {
                         x: 82.85,
                         y: -106.40,
-                        z: 110.775,
+                        z: 110.775
                     },
                     up: {
                         x: 0,
@@ -82,20 +82,23 @@ $(function() {
                 setMode(2);
                 $box.data('updateFunc', function(rec) {
                     ts = new Date().getTime();
-                    if (last_mode_change === 0)
+                    if (last_mode_change === 0) {
                         last_mode_change = ts;
+                    }
                     if ((ts - last_mode_change) / 1000 > mode_interval) {
                         last_mode_change = ts;
 
                         mode += 1;
-                        if(mode >= 3)
+                        if(mode >= 3) {
                             mode = 0;
+                        }
                         setMode(mode);
                     }
 
-                    if(rec.type !== 'room')
+                    if(rec.type !== 'room') {
                         return;
-                    
+                    }
+
                     var room_key = rec.key;
 
                     if(mode === 0) {
@@ -106,15 +109,17 @@ $(function() {
                         $('#viewer-container').viewer('show', room_key);
                     } else if(mode == 1) {
                         col = rec.co2 < 1000 ? '#0f0' : '#ff0';
-                        if(rec.co2 > 1500)
+                        if(rec.co2 > 1500) {
                             col = '#f00';
+                        }
 
                         $('#viewer-container').viewer('color', col, room_key);
                         $('#viewer-container').viewer('show', room_key);
                     } else {
                         col = rec.temperature < 20 ? '#00f' : '#0f0';
-                        if(rec.temperature > 23)
+                        if(rec.temperature > 23) {
                             col = '#f00';
+                        }
 
                         $('#viewer-container').viewer('color', col, room_key);
                         $('#viewer-container').viewer('show', room_key);
@@ -123,6 +128,6 @@ $(function() {
             });
         }
     }
-    
+
     initModelBox();
 });
