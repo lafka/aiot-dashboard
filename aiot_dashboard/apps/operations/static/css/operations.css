@@ -1,0 +1,8 @@
+#operations .box {
+    box-sizing: border-box;
+    padding: 4px;
+    position: absolute;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+    background: #fff;
+}

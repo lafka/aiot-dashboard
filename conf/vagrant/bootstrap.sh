@@ -47,6 +47,8 @@ initctl start django
 # cd aiot/connector/aiot_connector
 # python connector.py
 #
+# LET CONNECTOR RUN FOR A BIT
+#
 # cd aiot/aiot_dashboard
 # ./manage.py sync_rooms
 # sudo su -c "psql -d aiot </home/vagrant/aiot/conf/vagrant/test_mapping.sql" -m "postgres" 

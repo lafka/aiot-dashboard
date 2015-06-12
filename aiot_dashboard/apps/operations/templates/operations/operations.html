@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+    <link type="text/css" rel="stylesheet" media="all" href="{% static 'css/operations.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="operations">
+    <div class="box">
+    </div>
+    <div class="box">
+    </div>
+    <div class="box">
+    </div>
+    <div class="box">
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static 'js/operations.js' %}"></script>
+{% endblock %}

@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'aiot_dashboard.apps.db',
     'aiot_dashboard.apps.rooms',
     'aiot_dashboard.apps.power_meters',
+    'aiot_dashboard.apps.operations',
     'aiot_dashboard.apps.display',
 )
 

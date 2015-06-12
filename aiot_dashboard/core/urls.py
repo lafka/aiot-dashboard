@@ -7,6 +7,7 @@ urlpatterns = [
     url(r'^display/', include('aiot_dashboard.apps.display.urls')),
     url(r'^rooms/', include('aiot_dashboard.apps.rooms.urls')),
     url(r'^power-meters/', include('aiot_dashboard.apps.power_meters.urls')),
+    url(r'^operations/', include('aiot_dashboard.apps.operations.urls')),
 
     url(r'^jsreverse/$', 'django_js_reverse.views.urls_js', name='js_reverse'),
 ]
