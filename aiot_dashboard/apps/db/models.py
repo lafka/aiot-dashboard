@@ -1,10 +1,9 @@
 from __future__ import unicode_literals
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.db import models
 from django.utils import timezone
-from django.db.models.aggregates import Sum
 
 class TimeSeriesMixin(object):
     @classmethod
@@ -13,6 +12,11 @@ class TimeSeriesMixin(object):
 
 
 class Deviations(models.Model):
+    class DeviationType:
+        HUMIDITY = 'moist'
+        CO2 = 'co2'
+        TEMPERATURE = 'temperature'
+
     datetime = models.DateTimeField(blank=True, null=True)
     device_key = models.ForeignKey('Device', db_column='device_key', blank=True, null=True)
     deviation_type = models.TextField()
