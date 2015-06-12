@@ -1,19 +1,17 @@
 import datetime
 import time
-import json
 import math
 
 from dateutil.relativedelta import relativedelta
 
-from django import http, db
 from django.conf import settings
-from django.views.generic.base import TemplateView, View
-from django.utils import timezone
+from django.views.generic.base import TemplateView
 from aiot_dashboard.apps.db.models import Room, PowerCircuit, TsKwm, TsKwh,\
     TsEnergyProductivity
 from django.db.models.aggregates import Sum, Max, Avg
 
 from aiot_dashboard.core.utils import get_today
+from aiot_dashboard.core.sse import EventsSseView
 
 
 class DisplayView(TemplateView):
@@ -25,33 +23,7 @@ class DisplayView(TemplateView):
         return data
 
 
-# Base class for server side event update streams.
-class SseUpdateView(View):
-    last_poll = datetime.datetime(2010, 1, 1)
-
-    def dispatch(self, request):
-        response = http.StreamingHttpResponse(streaming_content=self.iterator(request=request), content_type="text/event-stream")
-        response['Cache-Control'] = 'no-cache'
-        return response
-
-    def iterator(self, request):
-        start = timezone.now()
-        while timezone.now() - start < settings.SSE_MAX_TIME:
-            data = self.get_updates()
-            if data:
-                yield "data: %s\n" % json.dumps(data)
-                yield "\n"
-
-            if settings.DEBUG:
-                # Prevents a memory leak on dev
-                db.reset_queries()
-
-    def get_updates(self):
-        time.sleep(1)
-        return None
-
-
-class DataSseView(SseUpdateView):
+class DataSseView(EventsSseView):
     GRAPH_HOUR_START = 7
     GRAPH_HOUR_END = 18
 
@@ -59,7 +31,7 @@ class DataSseView(SseUpdateView):
     last_power = None
     last_current_kwh = None
 
-    def get_updates(self):
+    def get_events(self):
         if len(self.rooms) == 0:
             self.rooms = Room.get_active_rooms()
 
