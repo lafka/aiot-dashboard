@@ -11,9 +11,18 @@ EventManager.prototype.initialize_stream = function() {
     var self = this;
 
     var source = new EventSource(this.config.url);
-    source.onmessage = function(event) {
-        var events = JSON.parse(event.data);
+    source.onmessage = function(e) {
+        self.trigger_callback('on_message', [e]);
+        var events = JSON.parse(e.data);
         self.add_events(events);
+    };
+
+    source.onerror = function(e) {
+        self.trigger_callback('on_error', [e]);
+    };
+
+    source.onopen = function(e) {
+        self.trigger_callback('on_open', [e]);
     };
 
     /* TODO: Handle errors gracefully here .. */
