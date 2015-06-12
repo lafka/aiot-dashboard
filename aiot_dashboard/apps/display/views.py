@@ -63,19 +63,19 @@ class DataSseView(EventsSseView):
                 circuits.append({
                     'name': circuit.name,
                     'kwh': self._build_kwh_for_devices(circuit.devices.all()),
-                    'productivity': self._build_productivity_for_devices(circuit.devices.all())
+                    'productivity': self._build_energy_productivity_for_devices(circuit.devices.all()) # TODO TODO TODO
                 })
             data.append({
                 'type': 'graph',
                 'circuits': circuits,
-                'max_month': self._build_max_kwh(),
+                'max_month': self._get_max_kwh_for_current_month(),
                 'current_kwh': self._build_current_kwh()
             })
             self.last_power = datetime.datetime.utcnow()
         return data
 
     def _build_current_kwh_msg(self, data=[]):
-        if not self.last_current_kwh or datetime.datetime.utcnow() - self.last_current_kwh > datetime.timedelta(seconds=10):
+        if not self.last_current_kwh or (datetime.datetime.utcnow() - self.last_current_kwh) > datetime.timedelta(seconds=10):
             data.append({
                 'type': 'current_kwh',
                 'data': self._build_current_kwh()
@@ -96,18 +96,7 @@ class DataSseView(EventsSseView):
             data.append([h, self._get_aggregate_sum(qs)])
         return data
 
-    def _build_max_kwh(self):
-        today = get_today()
-        month_start = datetime.datetime(today.year, today.month, 1)
-        try:
-            max_rec = TsKwh.get_max_record_for_period(month_start, month_start + relativedelta(months=1))
-            return TsKwh.objects.filter(datetime=max_rec.datetime).aggregate(Sum('value'))['value__sum']
-        except IndexError:
-            pass
-
-        return 0
-
-    def _build_productivity_for_devices(self, devices):
+    def _build_energy_productivity_for_devices(self, devices): # TODO TODO TODO
         today = get_today()
         data = []
 
@@ -134,24 +123,19 @@ class DataSseView(EventsSseView):
 
     def _build_current_kwh(self):
         return {
-            'max': self._get_max_kwh_for_current_month(),
+            'max': math.ceil(self._get_max_kwh_for_current_month()),
             'current': self._get_current_kwh_for_current_period()
         }
 
     def _get_max_kwh_for_current_month(self):
         today = get_today()
         month_start = datetime.datetime(today.year, today.month, 1)
-
-        try:
-            max_rec = TsKwh.get_max_record_for_period(month_start, month_start + relativedelta(months=1))
-            return math.ceil(TsKwh.objects.filter(datetime=max_rec.datetime).aggregate(Sum('value'))['value__sum'])
-        except IndexError:
-            pass
-
-        return 0
+        max_kwh = TsKwhNetwork.get_max_record_for_period(month_start, month_start + relativedelta(months=1))
+        return max_kwh.value if max_kwh is not None else 0
 
     def _get_current_kwh_for_current_period(self):
         # Get last 10 TsKwm for each circuit
+        # TODO: Not safe if one power meter stops sending measurements.
         total = 0
         for circuit in PowerCircuit.objects.all().prefetch_related('devices'):
             val = TsKwm.objects.filter(id__in=TsKwm.objects.filter(device_key__in=circuit.devices.all())\
