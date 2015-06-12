@@ -36,7 +36,7 @@ def get_datetimes_from_filters(request):
         'last_week': {
             'from': trunc_day(now - timedelta(days=7)),
             'to': now,
-            'stream': True
+            'stream': False
         },
     }
 
