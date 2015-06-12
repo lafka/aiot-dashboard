@@ -37,12 +37,12 @@ class Command(BaseCommand):
                 return rec['value']
         return None
 
-    def _get_room_type(self, value, occupancy):
+    def _get_room_type(self, value, capacity):
         try:
             return RoomType.objects.get(description=value)
         except RoomType.DoesNotExist:
             rt = RoomType(description=value)
-            rt.manminutes_capacity = occupancy
+            rt.manminutes_capacity = capacity
             rt.save()
             return rt
 
@@ -53,11 +53,12 @@ class Command(BaseCommand):
 
         details = self._get_room_details(obj)[0]
         longname = self._get_attribute_by_path(details['attributes'], 'LongName')
-        occupancy = self._get_attribute_by_path(details['propertySets'], 'Pset_SpaceOccupancyRequirements/OccupancyNumber')
+        capacity = self._get_attribute_by_path(details['propertySets'], 'Pset_SpaceOccupancyRequirements/OccupancyNumber')
+
         if longname:
-            if not occupancy:
-                occupancy = random.randint(5, 100)
-            obj.room_type = self._get_room_type(longname, occupancy)
+            if not capacity:
+                capacity = random.randint(4, 18)
+            obj.room_type = self._get_room_type(longname, capacity)
 
         obj.save()
         return obj
