@@ -42,16 +42,16 @@ $(function() {
             // Sort
             $box_list_li = $box_list.children('li');
             $box_list_li.sort(function(a,b){
-            	var an = a.getAttribute('data-quality-index'),
-            		bn = b.getAttribute('data-quality-index');
+                var an = a.getAttribute('data-quality-index'),
+                    bn = b.getAttribute('data-quality-index');
 
-            	if(an < bn) {
-            		return 1;
-            	}
-            	if(an > bn) {
-            		return -1;
-            	}
-            	return 0;
+                if(an < bn) {
+                    return 1;
+                }
+                if(an > bn) {
+                    return -1;
+                }
+                return 0;
             });
 
             $box_list_li.detach().appendTo($box_list);
