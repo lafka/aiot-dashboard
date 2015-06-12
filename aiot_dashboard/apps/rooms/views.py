@@ -40,12 +40,12 @@ class RoomDetailView(TemplateView):
 
     def get_context_data(self, room_key):
         room = Room.objects.get(key=room_key)
-        datetimes_from_filter = get_datetimes_from_filters(self.request)
-
-        events_url = reverse('room_detail_events', args=(room.key,)) + '?' + datetimes_from_filter['events_url_params']
+        filter_dts = get_datetimes_from_filters(self.request)
+        events_url = reverse('room_detail_events', args=(room.key,))
 
         return  {
-            'room_key': json.dumps(room.key),
+            'room': room,
+            'filter_dts': filter_dts,
             'events_url': json.dumps(events_url),
         }
 
@@ -57,10 +57,10 @@ class RoomDetailEventsView(DatetimeEventsSseView):
     def get_events(self, datetime_from, datetime_to):
         map_measurement_type_to_ts_class = {
             'co2': TsCo2,
-            'moist': TsMoist,
-            'lux': TsLight,
-            'temp': TsTemperature,
-            'db': TsDecibel
+            'humidity': TsMoist,
+            'light': TsLight,
+            'temperature': TsTemperature,
+            'noise': TsDecibel
         }
 
         data = []
