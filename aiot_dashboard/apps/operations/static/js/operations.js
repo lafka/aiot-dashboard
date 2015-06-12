@@ -4,7 +4,7 @@ $(function() {
 	var box_height = 0;
 	var z_index = 100;
 	var max_z_index = 200;
-	var focus_offset = 20;
+	var focus_offset = 100;
 
 	function calcSizes() {
 		// Get the operations panel as big as we can
@@ -19,8 +19,8 @@ $(function() {
 		var i = 0;
 		$operations.find('.box').each(function() {
 			var $box = $(this);
-			$box.width(box_width - 8);
-			$box.height(box_height - 8)
+			$box.width(box_width - 16);
+			$box.height(box_height - 16)
 			
 			var top = Math.floor(i/2) * box_height;
 			var left = (i % 2) * box_width;
@@ -28,6 +28,7 @@ $(function() {
 			$box.css('left', '' + left + 'px');
 			$box.data('top', top);
 			$box.data('left', left);
+			$box.css('font-size', '10px');
 			
 			i++;
 		});
@@ -55,17 +56,25 @@ $(function() {
 			'height': $operations.height() - focus_offset,
 			'top': $box.data('top') > 0 ? focus_offset : 0,
 			'left': $box.data('left') > 0 ? focus_offset : 0,
-		}, 200);		
+			'font-size': 14
+		}, 500);
+		$box.find('h2').animate({
+			'font-size': 22
+		}, 500);
 	}
 	function unfocusBox($box) {
 		$box.animate({
 			'width': box_width,
 			'height': box_height,
 			'top': $box.data('top'),
-			'left': $box.data('left')
-		}, 200, function() {
+			'left': $box.data('left'),
+			'font-size': 10
+		}, 500, function() {
 			$(this).css('z-index', '1');
 		});
+		$box.find('h2').animate({
+			'font-size': 14
+		}, 500);
 	}
 	
 	$(window).resize(calcSizes);

@@ -1,8 +1,25 @@
 #operations .box {
     box-sizing: border-box;
-    padding: 4px;
+    padding: 8px;
     position: absolute;
-    border: 1px solid #aaa;
+    border: 1px solid #eee;
     border-radius: 8px;
     background: #fff;
+    overflow-y: hidden;
+    overflox-x: hidden;
 }
+#operations .box h2 {
+	padding: 0px; margin: 0px 0px 20px;
+	padding: 4px;
+	background: #eee;
+	font-size: 14px; font-weight: bold;
+}
+#stats ul { list-style: none; padding: 0px; margin: 0px; }
+#stats li { float: left; width: 50%; padding: 5px; }
+#stats li div { display: inline-block; }
+#stats li .room_name { width: 40%; }
+#stats li .deviations { width: 50%; }
+#stats li .deviations div { width: 33%; border-bottom: 1px solid #eee; }
+#stats li .deviations span { margin-left: 20px; }
+#stats li .room_name, #stats li .quality_index { border-bottom: 1px solid #eee; }
+#stats li .quality_index { width: 10%; text-align: center; }

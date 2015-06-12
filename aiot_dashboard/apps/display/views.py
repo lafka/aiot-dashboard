@@ -48,10 +48,13 @@ class DataSseView(EventsSseView):
                 'co2': room.current_co2(),
                 'temperature': room.current_temperature(),
                 'productivity': "%s%%" % room.current_productivity(),
+                'quality_index': room.deviation_minutes_today([Deviations.DeviationType.TEMPERATURE,
+                                                               Deviations.DeviationType.CO2,
+                                                               Deviations.DeviationType.HUMIDITY]),
                 'deviations': {
-                    'temperature': room.deviation_minutes_today(Deviations.DeviationType.TEMPERATURE),
-                    'co2': room.deviation_minutes_today(Deviations.DeviationType.CO2),
-                    'humidity': room.deviation_minutes_today(Deviations.DeviationType.HUMIDITY)
+                    'temperature': room.deviation_minutes_today([Deviations.DeviationType.TEMPERATURE]),
+                    'co2': room.deviation_minutes_today([Deviations.DeviationType.CO2]),
+                    'humidity': room.deviation_minutes_today([Deviations.DeviationType.HUMIDITY])
                 }
             })
         return data

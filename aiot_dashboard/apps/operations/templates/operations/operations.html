@@ -2,12 +2,12 @@
 {% load static %}
 
 {% block header %}
-    <link type="text/css" rel="stylesheet" media="all" href="{% static 'css/operations.css' %}">
+<link type="text/css" rel="stylesheet" media="all" href="{% static 'css/operations.css' %}">
 {% endblock %}
 
 {% block content %}
 <div id="operations">
-    <div class="box">
+    <div class="box" id="stats">
     </div>
     <div class="box">
     </div>
@@ -19,5 +19,23 @@
 {% endblock %}
 
 {% block javascript %}
-    <script type="text/javascript" src="{% static 'js/operations.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/operations.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/operations_stats.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/events/event_manager.js' %}"></script>
+<script type="text/javascript">
+$(function() {
+    var event_manager = new aiot.events.EventManager({
+        on_event: function(event) {
+            $('.box').each(function() {
+                if($(this).data('updateFunc') !== undefined)
+                    $(this).data('updateFunc')(event);
+            });
+        },
+        url: Urls.display_data_update(),
+        stream: true
+    });
+    event_manager.start();
+});
+</script>
 {% endblock %}

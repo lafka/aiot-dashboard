@@ -73,3 +73,17 @@ li.active a { font-weight: bold; }
     padding: 0;
     margin: 0;
 }
+
+/* common stats icons */
+#stats li .temperature, .icon .temperature {
+	background-size: contain;
+    background: url('../images/display/icon-temperature.png') left center no-repeat;
+}
+#stats li .co2, .icon .co2 {
+	background-size: contain;
+    background: url('../images/display/icon-co2.png') left center no-repeat;
+}
+#stats li .humidity {
+	background-size: contain;
+    background: url('../images/display/icon-humidity.png') left center no-repeat;
+}

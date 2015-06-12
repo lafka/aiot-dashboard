@@ -93,10 +93,10 @@ class Room(models.Model):
     def current_productivity(self):
         return int((self.current_manminutes() / self.room_type.manminutes_capacity) * 100)
 
-    def deviation_minutes_today(self, deviation_type):
+    def deviation_minutes_today(self, deviation_types):
         today = timezone.now().replace(hour=0, minute=0, second=0)
         return Deviations.objects.filter(device_key__in=self.devices.all(),
-                                         deviation_type=deviation_type,
+                                         deviation_type__in=deviation_types,
                                          datetime__gte=today).count()
 
     def get_latest_room_state(self):
@@ -135,6 +135,7 @@ class Room(models.Model):
         if ts:
             return ts.value
         return 0
+
 
 class RoomType(models.Model):
     description = models.TextField()
