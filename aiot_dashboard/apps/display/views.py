@@ -38,7 +38,6 @@ class DataSseView(EventsSseView):
         data = self._build_rooms_msg([])
         data = self._build_graph_msg(data)
         data = self._build_current_kwh_msg(data)
-        time.sleep(1)
         return data
 
     def _build_rooms_msg(self, data=[]):
