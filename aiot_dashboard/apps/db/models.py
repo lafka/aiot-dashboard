@@ -76,13 +76,12 @@ class Room(models.Model):
         return cls.objects.exclude(devices=None).select_related('room_type').prefetch_related('devices')
 
     def get_latest_ts(self, cls):
+        # TODO: We should not accept values that's way behind in time.
+        #       Generally, we should always think "yes, this is the latest, but it might not be current".
         try:
             return cls.objects.filter(device_key__in=self.devices.all()).latest()
         except AttributeError:
             return None
-
-    def is_occupied(self):
-        return self.current_manminutes() > 0.0
 
     def current_manminutes(self):
         ts = self.get_latest_ts(TsPersonsInside)
@@ -126,6 +125,12 @@ class Room(models.Model):
 
     def current_temperature(self):
         ts = self.get_latest_ts(TsTemperature)
+        if ts:
+            return ts.value
+        return 0
+
+    def current_movement(self):
+        ts = self.get_latest_ts(TsMovement)
         if ts:
             return ts.value
         return 0
