@@ -29,7 +29,7 @@ class EventsSseView(View):
             if not self.stream:
                 break
 
-            time.sleep(1)
+            time.sleep(4)
 
     def _fetch_events(self):
         return self.get_events()
