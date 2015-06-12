@@ -64,6 +64,7 @@ class Room(models.Model):
     name = models.TextField()
     room_type = models.ForeignKey('RoomType', blank=True, null=True)
     area = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    floor = models.IntegerField(default=0)
     devices = models.ManyToManyField('Device', through='MapDeviceRoom')
 
     class Meta:
@@ -231,7 +232,6 @@ class TsKwhNetwork(models.Model, TimeSeriesMixin):
     def get_max_record_for_period(cls, start, end):
         return cls.objects.filter(datetime__gte=start,
                                   datetime__lt=end).order_by('-value').first()
-
 
 
 class TsKwm(models.Model, TimeSeriesMixin):

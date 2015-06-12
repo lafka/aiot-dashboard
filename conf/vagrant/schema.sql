@@ -9,7 +9,8 @@ CREATE TABLE room (
     key TEXT PRIMARY KEY NOT NULL,
     name TEXT NOT NULL,
     room_type_id INTEGER REFERENCES room_type(id),
-    area numeric(6, 2) DEFAULT 0
+    area numeric(6, 2) DEFAULT 0,
+    floor INTEGER default 0
 );
 
 CREATE TABLE device (

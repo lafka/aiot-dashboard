@@ -1,6 +1,7 @@
 import requests
 import random
 import json
+import sys
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -52,6 +53,7 @@ class Command(BaseCommand):
         obj.area = random.randrange(5.0, 50.0)
 
         details = self._get_room_details(obj)[0]
+        obj.floor = self._get_attribute_by_path(details['attributes'], 'ElevationWithFlooring')
         longname = self._get_attribute_by_path(details['attributes'], 'LongName')
         capacity = self._get_attribute_by_path(details['propertySets'], 'Pset_SpaceOccupancyRequirements/OccupancyNumber')
 
