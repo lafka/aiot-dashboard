@@ -43,17 +43,22 @@ class DatetimeEventsSseView(EventsSseView):
     - datetime_to
     """
     def dispatch(self, request, *args, **kwargs):
-        self.datetime_from = dateparse.parse_datetime(request.GET['datetime_from'])
-        self.datetime_to = dateparse.parse_datetime(request.GET['datetime_to'])
+        self.initial_datetime_from = dateparse.parse_datetime(request.GET['datetime_from'])
+        self.initial_datetime_to = dateparse.parse_datetime(request.GET['datetime_to'])
+        self.last_datetime_with_data = self.initial_datetime_to
         self.first = True
         return super(DatetimeEventsSseView, self).dispatch(request, *args, **kwargs)
 
     def _fetch_events(self):
-        if not self.first:
-            self.datetime_from = self.datetime_to
-            self.datetime_to = timezone.now()
-        self.first = False
-        data = self.get_events(self.datetime_from, self.datetime_to)
+        if self.first:
+            data = self.get_events(self.initial_datetime_from, self.initial_datetime_to)
+            self.first = False
+            self.last_datetime_with_data = self.initial_datetime_to
+        else:
+            now = timezone.now()
+            data = self.get_events(self.last_datetime_with_data, now)
+            if data:
+                self.last_datetime_with_data = now
         return data
 
     def get_events(self, datetime_from, datetime_to):
