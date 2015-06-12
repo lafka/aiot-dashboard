@@ -92,7 +92,7 @@ class Room(models.Model):
     def current_productivity(self):
         return int((self.current_manminutes() / self.room_type.manminutes_capacity) * 100)
 
-    def deviation_minutes(self, deviation_type):
+    def deviation_minutes_today(self, deviation_type):
         today = timezone.now().replace(hour=0, minute=0, second=0)
         return Deviations.objects.filter(device_key__in=self.devices.all(),
                                          deviation_type=deviation_type,
@@ -214,7 +214,24 @@ class TsKwh(models.Model, TimeSeriesMixin):
     @classmethod
     def get_max_record_for_period(cls, start, end):
         return cls.objects.filter(datetime__gte=start,
-                                  datetime__lt=end).order_by('-value')[0]
+                                  datetime__lt=end).order_by('-value').first()
+
+
+class TsKwhNetwork(models.Model, TimeSeriesMixin):
+    datetime = models.DateTimeField(blank=True, null=True, primary_key=True)
+    value = models.FloatField()
+
+    class Meta:
+        managed = False
+        db_table = 'ts_kwh_network'
+        ordering = ['datetime']
+        get_latest_by = 'datetime'
+
+    @classmethod
+    def get_max_record_for_period(cls, start, end):
+        return cls.objects.filter(datetime__gte=start,
+                                  datetime__lt=end).order_by('-value').first()
+
 
 
 class TsKwm(models.Model, TimeSeriesMixin):
