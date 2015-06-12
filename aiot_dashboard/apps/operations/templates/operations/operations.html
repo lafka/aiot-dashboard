@@ -9,7 +9,7 @@
 <div id="operations">
     <div class="box" id="stats">
     </div>
-    <div class="box" id="model">
+    <div class="box" id="model" data-token="{{ model_token }}">
     </div>
     <div class="box" id="graphs">
     </div>
@@ -21,6 +21,9 @@
 {% block javascript %}
 <script type="text/javascript" src="{% static 'js/operations.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/operations_stats.js' %}"></script>
+
+<script type="text/javascript" src="https://api.bimsync.com/1.0/js/viewer.js"></script>
+<script type="text/javascript" src="{% static 'js/operations_model.js' %}"></script>
 
 <script type="text/javascript" src="{% static 'js/events/event_manager.js' %}"></script>
 <script type="text/javascript">

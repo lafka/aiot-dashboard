@@ -69,10 +69,21 @@ $(function() {
             'top': $box.data('top') > 0 ? focus_offset : 0,
             'left': $box.data('left') > 0 ? focus_offset : 0,
             'font-size': 14
-        }, 500);
+        }, 500, function() {
+/*        	if($box.find('canvas').length > 0) {
+        		$box.find('canvas').attr('width', $box.width());
+        		$box.find('canvas').attr('height', $box.height());
+        		$box.find('canvas').css('width', '' + $box.width() + 'px');
+        		$box.find('canvas').css('height', '' + $box.height() + 'px');
+        	}*/
+        });
         $box.find('h2').animate({
             'font-size': 22
         }, 500);
+/*        $box.find('canvas').attr('width', '100%');
+        $box.find('canvas').attr('height', '100%');
+        $box.find('canvas').css('width', '100%');
+        $box.find('canvas').css('height', '100%');*/
     }
     function unfocusBox($box) {
         $box.animate({

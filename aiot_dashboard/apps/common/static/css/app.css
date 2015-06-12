@@ -87,3 +87,25 @@ li.active a { font-weight: bold; }
 	background-size: contain;
     background: url('../images/display/icon-humidity.png') left center no-repeat;
 }
+.box .legend {
+    position: absolute;
+    margin: 10px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    opacity: 0.8;
+    width: 270px;
+}
+.box .legend ul {
+    list-type: none;
+    padding: 0px; margin: 0px;
+}
+.box .legend li {
+    display: inline-block;
+    padding: 4px;
+}
+.box .legend .color_block {
+    display: inline-block;
+    width: 20px;
+    height: 8px;
+}

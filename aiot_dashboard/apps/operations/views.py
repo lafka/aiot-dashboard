@@ -1,4 +1,4 @@
-from django.views.generic.base import TemplateView
+from aiot_dashboard.apps.display.views import BimView
 
-class OperationsView(TemplateView):
+class OperationsView(BimView):
     template_name = "operations/operations.html"

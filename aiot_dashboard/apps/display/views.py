@@ -12,13 +12,15 @@ from aiot_dashboard.core.sse import EventsSseView
 from aiot_dashboard.core.utils import get_today
 
 
-class DisplayView(TemplateView):
-    template_name = "display/display.html"
-
+class BimView(TemplateView):
     def get_context_data(self, **kwargs):
         data = TemplateView.get_context_data(self, **kwargs)
         data['model_token'] = settings.BIMSYNC_TOKEN
         return data
+
+
+class DisplayView(BimView):
+    template_name = "display/display.html"
 
 
 class DataSseView(EventsSseView):
