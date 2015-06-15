@@ -81,13 +81,8 @@ $(function() {
             }
 
             graph_data = [];
-            $(rec.circuits).each(function(ci) {
-                var circuit = rec.circuits[ci];
-
-                graph_data.push({
-                    label: circuit.name,
-                    data: circuit.productivity
-                });
+            graph_data.push({
+                data: rec.productivity
             });
 
             $.plot($box_prod.find(".graph:first"), graph_data, {
