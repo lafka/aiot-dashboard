@@ -59,6 +59,15 @@ class DataSseView(EventsSseView):
                     'humidity': room.deviation_minutes_today([Deviations.DeviationType.HUMIDITY])
                 }
             })
+
+        data = sorted(data, key=lambda x: x['quality_index'] if 'quality_index' in x else 0, reverse=True)
+
+        i = 0
+        for rec in data:
+            if rec['type'] == 'room':
+                rec['worse_5'] = i < 5
+                i += 1
+
         return data
 
     def _build_graph_msg(self, data=[]):

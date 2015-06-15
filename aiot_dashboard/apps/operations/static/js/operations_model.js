@@ -131,16 +131,17 @@ $(function() {
                         $('#viewer-container').viewer('color', col, room_key);
                         $('#viewer-container').viewer('show', room_key);
                     } else if(mode == 1) {
-                        col = rec.co2 < 1000 ? '#0f0' : '#ff0';
-                        if(rec.co2 > 1500) {
-                            col = '#f00';
-                        }
+                        col = rec.worse_5 ? '#f00' : '#0f0';
 
                         $('#viewer-container').viewer('color', col, room_key);
-                        $('#viewer-container').viewer('show', room_key);
+                        if(rec.worse_5)
+                        	$('#viewer-container').viewer('show', room_key);
+                        else
+                        	$('#viewer-container').viewer('hide', room_key);
                     } else {
-                        col = rec.temperature < 20 ? '#00f' : '#0f0';
-                        if(rec.temperature > 23) {
+                    	p = parseInt(rec.productivity);
+                        col = p < 30 ? '#0f0' : '#ff0';
+                        if(p > 70) {
                             col = '#f00';
                         }
 
