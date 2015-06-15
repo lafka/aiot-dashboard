@@ -48,6 +48,7 @@ class DataSseView(EventsSseView):
                 'co2': room.current_co2(),
                 'temperature': room.current_temperature(),
                 'productivity': "%s%%" % room.current_productivity(),
+                'subjective_evaluation': room.subjective_evaluation(),
                 'deviations': {
                     'temperature': room.deviation_minutes_today(Deviations.DeviationType.TEMPERATURE),
                     'co2': room.deviation_minutes_today(Deviations.DeviationType.CO2),
