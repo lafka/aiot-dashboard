@@ -75,11 +75,11 @@ function on_open() {
 function get_type_dict() {
     var all_types = {
         'light': {
-            unit_suffix: ' lx',
+            unit_suffix: ' lux',
             color: '#edc240'
         },
         'humidity': {
-            unit_suffix: ' kg/m',
+            unit_suffix: ' %',
             color: '#afd8f8'
         },
         'co2': {
