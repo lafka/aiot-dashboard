@@ -101,17 +101,20 @@
         var parent = $(this).parents('tr:first');
         var yaxis = parent.find('.yaxis');
 
+        /* make sure we can't disable all lines */
         var num_checked_sensor_types = $("#sensor-type .line:checked").size();
         if (num_checked_sensor_types == 0) {
             this.checked = true;
             return;
         }
 
-        if (!this.checked && yaxis.is(':checked')) {
-            console.log($("#sensor-type .yaxis:not(:disabled)").not(yaxis).first().prop('checked', true));
-        }
-
+        /* disable yaxis radio button if this line is not visible anymore */
         yaxis.prop('disabled', !this.checked);
+
+        /* if the yaxis radio button was active, make some other active instead. */
+        if (!this.checked && yaxis.is(':checked')) {
+            $("#sensor-type .yaxis:not(:disabled)").not(yaxis).first().prop('checked', true);
+        }
     });
     $("#sensor-type :input").change(aiot.rooms.detail.plot_graph);
 </script>
