@@ -7,8 +7,10 @@ from django.utils import timezone
 
 class TimeSeriesMixin(object):
     @classmethod
-    def get_ts_between(cls, start, end, device):
-        return cls.objects.filter(datetime__gte=start, datetime__lt=end, device_key=device.key)
+    def get_ts_between(cls, start, end, device=None):
+        if device:
+            return cls.objects.filter(datetime__gte=start, datetime__lt=end, device_key=device.key).order_by('-datetime')
+        return cls.objects.filter(datetime__gte=start, datetime__lt=end).order_by('-datetime')
 
 
 class Deviations(models.Model):
@@ -62,7 +64,7 @@ class PowerCircuit(models.Model):
 class Room(models.Model):
     key = models.TextField(primary_key=True)
     name = models.TextField()
-    room_type = models.ForeignKey('RoomType', blank=True, null=True)
+    room_type = models.ForeignKey('RoomType', blank=True, null=True, related_name='rooms')
     area = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     floor = models.IntegerField(default=0)
     devices = models.ManyToManyField('Device', through='MapDeviceRoom')

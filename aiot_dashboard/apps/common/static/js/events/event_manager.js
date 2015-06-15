@@ -47,8 +47,6 @@ EventManager.prototype.start = function() {
 
     var url = this.build_url();
 
-    console.log(url);
-
     var source = new EventSource(url);
     source.onmessage = function(e) {
         self.trigger_callback('on_message', [e]);
