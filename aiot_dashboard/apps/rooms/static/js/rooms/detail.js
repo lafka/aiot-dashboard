@@ -17,10 +17,10 @@ function get_timeseries_by_type(type) {
         flot_timeseries_by_type[type] = timeseries;
     }
 
-    return timeseries;
+    return $.extend({}, timeseries);
 }
 
-function plot_graph() {
+function plot_overview_graph() {
     var types = get_type_dict();
     var flot_timeseries = [];
     var yaxes = [];
@@ -31,9 +31,6 @@ function plot_graph() {
         }
 
         yaxes.push({
-            tickFormatter: function (value) {
-                return value + type_obj.unit_suffix;
-            },
             color: type_obj.color
         });
 
@@ -50,13 +47,33 @@ function plot_graph() {
         },
         yaxis: {
             show: false
-        },
-        zoom: {
-            interactive: true
-        },
-        pan: {
-            interactive: true
         }
+    });
+}
+
+function plot_detailed_graphs() {
+    var types = get_type_dict();
+    $.each(types, function(type, type_obj) {
+        var sensor_timeseries = get_timeseries_by_type(type);
+        sensor_timeseries.color = type_obj.color;
+
+        $.plot($('#graph-' + type), [sensor_timeseries], {
+            xaxis: {
+                mode: 'time'
+            },
+            yaxis: {
+                show: true,
+                tickFormatter: function (value) {
+                    if (type_obj.decimals) {
+                        value = value.toFixed(2);
+                    }
+                    else {
+                        value = '' + value;
+                    }
+                    return value + type_obj.unit_suffix;
+                }
+            }
+        });
     });
 }
 
@@ -77,36 +94,41 @@ function get_type_dict() {
     return {
         'light': {
             unit_suffix: ' lux',
-            color: '#edc240'
+            color: '#edc240',
+            decimals: false
         },
         'humidity': {
             unit_suffix: ' %',
-            color: '#afd8f8'
+            color: '#afd8f8',
+            decimals: true
         },
         'co2': {
             unit_suffix: ' ppm',
-            color: '#cb4b4b'
+            color: '#cb4b4b',
+            decimals: false
         },
         'noise': {
             unit_suffix: ' dB',
-            color: '#4da74d'
+            color: '#4da74d',
+            decimals: true
         },
         'temperature': {
             unit_suffix: ' \u2103',
-            color: '#9440ed'
+            color: '#9440ed',
+            decimals: true
         }
     };
 }
 
 function on_after_events(events) {
     if (events.length) {
-        plot_graph();
+        plot_overview_graph();
+        plot_detailed_graphs();
     }
 }
 
 ns.on_after_events = on_after_events;
 ns.on_event = on_event;
 ns.on_open = on_open;
-ns.plot_graph = plot_graph;
 
 })(aiot.rooms.detail);
