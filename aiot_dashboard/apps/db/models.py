@@ -103,11 +103,11 @@ class Room(models.Model):
     def get_latest_room_state(self):
         sensor_map = {
             'co2': TsCo2,
-            'temp': TsTemperature,
-            'db': TsDecibel,
-            'moist': TsMoist,
+            'temperature': TsTemperature,
+            'noise': TsDecibel,
+            'humidity': TsMoist,
             'movement': TsMovement,
-            'lux': TsLight,
+            'light': TsLight,
         }
 
         ret = {}

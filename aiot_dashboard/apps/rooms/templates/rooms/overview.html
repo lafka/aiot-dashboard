@@ -29,16 +29,21 @@
 {% endblock %}
 
 {% block content %}
+    <h1>Room overview</h1>
+
     <table class="table table-zebra table-bordered" id="data_list">
         <thead>
             <tr>
                 <th data-col="name">Room name</th>
-                <th data-col="temp">Temp</th>
-                <th data-col="co2">Co2</th>
-                <th data-col="db">DB</th>
-                <th data-col="lux">LUX</th>
+                <th data-col="room_type">Room type</th>
+                <th data-col="area">Area</th>
+                <th data-col="capacity">Capacity</th>
+                <th data-col="temperature">Temperature</th>
+                <th data-col="co2">CO2</th>
+                <th data-col="noise">Noise</th>
+                <th data-col="light">Light</th>
+                <th data-col="humidity">Humidity</th>
                 <th data-col="movement">Movement</th>
-                <th data-col="moist">Moist</th>
             </tr>
         </thead>
         <tbody>

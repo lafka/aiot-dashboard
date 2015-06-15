@@ -2,6 +2,7 @@
 import json
 
 from django.core.urlresolvers import reverse
+from django.template.loader import get_template
 from django.views.generic.base import TemplateView
 
 from aiot_dashboard.apps.db.models import Room, RoomType, TsCo2, TsMoist, TsLight, TsTemperature, TsDecibel
@@ -25,15 +26,27 @@ class RoomOverviewView(TemplateView):
 
 class RoomOverviewEventsView(EventsSseView):
     def get_events(self):
-        data = []
+        rows = []
+
+        overview_tr_tpl = get_template('rooms/overview_tr.html')
 
         for room in Room.get_active_rooms():
             room_state = room.get_latest_room_state()
-            room_state['name'] = room.name
-            room_state['url'] = reverse('room_detail', args=(room.key,))
-            data.append(room_state)
 
-        return [data]
+            overview_tr_html = overview_tr_tpl.render({
+                'room': room,
+                'temperature': room_state['temperature'],
+                'co2': room_state['co2'],
+                'noise': room_state['noise'],
+                'humidity': room_state['humidity'],
+                'movement': room_state['movement'],
+                'light': room_state['light'],
+            })
+
+            rows.append(overview_tr_html)
+
+        overview_trs_html = u'\n'.join(rows)
+        return [{'overview_trs_html': overview_trs_html}]
 
 
 # Room Detail
