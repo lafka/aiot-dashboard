@@ -31,7 +31,6 @@ function plot_graph() {
         }
 
         yaxes.push({
-            show: type_obj.yaxis,
             tickFormatter: function (value) {
                 return value + type_obj.unit_suffix;
             },
@@ -49,7 +48,9 @@ function plot_graph() {
         xaxis: {
             mode: 'time'
         },
-        yaxes: yaxes,
+        yaxis: {
+            show: false
+        },
         zoom: {
             interactive: true
         },
@@ -73,7 +74,7 @@ function on_open() {
 }
 
 function get_type_dict() {
-    var all_types = {
+    return {
         'light': {
             unit_suffix: ' lux',
             color: '#edc240'
@@ -95,20 +96,6 @@ function get_type_dict() {
             color: '#9440ed'
         }
     };
-    var ret = {};
-
-    var yaxis_choice = $('#sensor-type .yaxis:checked').val();
-    var line_choices = $('#sensor-type .line:checked').map(function() { return this.value; });
-
-    $.each(line_choices, function(k, type) {
-        ret[type] = {
-            unit_suffix: all_types[type].unit_suffix,
-            color: all_types[type].color,
-            yaxis: yaxis_choice == type
-        };
-    });
-
-    return ret;
 }
 
 function on_after_events(events) {
