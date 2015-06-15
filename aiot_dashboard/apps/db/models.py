@@ -12,6 +12,12 @@ class TimeSeriesMixin(object):
             return cls.objects.filter(datetime__gte=start, datetime__lt=end, device_key=device.key).order_by('-datetime')
         return cls.objects.filter(datetime__gte=start, datetime__lt=end).order_by('-datetime')
 
+    @classmethod
+    def get_all_ts(cls, device=None):
+        if device:
+            return cls.objects.filter(device_key=device.key).order_by('-datetime')
+        return cls.objects.order_by('-datetime')
+
 
 class Deviations(models.Model):
     class DeviationType:
@@ -136,6 +142,10 @@ class Room(models.Model):
         if ts:
             return ts.value
         return 0
+
+    def subjective_evaluation(self):
+        ts = TsSubjectiveEvaluation.get_all_ts(self.devices.first()).values_list('value')
+        return sum(i[0] for i in ts)/len(ts)
 
 class RoomType(models.Model):
     description = models.TextField()
@@ -324,5 +334,16 @@ class TsTemperature(models.Model, TimeSeriesMixin):
     class Meta:
         managed = False
         db_table = 'ts_temperature'
+        ordering = ['datetime']
+        get_latest_by = 'datetime'
+
+class TsSubjectiveEvaluation(models.Model, TimeSeriesMixin):
+    datetime = models.DateTimeField(blank=True, null=True)
+    device_key = models.ForeignKey('Device', db_column='device_key', blank=True, null=True)
+    value = models.FloatField()
+
+    class Meta:
+        managed = False
+        db_table = 'ts_subjective_evaluation'
         ordering = ['datetime']
         get_latest_by = 'datetime'

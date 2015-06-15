@@ -85,6 +85,10 @@ html, body {
 #stats li .humidity {
     background: url('../images/display/icon-humidity.png') left center no-repeat;
 }
+
+.icon .subjective_evaluation {
+    background: url('../images/display/icon-subjective_evaluation.png') left center no-repeat;
+}
 #model .spinner {
     font-size: 60px;
     position: relative;
