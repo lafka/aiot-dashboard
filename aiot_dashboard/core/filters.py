@@ -18,8 +18,8 @@ def get_datetimes_from_filters(request):
     now = timezone.now()
 
     map_time_to_datetimes = {
-        'last_activity': {
-            'from': now - timedelta(hours=1),
+        'last_4_hours': {
+            'from': now - timedelta(hours=4),
             'to': now,
             'stream': True
         },
@@ -33,14 +33,14 @@ def get_datetimes_from_filters(request):
             'to': trunc_day(now),
             'stream': False
         },
-        'last_week': {
+        'last_7_days': {
             'from': trunc_day(now - timedelta(days=7)),
             'to': now,
             'stream': False
         },
     }
 
-    time_str =  request.GET.get('time', 'today')
+    time_str =  request.GET.get('time', 'last_7_days')
     ret = copy(map_time_to_datetimes[time_str])
 
-    return ret
+    return time_str, ret

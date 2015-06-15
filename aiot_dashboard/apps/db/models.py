@@ -64,7 +64,7 @@ class PowerCircuit(models.Model):
 class Room(models.Model):
     key = models.TextField(primary_key=True)
     name = models.TextField()
-    room_type = models.ForeignKey('RoomType', blank=True, null=True)
+    room_type = models.ForeignKey('RoomType', blank=True, null=True, related_name='rooms')
     area = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     devices = models.ManyToManyField('Device', through='MapDeviceRoom')
 

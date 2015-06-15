@@ -2,6 +2,32 @@
 
 {% load static %}
 
+{% block filters %}
+    <div class="block">
+        <div class="page-header"><h2>Filter</h2></div>
+    </div>
+    <ul>
+        <li>
+            <h3>Floor:</h3>
+            <div>&ndash; <a><b>Any</b></a></div>
+            <div>&ndash; <a>1st floor</a></div>
+            <div>&ndash; <a>2nd floor</a></div>
+            <div>&ndash; <a>3rd floor</a></div>
+            <hr />
+        </li>
+
+        <li>
+            <h3>Room Type:</h3>
+            <div>&ndash; <a><b>All rooms with sensor</b></a></div>
+            <div>&ndash; <a>All rooms</a></div>
+            {% for room_type in room_types %}
+                &ndash; <a>{{ room_type.description }}</a><br>
+            {% endfor %}
+            <hr />
+        </li>
+    </ul>
+{% endblock %}
+
 {% block content %}
     <table class="table table-zebra table-bordered" id="data_list">
         <thead>
