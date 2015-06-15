@@ -24,12 +24,13 @@ class DisplayView(BimView):
 
 
 class DataSseView(EventsSseView):
-    GRAPH_HOUR_START = 7
-    GRAPH_HOUR_END = 18
-
     rooms = []
     last_power = None
     last_current_kwh = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self._build_graph_range(request)
+        return EventsSseView.dispatch(self, request, *args, **kwargs)
 
     def get_events(self):
         if len(self.rooms) == 0:
@@ -39,6 +40,11 @@ class DataSseView(EventsSseView):
         data = self._build_graph_msg(data)
         data = self._build_current_kwh_msg(data)
         return data
+
+    def _build_graph_range(self, request):
+        self.graph_range = range(int(request.REQUEST.get('graph_start', 7)),
+                                 int(request.REQUEST.get('graph_end', 18)))
+        print request.REQUEST.get('graph_start', 7)
 
     def _build_rooms_msg(self, data=[]):
         for room in self.rooms:
@@ -101,7 +107,7 @@ class DataSseView(EventsSseView):
         today = get_today()
         data = []
 
-        for h in range(self.GRAPH_HOUR_START, self.GRAPH_HOUR_END):
+        for h in self.graph_range:
             dte = today + datetime.timedelta(hours=h)
             qs = TsKwh.objects.filter(datetime__gte=dte,
                                       datetime__lt=dte + datetime.timedelta(hours=1))
@@ -114,7 +120,7 @@ class DataSseView(EventsSseView):
         today = get_today()
         data = []
 
-        for h in range(self.GRAPH_HOUR_START, self.GRAPH_HOUR_END):
+        for h in self.graph_range:
             dte = today + datetime.timedelta(hours=h)
             qs = TsEnergyProductivity.get_ts_between(dte, dte + datetime.timedelta(hours=1))
             data.append([h, self._get_aggregate_avg(qs)])

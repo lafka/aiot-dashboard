@@ -9,6 +9,14 @@ function EventManager(config) {
 
 EventManager.prototype.build_url = function() {
     var params = [];
+
+    // TODO: Put this all in a loop.
+    if (this.config.graph_start !== undefined) {
+        params.push('graph_start=' + encodeURIComponent(this.config.graph_start));
+    }
+    if (this.config.graph_end) {
+        params.push('graph_end=' + encodeURIComponent(this.config.graph_end));
+    }
     if (this.config.datetime_from) {
         params.push('datetime_from=' + encodeURIComponent(this.config.datetime_from));
     }

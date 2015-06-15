@@ -80,6 +80,7 @@ $(function() {
             'left': $box.data('left') > 0 ? focus_offset : 0,
             'font-size': 14
         }, 500, function() {
+        	$box.trigger('plot');
         });
         $box.find('h2').animate({
             'font-size': 22
@@ -106,6 +107,7 @@ $(function() {
             'font-size': 10
         }, 500, function() {
             $(this).css('z-index', '1');
+            $box.trigger('plot');
         });
         $box.find('h2').animate({
             'font-size': 14
