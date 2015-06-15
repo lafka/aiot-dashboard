@@ -75,40 +75,22 @@ li.active a { font-weight: bold; }
 }
 
 /* common stats icons */
-#stats li .temperature, .icon .temperature {
-	background-size: contain;
+#stats li .temperature {
     background: url('../images/display/icon-temperature.png') left center no-repeat;
 }
-#stats li .co2, .icon .co2 {
-	background-size: contain;
-    background: url('../images/display/icon-co2.png') left center no-repeat;
+#stats li .co2 {
+    background: url('../images/display/icon-co2.png') left bottom no-repeat;
+}
+.icon .temperature {
+    background: url('../images/display/icon-temperature-64.png') left center no-repeat;
+    background-size: contain;
+}
+.icon .co2 {
+    background: url('../images/display/icon-co2-64.png') left center no-repeat;
+    background-size: contain;
 }
 #stats li .humidity {
-	background-size: contain;
     background: url('../images/display/icon-humidity.png') left center no-repeat;
-}
-.box .legend {
-    position: absolute;
-    margin: 10px;
-    background: #fff;
-    border-radius: 8px;
-    border: 1px solid #eee;
-    opacity: 0.8;
-    width: 270px;
-    z-index: 10;
-}
-.box .legend ul {
-    list-type: none;
-    padding: 0px; margin: 0px;
-}
-.box .legend li {
-    display: inline-block;
-    padding: 4px;
-}
-.box .legend .color_block {
-    display: inline-block;
-    width: 20px;
-    height: 8px;
 }
 #model .spinner {
     font-size: 60px;
@@ -123,5 +105,33 @@ li.active a { font-weight: bold; }
     top: -34px;
 }
 #model .icon { float: left; }
-#model .icon div, #model .icon i { width: 22px; height: 22px; margin-top: 2px; background-position: center; text-align: center; display: inline-block; margin-right: 8px; }
+#model .icon div, #model .icon i {
+    min-width: 32px; min-height: 32px; margin-top: 2px; background-position: center; text-align: center; display: inline-block; margin-right: 8px;
+    font-size: 22px;
+}
 #model .icon i { margin-top: 6px; color: #aaa; }
+
+.box .legend {
+    position: absolute;
+    margin: 10px;
+    background: #fff;
+    border-radius: 8px;
+    /*border: 1px solid #eee;*/
+    opacity: 0.8;
+    width: 370px;
+    z-index: 10;
+}
+.box .legend ul {
+    list-type: none;
+    padding: 0px; margin: 0px;
+}
+.box .legend li {
+    display: inline-block;
+    padding: 4px 8px;
+    font-size: 20px;
+}
+.box .legend .color_block {
+    display: inline-block;
+    width: 20px;
+    height: 18px;
+}
