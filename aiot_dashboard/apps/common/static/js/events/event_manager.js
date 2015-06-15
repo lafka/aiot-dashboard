@@ -19,7 +19,8 @@ EventManager.prototype.build_url = function() {
         params.push('stream=true');
     }
 
-    return this.config.url + '?' + params.join('&');
+    var query_seperator = this.config.url.indexOf('?') >= 0 ? '&' : '?';
+    return this.config.url + query_seperator + params.join('&');
 };
 
 EventManager.prototype.trigger_callback = function(callback_fn_name, args) {
@@ -46,8 +47,6 @@ EventManager.prototype.start = function() {
     var self = this;
 
     var url = this.build_url();
-
-    console.log(url);
 
     var source = new EventSource(url);
     source.onmessage = function(e) {

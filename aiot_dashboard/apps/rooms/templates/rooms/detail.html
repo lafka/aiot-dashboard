@@ -2,6 +2,10 @@
 
 {% load static %}
 
+{% block header %}
+    <link type="text/css" rel="stylesheet" media="all" href="{% static 'css/rooms.css' %}">
+{% endblock %}
+
 {% block filters %}
 <div class="block">
     <div class="page-header"><h2>Filter</h2></div>
@@ -9,60 +13,18 @@
 <ul id="filters">
     <li>
         <h3>Time:</h3>
-        <div>
-            &ndash; <a href="?time=last_activity"> Last Activity</a>
+        <div {% if active_filter == 'last_4_hours' %}class="active"{% endif %}>
+            &ndash; <a href="?time=last_4_hours"> Last four hours</a>
         </div>
-        <div>
+        <div {% if active_filter == 'today' %}class="active"{% endif %}>
             &ndash; <a href="?time=today">Today</a>
         </div>
-        <div>
+        <div {% if active_filter == 'yesterday' %}class="active"{% endif %}>
             &ndash; <a href="?time=yesterday">Yesterday</a>
         </div>
-        <div>
-            &ndash; <a href="?time=last_week">Last Week</a>
+        <div {% if active_filter == 'last_7_days' %}class="active"{% endif %}>
+            &ndash; <a href="?time=last_7_days">Last 7 days</a>
         </div>
-        <div>
-            &ndash; <a>Custom Timerange</a>
-        </div>
-        <hr />
-    </li>
-
-    <li id="sensor-type">
-        <h3>Sensor Type:</h3>
-        <table class="table" style="border: none">
-            <thead>
-                <tr>
-                    <th><i class="glyphicon glyphicon-eye-open" data-toggle="tooltip" data-placement="top" title="Which lines to show"></i></th>
-                    <th><i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Which unit to show in Y-axis"></i></th>
-                    <th>Type</th>
-                </tr>
-            </thead>
-            <tr>
-                <td><input type="checkbox" class="line" value="light" checked/></td>
-                <td><input name="yaxis" class="yaxis" type="radio" value="light" checked/></td>
-                <td>Light</td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="line" value="humidity" checked/></td>
-                <td><input name="yaxis" class="yaxis" type="radio" value="humidity"/></td>
-                <td>Humidity</td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="line" value="co2" checked/></td>
-                <td><input name="yaxis" class="yaxis" type="radio" value="co2"/></td>
-                <td>CO2</td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="line" value="noise" checked/></td>
-                <td><input name="yaxis" class="yaxis" type="radio" value="noise"/></td>
-                <td>Noise</tD>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="line" value="temperature" checked/></td>
-                <td><input name="yaxis" class="yaxis" type="radio" value="temperature"/></td>
-                <td>Temperature</td>
-            </tr>
-        </table>
         <hr />
     </li>
 </ul>
@@ -75,8 +37,32 @@
     {{ room.name }}
 </h1>
 
-<div id="graph" style="width: 100%; height:400px;"></div>
-
+<div class="container-fluid" id="room-detail-graphs">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="graph" id="graph"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="graph" id="graph-temperature"></div>
+        </div>
+        <div class="col-md-4">
+            <div class="graph" id="graph-co2"></div>
+        </div>
+        <div class="col-md-4">
+            <div class="graph" id="graph-humidity"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="graph" id="graph-noise"></div>
+        </div>
+        <div class="col-md-6">
+            <div class="graph" id="graph-light"></div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block javascript %}
@@ -96,23 +82,5 @@
         datetime_to: '{{ filter_dts.to.isoformat }}'
     });
     event_manager.start();
-
-    $("#sensor-type .line").change(function() {
-        var parent = $(this).parents('tr:first');
-        var yaxis = parent.find('.yaxis');
-
-        var num_checked_sensor_types = $("#sensor-type .line:checked").size();
-        if (num_checked_sensor_types == 0) {
-            this.checked = true;
-            return;
-        }
-
-        if (!this.checked && yaxis.is(':checked')) {
-            console.log($("#sensor-type .yaxis:not(:disabled)").not(yaxis).first().prop('checked', true));
-        }
-
-        yaxis.prop('disabled', !this.checked);
-    });
-    $("#sensor-type :input").change(aiot.rooms.detail.plot_graph);
 </script>
 {% endblock %}

@@ -7,8 +7,10 @@ from django.utils import timezone
 
 class TimeSeriesMixin(object):
     @classmethod
-    def get_ts_between(cls, start, end, device):
-        return cls.objects.filter(datetime__gte=start, datetime__lt=end, device_key=device.key)
+    def get_ts_between(cls, start, end, device=None):
+        if device:
+            return cls.objects.filter(datetime__gte=start, datetime__lt=end, device_key=device.key).order_by('-datetime')
+        return cls.objects.filter(datetime__gte=start, datetime__lt=end).order_by('-datetime')
 
 
 class Deviations(models.Model):
@@ -62,7 +64,7 @@ class PowerCircuit(models.Model):
 class Room(models.Model):
     key = models.TextField(primary_key=True)
     name = models.TextField()
-    room_type = models.ForeignKey('RoomType', blank=True, null=True)
+    room_type = models.ForeignKey('RoomType', blank=True, null=True, related_name='rooms')
     area = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     devices = models.ManyToManyField('Device', through='MapDeviceRoom')
 
@@ -101,11 +103,11 @@ class Room(models.Model):
     def get_latest_room_state(self):
         sensor_map = {
             'co2': TsCo2,
-            'temp': TsTemperature,
-            'db': TsDecibel,
-            'moist': TsMoist,
+            'temperature': TsTemperature,
+            'noise': TsDecibel,
+            'humidity': TsMoist,
             'movement': TsMovement,
-            'lux': TsLight,
+            'light': TsLight,
         }
 
         ret = {}
@@ -143,6 +145,9 @@ class RoomType(models.Model):
         managed = False
         db_table = 'room_type'
         ordering = ['description']
+
+    def get_active_rooms(self):
+        return Room.get_active_rooms().filter(room_type=self)
 
 
 class MapDeviceRoom(models.Model):
