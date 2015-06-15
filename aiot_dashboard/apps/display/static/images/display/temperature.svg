@@ -16,9 +16,9 @@
    version="1.1"
    inkscape:version="0.91 r13725"
    sodipodi:docname="temperature.svg"
-   inkscape:export-filename="/home/mark/Development/monsternett/aiot/aiot_dashboard/apps/display/static/images/display/icon-temperature.png"
-   inkscape:export-xdpi="4.5"
-   inkscape:export-ydpi="4.5">
+   inkscape:export-filename="/home/mark/Development/monsternett/aiot/aiot_dashboard/apps/display/static/images/display/icon-temperature-64.png"
+   inkscape:export-xdpi="16"
+   inkscape:export-ydpi="16">
   <defs
      id="defs4">
     <filter
@@ -181,7 +181,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>

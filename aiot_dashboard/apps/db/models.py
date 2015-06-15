@@ -109,11 +109,11 @@ class Room(models.Model):
     def get_latest_room_state(self):
         sensor_map = {
             'co2': TsCo2,
-            'temp': TsTemperature,
-            'db': TsDecibel,
-            'moist': TsMoist,
+            'temperature': TsTemperature,
+            'noise': TsDecibel,
+            'humidity': TsMoist,
             'movement': TsMovement,
-            'lux': TsLight,
+            'light': TsLight,
         }
 
         ret = {}
@@ -155,6 +155,9 @@ class RoomType(models.Model):
         managed = False
         db_table = 'room_type'
         ordering = ['description']
+
+    def get_active_rooms(self):
+        return Room.get_active_rooms().filter(room_type=self)
 
 
 class MapDeviceRoom(models.Model):

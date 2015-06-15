@@ -5,6 +5,19 @@ html, body {
     font-family: 'Roboto Condensed', sans-serif;
     min-width: 1024px;
 }
+.box h2 {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    text-anchor: middle;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: bold;
+    font-stretch: normal;
+    font-size: 28px;
+    line-height: normal;
+    font-family: Arial;
+    fill-opacity: 1;
+    color: #999;
+}
 .box {
     width: 50%;
     height: 50%;
@@ -20,9 +33,9 @@ html, body {
     margin: 10px;
     background: #fff;
     border-radius: 8px;
-    border: 1px solid #eee;
+    /*border: 1px solid #eee;*/
     opacity: 0.8;
-    width: 270px;
+    width: 370px;
 }
 .box .legend ul {
     list-type: none;
@@ -30,12 +43,13 @@ html, body {
 }
 .box .legend li {
     display: inline-block;
-    padding: 4px;
+    padding: 4px 8px;
+    font-size: 20px;
 }
 .box .legend .color_block {
     display: inline-block;
     width: 20px;
-    height: 8px;
+    height: 18px;
 }
 #stats { overflow-y: hidden; }
 #stats ul { list-style: none; padding: 0px; margin: 0px; font-size: 16px; line-height: 16px; }
@@ -54,11 +68,19 @@ html, body {
     height: 18px;
     min-width: 46px;
 }
-#stats li .temperature, .icon .temperature {
+#stats li .temperature {
     background: url('../images/display/icon-temperature.png') left center no-repeat;
 }
-#stats li .co2, .icon .co2 {
+#stats li .co2 {
     background: url('../images/display/icon-co2.png') left bottom no-repeat;
+}
+.icon .temperature {
+    background: url('../images/display/icon-temperature-64.png') left center no-repeat;
+    background-size: contain;
+}
+.icon .co2 {
+    background: url('../images/display/icon-co2-64.png') left center no-repeat;
+    background-size: contain;
 }
 #stats li .humidity {
     background: url('../images/display/icon-humidity.png') left center no-repeat;
@@ -80,5 +102,8 @@ html, body {
     top: -34px;
 }
 #model .icon { float: left; }
-#model .icon div, #model .icon i { width: 22px; height: 22px; margin-top: 2px; background-position: center; text-align: center; display: inline-block; margin-right: 8px; }
+#model .icon div, #model .icon i {
+	min-width: 32px; min-height: 32px; margin-top: 2px; background-position: center; text-align: center; display: inline-block; margin-right: 8px;
+    font-size: 22px;
+}
 #model .icon i { margin-top: 6px; color: #aaa; }

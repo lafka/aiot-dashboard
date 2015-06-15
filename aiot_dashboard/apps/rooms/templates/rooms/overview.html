@@ -2,26 +2,38 @@
 
 {% load static %}
 
+{% block header %}
+    <link type="text/css" rel="stylesheet" media="all" href="{% static 'css/rooms.css' %}">
+{% endblock %}
+
 {% block filters %}
     <div class="block">
         <div class="page-header"><h2>Filter</h2></div>
     </div>
-    <ul>
+    <ul id="filters">
         <li>
             <h3>Floor:</h3>
-            <div>&ndash; <a><b>Any</b></a></div>
-            <div>&ndash; <a>1st floor</a></div>
-            <div>&ndash; <a>2nd floor</a></div>
-            <div>&ndash; <a>3rd floor</a></div>
+            <div>
+                &ndash; <a href="?floor=any">Any</a>
+            </div>
+            <div>
+                TODO: Waiting on integration w/BIM
+            </div>
             <hr />
         </li>
 
         <li>
             <h3>Room Type:</h3>
-            <div>&ndash; <a><b>All rooms with sensor</b></a></div>
-            <div>&ndash; <a>All rooms</a></div>
-            {% for room_type in room_types %}
-                &ndash; <a>{{ room_type.description }}</a><br>
+            <div {% if filter_context.room_type == 'all' %}class="active"{% endif %}>
+                &ndash; <a href="?room_type=all">All rooms ({{ filter_context.num_active_rooms }})</a>
+            </div>
+            {% for room_type in filter_context.available_room_types %}
+                <div {% if filter_context.room_type == room_type.pk %}class="active"{% endif %}>
+                    &ndash;
+                    <a href="?room_type={{ room_type.pk }}">
+                        {{ room_type.description }} ({{ room_type.get_active_rooms|length }})
+                    </a>
+                </div>
             {% endfor %}
             <hr />
         </li>
@@ -29,16 +41,21 @@
 {% endblock %}
 
 {% block content %}
+    <h1>Room overview</h1>
+
     <table class="table table-zebra table-bordered" id="data_list">
         <thead>
             <tr>
                 <th data-col="name">Room name</th>
-                <th data-col="temp">Temp</th>
-                <th data-col="co2">Co2</th>
-                <th data-col="db">DB</th>
-                <th data-col="lux">LUX</th>
+                <th data-col="room_type">Room type</th>
+                <th data-col="area">Area</th>
+                <th data-col="capacity">Capacity</th>
+                <th data-col="temperature">Temperature</th>
+                <th data-col="co2">CO2</th>
+                <th data-col="noise">Noise</th>
+                <th data-col="light">Light</th>
+                <th data-col="humidity">Humidity</th>
                 <th data-col="movement">Movement</th>
-                <th data-col="moist">Moist</th>
             </tr>
         </thead>
         <tbody>
