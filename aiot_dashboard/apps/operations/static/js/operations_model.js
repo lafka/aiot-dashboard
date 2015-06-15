@@ -4,24 +4,63 @@ $(function() {
     var mode = 0; // 0 = Occupied, 1 = Time usage, 2 = Quality
 
     function setMode(new_mode) {
-        mode = new_mode;
+        mode = parseInt(new_mode);
+        
+        var $button = $box.find('.buttons ul .btn').eq(mode);
+        $box.find('.buttons ul .active').removeClass('active');
+        $button.addClass('active');
 
         $legend.animate({
             'margin-left': '-300px'
-        }, 500, function() {
+        }, 500);
+        setTimeout(function() {
             $legend.html('<div class="icon"></div><ul></ul>');
-            if(mode === 0) {
+            if(mode === 0) { // Occupied
                 $legend.find('.icon').html("<i class='fa fa-users'></i>");
                 $legend.find('ul')
-                    .append('<li><div class="color_block" style="background-color: #f00;"></div> opptatt</li>')
-                    .append('<li><div class="color_block" style="background-color: #0f0;"></div> tom</li>');
+                    .append('<li><div class="color_block" style="background-color: #f00;"></div> available</li>')
+                    .append('<li><div class="color_block" style="background-color: #0f0;"></div> occupied</li>');
             } else if(mode == 1) {
             } else {
+                $legend.find('.icon').html("<i class='fa fa-wrench'></i>");
+                $legend.find('ul')
+                    .append('<li><div class="color_block" style="background-color: #0f0;"></div> < 30</li>')
+                    .append('<li><div class="color_block" style="background-color: #ff0;"></div> 30 - 70</li>')
+                	.append('<li><div class="color_block" style="background-color: #f00;"></div> > 70</li>');
             }
 
             $legend.animate({
                 'margin-left': '10px'
             }, 500);
+        }, 501);
+    }
+    
+    function initButtons() {
+        var $buttons = $box.find('.buttons');
+        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_availability" data-mode="0"><i class="fa fa-users"></i> Availability</button></li>');
+        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_worst" data-mode="1"><i class="fa fa-users"></i> Worst 5</button></li>');
+        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_productivity" data-mode="2"><i class="fa fa-users"></i> Productivity</button></li>');
+        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_bim"><i class="fa fa-users"></i> Go to TotalBIM</button></li>');
+        
+        $buttons.find('.btn').css('margin-left', '-' + $buttons.width() + 'px');
+        setTimeout(function() {
+        	var i = 0;
+        	$buttons.find('.btn').each(function() {
+        		var $this = $(this);
+        		
+        		setTimeout(function() {
+                    $this.animate({
+                    	'margin-left': '0px'
+                    }, 1000);
+        		}, i * 200);
+        		i++;
+        	});
+        }, 1000);
+        
+        $buttons.find('.btn').click(function() {
+        	var mode = $(this).attr('data-mode');
+        	if(mode !== undefined)
+        		setMode(mode);
         });
     }
 
@@ -33,7 +72,7 @@ $(function() {
         var w_offset = (max_width - $box.width())/2;
         var h_offset = (max_height - $box.height())/2;
         
-        $box.append('<div class="spinner"><i class="fa fa-spin fa-spinner"></i></div><div class="legend"></div><div id="viewer-container" style="position: relative; width: ' + max_width + 'px; height: ' + max_height + 'px; margin: auto;"></div>');
+        $box.append('<div class="spinner"><i class="fa fa-spin fa-spinner"></i></div><div class="buttons"><ul></ul></div><div class="legend"></div><div id="viewer-container" style="position: relative; width: ' + max_width + 'px; height: ' + max_height + 'px; margin: auto;"></div>');
         $legend = $box.find('.legend:first');
         $legend.css('margin-left', '-300px');
 
@@ -51,6 +90,9 @@ $(function() {
             // Make model translucent, otherwise we can't actually see much
             $viewer.bind('viewer.load', function() {
                 $('#model .spinner').remove();
+                
+                // Buttons
+                initButtons();
 
                 $viewer.viewer('translucentall');
 

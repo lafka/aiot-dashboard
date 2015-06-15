@@ -95,6 +95,7 @@ li.active a { font-weight: bold; }
     border: 1px solid #eee;
     opacity: 0.8;
     width: 270px;
+    z-index: 10;
 }
 .box .legend ul {
     list-type: none;
@@ -121,3 +122,6 @@ li.active a { font-weight: bold; }
     left: -34px;
     top: -34px;
 }
+#model .icon { float: left; }
+#model .icon div, #model .icon i { width: 22px; height: 22px; margin-top: 2px; background-position: center; text-align: center; display: inline-block; margin-right: 8px; }
+#model .icon i { margin-top: 6px; color: #aaa; }
