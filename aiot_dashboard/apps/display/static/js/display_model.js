@@ -4,6 +4,7 @@ $(function() {
     var mode = 0; // 0 = Occupied, 1 = Co2, 2 = Temp
     var last_mode_change = 0;
     var mode_interval = 15;
+    return;
 
     function setMode(new_mode) {
         mode = new_mode;
