@@ -2,25 +2,38 @@
 
 {% load static %}
 
+{% block header %}
+    <link type="text/css" rel="stylesheet" media="all" href="{% static 'css/rooms.css' %}">
+{% endblock %}
+
 {% block filters %}
     <div class="block">
         <div class="page-header"><h2>Filter</h2></div>
     </div>
-    <ul>
+    <ul id="filters">
         <li>
             <h3>Floor:</h3>
-            <div>&ndash; <a><b>Any</b></a></div>
-            <div>&ndash; <a>1st floor</a></div>
-            <div>&ndash; <a>2nd floor</a></div>
-            <div>&ndash; <a>3rd floor</a></div>
+            <div>
+                &ndash; <a href="?floor=any">Any</a>
+            </div>
+            <div>
+                TODO: Waiting on integration w/BIM
+            </div>
             <hr />
         </li>
 
         <li>
             <h3>Room Type:</h3>
-            <div>&ndash; <a><b>All rooms</b></a></div>
-            {% for room_type in room_types %}
-                &ndash; <a>{{ room_type.description }}</a><br>
+            <div {% if filter_context.room_type == 'all' %}class="active"{% endif %}>
+                &ndash; <a href="?room_type=all">All rooms ({{ filter_context.num_active_rooms }})</a>
+            </div>
+            {% for room_type in filter_context.available_room_types %}
+                <div {% if filter_context.room_type == room_type.pk %}class="active"{% endif %}>
+                    &ndash;
+                    <a href="?room_type={{ room_type.pk }}">
+                        {{ room_type.description }} ({{ room_type.get_active_rooms|length }})
+                    </a>
+                </div>
             {% endfor %}
             <hr />
         </li>

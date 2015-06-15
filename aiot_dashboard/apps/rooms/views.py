@@ -10,18 +10,24 @@ from aiot_dashboard.core.filters import get_datetimes_from_filters
 from aiot_dashboard.core.sse import EventsSseView, DatetimeEventsSseView
 from aiot_dashboard.core.utils import to_epoch_mili
 
+from .filters import get_filter_context
+
 # Room Overview
 
 class RoomOverviewView(TemplateView):
     template_name = "rooms/overview.html"
 
     def get_context_data(self):
-        events_url = reverse('room_overview_events')
         room_types = RoomType.objects.all()
+
+        filter_context = get_filter_context(self.request)
+        events_url = reverse('room_overview_events')
+        events_url += '?room_type=%s' % filter_context['room_type']
 
         return  {
             'events_url': json.dumps(events_url),
             'room_types': room_types,
+            'filter_context': filter_context,
         }
 
 class RoomOverviewEventsView(EventsSseView):
@@ -30,7 +36,9 @@ class RoomOverviewEventsView(EventsSseView):
 
         overview_tr_tpl = get_template('rooms/overview_tr.html')
 
-        for room in Room.get_active_rooms():
+        filter_context = get_filter_context(self.request)
+
+        for room in filter_context['rooms']:
             room_state = room.get_latest_room_state()
 
             overview_tr_html = overview_tr_tpl.render({

@@ -146,6 +146,9 @@ class RoomType(models.Model):
         db_table = 'room_type'
         ordering = ['description']
 
+    def get_active_rooms(self):
+        return Room.get_active_rooms().filter(room_type=self)
+
 
 class MapDeviceRoom(models.Model):
     device_key = models.ForeignKey('Device', db_column='device_key')
