@@ -28,7 +28,12 @@ $(function() {
     function initModelBox() {
         var token = $box.attr('data-token');
         
-        $box.html('<div class="spinner"><i class="fa fa-spin fa-spinner"></i></div><div class="legend"></div><div id="viewer-container" style="width: 100%; height: 100%; margin: auto;"></div>');
+        var max_width = $box.data('max_width');
+        var max_height = $box.data('max_height');
+        var w_offset = (max_width - $box.width())/2;
+        var h_offset = (max_height - $box.height())/2;
+        
+        $box.append('<div class="spinner"><i class="fa fa-spin fa-spinner"></i></div><div class="legend"></div><div id="viewer-container" style="position: relative; width: ' + max_width + 'px; height: ' + max_height + 'px; margin: auto;"></div>');
         $legend = $box.find('.legend:first');
         $legend.css('margin-left', '-300px');
 
@@ -39,6 +44,8 @@ $(function() {
         // Callback that loads a viewer access token URL
         function createViewer() {
             var $viewer = $('#viewer-container');
+            $viewer.css('top', '-' + h_offset + 'px');
+            $viewer.css('left', '-' + w_offset + 'px');
             $viewer.viewer('loadurl', 'https://api.bimsync.com/1.0/viewer/access?token=' + token);
 
             // Make model translucent, otherwise we can't actually see much

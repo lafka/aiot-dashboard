@@ -32,18 +32,6 @@ html, body {
     height: 18px;
     min-width: 46px;
 }
-#model .spinner {
-    font-size: 60px;
-    position: relative;
-    left: 50%;
-    top: 50%; /* 68 */
-    color: #aaa;
-}
-#model .spinner i {
-    position: relative;
-    left: -34px;
-    top: -34px;
-}
 #model .icon { float: left; }
 #model .icon div, #model .icon i { width: 22px; height: 22px; margin-top: 2px; background-position: center; text-align: center; display: inline-block; margin-right: 8px; }
 #model .icon i { margin-top: 6px; color: #aaa; }

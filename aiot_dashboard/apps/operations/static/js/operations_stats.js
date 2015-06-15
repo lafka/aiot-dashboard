@@ -28,7 +28,7 @@ $(function() {
     }
 
     function initStatsBox() {
-        $box.html('<h2>Rooms</h2><ul></ul>');
+        $box.append('<h2>Rooms</h2><ul></ul>');
         $box_list = $box.find('ul:first');
 
         $box.data('updateFunc', function(rec) {

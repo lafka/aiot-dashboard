@@ -109,3 +109,15 @@ li.active a { font-weight: bold; }
     width: 20px;
     height: 8px;
 }
+#model .spinner {
+    font-size: 60px;
+    position: relative;
+    left: 50%;
+    top: 50%; /* 68 */
+    color: #aaa;
+}
+#model .spinner i {
+    position: relative;
+    left: -34px;
+    top: -34px;
+}

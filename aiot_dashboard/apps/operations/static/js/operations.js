@@ -31,6 +31,9 @@ $(function() {
             $box.data('left', left);
             $box.css('font-size', '10px');
             
+            $box.data('max_width', $operations.width() - focus_offset);
+            $box.data('max_height', $operations.height() - focus_offset);
+            
             i++;
         });
         $focused_box = null;
@@ -39,7 +42,10 @@ $(function() {
         $operations.find('.box').each(function() {
             var $box = $(this);
 
-            $(this).click(function() {
+            var clickHandler = function(e) {
+            	if( e.target !== this ) 
+            		return;
+
             	if($focused_box == null || $box.attr('id') != $focused_box.attr('id')) {
             		unfocusOtherBoxes($box);
             		focusBox($box);
@@ -47,7 +53,11 @@ $(function() {
             		$focused_box = null;
             		unfocusBox($box);
             	}
-            });
+            };
+            
+            $(this).prepend("<div class='focusbox'><i class='fa fa-chevron-circle-down'></i></div>");
+            $(this).click(clickHandler);
+            $(this).find('.focusbox i').click(clickHandler);
         });
     }
     function unfocusOtherBoxes($box) {
@@ -70,20 +80,22 @@ $(function() {
             'left': $box.data('left') > 0 ? focus_offset : 0,
             'font-size': 14
         }, 500, function() {
-/*        	if($box.find('canvas').length > 0) {
-        		$box.find('canvas').attr('width', $box.width());
-        		$box.find('canvas').attr('height', $box.height());
-        		$box.find('canvas').css('width', '' + $box.width() + 'px');
-        		$box.find('canvas').css('height', '' + $box.height() + 'px');
-        	}*/
         });
         $box.find('h2').animate({
             'font-size': 22
         }, 500);
-/*        $box.find('canvas').attr('width', '100%');
-        $box.find('canvas').attr('height', '100%');
-        $box.find('canvas').css('width', '100%');
-        $box.find('canvas').css('height', '100%');*/
+        $box.find('#viewer-container').each(function() {
+        	if($(this).data('original_top') === undefined)
+        		$(this).data('original_top', $(this).position().top);
+        	if($(this).data('original_left') === undefined)
+        		$(this).data('original_left', $(this).position().left);
+        	$(this).animate({
+            	'top': '0px',
+            	'left': '0px'
+            }, 500);
+        });
+        $box.find('.focusbox i').removeClass('fa-chevron-circle-down');
+        $box.find('.focusbox i').addClass('fa-chevron-circle-up');
     }
     function unfocusBox($box) {
         $box.animate({
@@ -98,6 +110,14 @@ $(function() {
         $box.find('h2').animate({
             'font-size': 14
         }, 500);
+        $box.find('#viewer-container').each(function() {
+        	$(this).animate({
+            	'top': '' + $(this).data('original_top') + 'px',
+            	'left': '' + $(this).data('original_left') + 'px'        	
+            }, 500);
+        });
+        $box.find('.focusbox i').removeClass('fa-chevron-circle-up');
+        $box.find('.focusbox i').addClass('fa-chevron-circle-down');
     }
     
     $(window).resize(calcSizes);
