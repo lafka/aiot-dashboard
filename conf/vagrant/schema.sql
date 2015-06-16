@@ -137,6 +137,14 @@ CREATE TABLE ts_energy_productivity (
     value DOUBLE PRECISION NOT NULL
 );
 
+-- Subjective evaluation
+CREATE TABLE ts_subjective_evaluation (
+    id SERIAL PRIMARY KEY,
+    datetime timestamp with time zone NOT NULL,
+    value integer NOT NULL,
+    device_key text REFERENCES device(key)
+);
+
 -- View for summed kwh for each power circuit
 CREATE VIEW
     ts_kwh_network
