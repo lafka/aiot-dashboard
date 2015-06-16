@@ -35,6 +35,17 @@ class Deviations(models.Model):
         db_table = 'deviations'
         ordering = ['datetime']
 
+    @classmethod
+    def minutes_for_range(cls, start, end, deviation_types=None):
+        qs = cls.objects.filter(datetime__gte=start,
+                                datetime__lt=end,
+                                device_key__in=Room.get_active_devices())
+        if deviation_types:
+            qs = qs.filter(deviation_type__in=deviation_types)
+
+        return qs.count()
+
+
 class Device(models.Model):
     key = models.TextField(primary_key=True)
     name = models.TextField()
@@ -84,6 +95,14 @@ class Room(models.Model):
     @classmethod
     def get_active_rooms(cls):
         return cls.objects.exclude(devices=None).select_related('room_type').prefetch_related('devices')
+
+    @classmethod
+    def get_active_devices(cls):
+        devices = []
+        for room in cls.get_active_rooms():
+            for device in room.devices.all():
+                devices.append(device)
+        return devices
 
     def get_latest_ts(self, cls):
         # TODO: We should not accept values that's way behind in time.

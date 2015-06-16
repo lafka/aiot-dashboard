@@ -70,7 +70,7 @@
 }
 .box .buttons i {
 	display: inline-block;
-	min-width: 22px;
+	min-width: 16px;
 }
 #graphs .buttons .btn, #graphs .buttons .btn, #graphs .buttons li {
     display: inline-block;

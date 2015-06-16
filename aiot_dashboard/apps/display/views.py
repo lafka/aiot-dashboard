@@ -98,22 +98,20 @@ class DataSseView(EventsSseView):
     def _build_room_deviations(self):
         today = get_today()
         data = {
-            'total': []
+            'total': [],
+            'rooms': []
         }
 
         for h in self.graph_range:
-            for m in range(0, 60):
-                dte = today + datetime.timedelta(minutes=(h * 60) + m)
+            dte = today + datetime.timedelta(hours=h)
 
-            total = 0
-            for room in Room.get_active_rooms():
-                value = room.deviation_minutes_for_range(start=dte,
-                                                         end=dte + datetime.timedelta(minutes=1))
-                if room.key not in data:
-                    data[room.key] = []
-                data[room.key].append([(h * 60) + m, value])
-                total += value
-            data['total'].append([(h * 60) + m, value])
+            value = Deviations.minutes_for_range(start=dte,
+                                                 end=dte + datetime.timedelta(hours=1))
+            data['total'].append([h, value])
+
+        for room in Room.get_active_rooms():
+            data['rooms'].append([room.name, room.deviation_minutes_for_range(today,
+                                                                              today + datetime.timedelta(hours=24))])
         return data
 
     def _build_current_kwh_msg(self, data=[]):

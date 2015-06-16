@@ -32,12 +32,13 @@ $(function() {
     function initGraphs() {
         $box.append('<div class="buttons"><ul></ul></div>');
 
-        for(h = 0; h < 24; h++) {
+        for(h = 0; h < 24; h+=2) {
             time_ticks.push([h, ("" + h).lpad("0", 2) + ":00"]);
         }
 
         initKwhGraph();
         initDeviationsTotalGraph();
+        initDeviationsPerRoomGraph();
         initButtons();
 
     	$box.data('updateFunc', function(rec) {
@@ -55,7 +56,8 @@ $(function() {
     function initButtons() {
         var $buttons = $box.find('.buttons');
         $box.find('.buttons ul').append('<li><button class="btn btn-default btn_kwm" data-mode="0"><i class="fa fa-bolt"></i> kWm</button></li>');
-        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_deviations" data-mode="1"><i class="fa fa-exclamation-triangle"></i> Deviations</button></li>');
+        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_deviations" data-mode="1"><i class="fa fa-exclamation-triangle"></i> Total Deviations</button></li>');
+        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_deviations_room" data-mode="2"><i class="fa fa-bar-chart"></i> Room Deviations</button></li>');
         
         $buttons.find('.btn').css('margin-left', '-' + $buttons.width() + 'px');
         setTimeout(function() {
@@ -141,17 +143,10 @@ $(function() {
     	
     	$dev_graph.data('updateFunc', function(rec) {
             var graph_data = [];
-            $(rec.circuits).each(function(ci) {
-                var circuit = rec.circuits[ci];
-                var vals = [];
-                $(circuit.kwh).each(function(i) {
-                	vals.push([circuit.kwh[i][0], circuit.kwh[i][1] * 60]);
-                });
-                
-                graph_data.push({
-                    label: circuit.name,
-                    data: vals
-                });
+            
+            graph_data.push({
+            	label: 'total',
+            	data: rec.deviations.total
             });
 
             $dev_graph.unbind('plot');
@@ -168,14 +163,8 @@ $(function() {
                     xaxis: {
                         ticks: time_ticks
                     },
-                    yaxis: {
-                        tickFormatter: function formatter(val, axis) {
-                            return "" + val + " kWm";
-                        }
-                    },
                     legend: {
-                        show: true,
-                        backgroundOpacity: 0.5
+                    	show: false
                     }
                 });            	
             });
@@ -183,6 +172,46 @@ $(function() {
         });    	
     }
 
+    function initDeviationsPerRoomGraph() {
+    	$box.append('<div class="dpr_graph graph" data-mode="2" style="width: 100%; height: 85%; margin-top: 40px; display: none;"></div>')
+    	var $dpr_graph = $box.find(".dpr_graph:first");
+    	
+    	$dpr_graph.data('updateFunc', function(rec) {
+            var graph_data = [];
+
+            graph_data.push({
+            	label: 'rooms',
+            	data: rec.deviations.rooms
+            });
+
+            $dpr_graph.unbind('plot');
+            $dpr_graph.bind('plot', function() {
+                $.plot($dpr_graph, graph_data, {
+                    series: {
+                        stack: false,
+                        lines: {
+                            show: false,
+                        },
+                        bars: {
+                        	show: true,
+        					barWidth: 0.6,
+        					align: "center"
+                        }
+                    },
+                    xaxis: {
+                    	mode: "categories",
+        				tickLength: 0
+        			},
+                    yaxis: {
+                    },
+                    legend: {
+                        show: false,
+                    }
+                });            	
+            });
+            $dpr_graph.trigger('plot');
+        });
+    }
 
     initGraphs();
 });

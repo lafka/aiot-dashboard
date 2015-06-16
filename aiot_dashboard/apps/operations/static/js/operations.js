@@ -97,6 +97,8 @@ $(function() {
         });
         $box.find('.focusbox i').removeClass('fa-chevron-circle-down');
         $box.find('.focusbox i').addClass('fa-chevron-circle-up');
+        
+        graphResizer($box);
     }
     function unfocusBox($box) {
         $box.animate({
@@ -120,6 +122,14 @@ $(function() {
         });
         $box.find('.focusbox i').removeClass('fa-chevron-circle-up');
         $box.find('.focusbox i').addClass('fa-chevron-circle-down');
+        graphResizer($box);
+    }
+    function graphResizer($box) {
+        for(n = 0; n < 500; n += 100) {
+        	setTimeout(function() {
+        		$box.find('.graph').trigger('plot');
+        	}, n);
+        }
     }
     
     $(window).resize(calcSizes);
