@@ -44,7 +44,6 @@ class DataSseView(EventsSseView):
     def _build_graph_range(self, request):
         self.graph_range = range(int(request.REQUEST.get('graph_start', 7)),
                                  int(request.REQUEST.get('graph_end', 18)))
-        print request.REQUEST.get('graph_start', 7)
 
     def _build_rooms_msg(self, data=[]):
         for room in self.rooms:
@@ -90,9 +89,31 @@ class DataSseView(EventsSseView):
                 'circuits': circuits,
                 'max_month': self._get_max_kwh_for_current_month(),
                 'current_kwh': self._build_current_kwh(),
-                'productivity': self._build_energy_productivity_for_network()
+                'productivity': self._build_energy_productivity_for_network(),
+                'deviations': self._build_room_deviations()
             })
             self.last_power = datetime.datetime.utcnow()
+        return data
+
+    def _build_room_deviations(self):
+        today = get_today()
+        data = {
+            'total': []
+        }
+
+        for h in self.graph_range:
+            for m in range(0, 60):
+                dte = today + datetime.timedelta(minutes=(h * 60) + m)
+
+            total = 0
+            for room in Room.get_active_rooms():
+                value = room.deviation_minutes_for_range(start=dte,
+                                                         end=dte + datetime.timedelta(minutes=1))
+                if room.key not in data:
+                    data[room.key] = []
+                data[room.key].append([(h * 60) + m, value])
+                total += value
+            data['total'].append([(h * 60) + m, value])
         return data
 
     def _build_current_kwh_msg(self, data=[]):

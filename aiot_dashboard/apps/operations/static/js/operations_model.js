@@ -37,10 +37,10 @@ $(function() {
     
     function initButtons() {
         var $buttons = $box.find('.buttons');
-        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_availability" data-mode="0"><i class="fa fa-users"></i> Availability</button></li>');
-        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_worst" data-mode="1"><i class="fa fa-users"></i> Worst 5</button></li>');
-        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_productivity" data-mode="2"><i class="fa fa-users"></i> Productivity</button></li>');
-        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_bim"><i class="fa fa-users"></i> Go to TotalBIM</button></li>');
+        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_kwm" data-mode="0"><i class="fa fa-users"></i> Availability</button></li>');
+        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_worst" data-mode="1"><i class="fa fa-arrow-down"></i> Worst 5</button></li>');
+        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_productivity" data-mode="2"><i class="fa fa-wrench"></i> Productivity</button></li>');
+        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_bim"><i class="fa fa-arrow-right"></i> Go to TotalBIM</button></li>');
         
         $buttons.find('.btn').css('margin-left', '-' + $buttons.width() + 'px');
         setTimeout(function() {
@@ -153,5 +153,5 @@ $(function() {
         }
     }
 
-    initModelBox();
+    //initModelBox();
 });

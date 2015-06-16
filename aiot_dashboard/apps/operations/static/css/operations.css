@@ -37,10 +37,10 @@
     color: #888;
     z-index: 10;
 }
-#model .buttons {
+.box .buttons {
 	/*float: right;*/
 }
-#model .buttons ul {
+.box .buttons ul {
     position: absolute;
     z-index: 10;
 	
@@ -48,10 +48,10 @@
 	margin-top: 60px;
 	opacity: 0.8;
 }
-#model .buttons li {
+.box .buttons li {
 	display: block;
 }
-#model .buttons .btn {
+.box .buttons .btn {
 	display: block;
     background: #fff;
 	border: 1px solid #eee;
@@ -59,11 +59,22 @@
 	width: 150px;
 	text-align: left;
 	margin-bottom: 4px;
+	margin-right: 4px;
 }
-#model .buttons .btn_bim {
+.box .buttons .btn_bim {
 	margin-top: 30px;
 }
-#model .buttons .btn.active {
+.box .buttons .btn.active {
 	background: #484;
 	color: #fff;
+}
+.box .buttons i {
+	display: inline-block;
+	min-width: 22px;
+}
+#graphs .buttons .btn, #graphs .buttons .btn, #graphs .buttons li {
+    display: inline-block;
+}
+#graphs .buttons ul {
+    margin-top: 0px;
 }

@@ -4,6 +4,7 @@ from datetime import timedelta
 
 from django.db import models
 from django.utils import timezone
+from django.db.models.aggregates import Sum
 
 class TimeSeriesMixin(object):
     @classmethod
@@ -106,6 +107,15 @@ class Room(models.Model):
         return Deviations.objects.filter(device_key__in=self.devices.all(),
                                          deviation_type__in=deviation_types,
                                          datetime__gte=today).count()
+
+    def deviation_minutes_for_range(self, start, end, deviation_types=None):
+        qs = Deviations.objects.filter(device_key__in=self.devices.all(),
+                                       datetime__gte=start,
+                                       datetime__lt=end)
+        if deviation_types:
+            qs = qs.filter(deviation_type__in=deviation_types)
+
+        return qs.count()
 
     def get_latest_room_state(self):
         sensor_map = {
