@@ -59,6 +59,7 @@ class DataSseView(EventsSseView):
                 'quality_index': room.deviation_minutes_today([Deviations.DeviationType.TEMPERATURE,
                                                                Deviations.DeviationType.CO2,
                                                                Deviations.DeviationType.HUMIDITY]),
+                'subjective_evaluation': room.subjective_evaluation(),
                 'deviations': {
                     'temperature': room.deviation_minutes_today([Deviations.DeviationType.TEMPERATURE]),
                     'co2': room.deviation_minutes_today([Deviations.DeviationType.CO2]),

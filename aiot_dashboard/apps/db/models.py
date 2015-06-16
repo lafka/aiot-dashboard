@@ -12,6 +12,12 @@ class TimeSeriesMixin(object):
             return cls.objects.filter(datetime__gte=start, datetime__lt=end, device_key=device.key).order_by('-datetime')
         return cls.objects.filter(datetime__gte=start, datetime__lt=end).order_by('-datetime')
 
+    @classmethod
+    def get_all_ts(cls, device=None):
+        if device:
+            return cls.objects.filter(device_key=device.key).order_by('-datetime')
+        return cls.objects.order_by('-datetime')
+
 
 class Deviations(models.Model):
     class DeviationType:
@@ -104,11 +110,11 @@ class Room(models.Model):
     def get_latest_room_state(self):
         sensor_map = {
             'co2': TsCo2,
-            'temp': TsTemperature,
-            'db': TsDecibel,
-            'moist': TsMoist,
+            'temperature': TsTemperature,
+            'noise': TsDecibel,
+            'humidity': TsMoist,
             'movement': TsMovement,
-            'lux': TsLight,
+            'light': TsLight,
         }
 
         ret = {}
@@ -138,6 +144,9 @@ class Room(models.Model):
             return ts.value
         return 0
 
+    def subjective_evaluation(self):
+        ts = TsSubjectiveEvaluation.get_all_ts(self.devices.first()).values_list('value')
+        return sum(i[0] for i in ts)/len(ts)
 
 class RoomType(models.Model):
     description = models.TextField()
@@ -147,6 +156,9 @@ class RoomType(models.Model):
         managed = False
         db_table = 'room_type'
         ordering = ['description']
+
+    def get_active_rooms(self):
+        return Room.get_active_rooms().filter(room_type=self)
 
 
 class MapDeviceRoom(models.Model):
@@ -322,5 +334,16 @@ class TsTemperature(models.Model, TimeSeriesMixin):
     class Meta:
         managed = False
         db_table = 'ts_temperature'
+        ordering = ['datetime']
+        get_latest_by = 'datetime'
+
+class TsSubjectiveEvaluation(models.Model, TimeSeriesMixin):
+    datetime = models.DateTimeField(blank=True, null=True)
+    device_key = models.ForeignKey('Device', db_column='device_key', blank=True, null=True)
+    value = models.FloatField()
+
+    class Meta:
+        managed = False
+        db_table = 'ts_subjective_evaluation'
         ordering = ['datetime']
         get_latest_by = 'datetime'

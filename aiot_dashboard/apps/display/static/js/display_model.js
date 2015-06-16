@@ -23,13 +23,20 @@ $(function() {
                     .append('<li><div class="color_block" style="background-color: #0f0;"></div> < 1000</li>')
                     .append('<li><div class="color_block" style="background-color: #ff0;"></div> 1000 - 1500</li>')
                     .append('<li><div class="color_block" style="background-color: #f00;"></div> > 1500</li>');
-            } else {
+            } else if(mode == 2) {
                 $legend.find('.icon').html("<div class='temperature'></div>");
                 $legend.find('ul')
                     .append('<li><div class="color_block" style="background-color: #00f;"></div> < 20</li>')
                     .append('<li><div class="color_block" style="background-color: #0f0;"></div> 20 - 23</li>')
                     .append('<li><div class="color_block" style="background-color: #f00;"></div> > 23</li>');
-            }
+             } else {
+                $legend.find('.icon').html("<div class='subjective_evaluation'></div>");
+                $legend.find('ul')
+                    .append('<li><div class="color_block" style="background-color: #0f0;"></div> Bra </li>')
+                    .append('<li><div class="color_block" style="background-color: #ff0;"></div> OK </li>')
+                    .append('<li><div class="color_block" style="background-color: #f00;"></div> Dårlig </li>');
+
+             }
 
             $legend.animate({
                 'margin-left': '10px'
@@ -81,6 +88,7 @@ $(function() {
 
                 setMode(2);
                 $box.data('updateFunc', function(rec) {
+                    console.log(rec);
                     ts = new Date().getTime();
                     if (last_mode_change === 0) {
                         last_mode_change = ts;
@@ -89,7 +97,7 @@ $(function() {
                         last_mode_change = ts;
 
                         mode += 1;
-                        if(mode >= 3) {
+                        if(mode >= 4) {
                             mode = 0;
                         }
                         setMode(mode);
@@ -115,11 +123,28 @@ $(function() {
 
                         $('#viewer-container').viewer('color', col, room_key);
                         $('#viewer-container').viewer('show', room_key);
-                    } else {
+                    } else if(mode == 2) {
                         col = rec.temperature < 20 ? '#00f' : '#0f0';
                         if(rec.temperature > 23) {
                             col = '#f00';
                         }
+
+                        $('#viewer-container').viewer('color', col, room_key);
+                        $('#viewer-container').viewer('show', room_key);
+                    }
+                    else {
+                        if(rec.subjective_evaluation < -0.2) {
+                            col = '#f00';
+                        }
+                        else if(rec.subjective_evaluation > 0.2) {
+                            col = '#0f0';
+                        }
+                        else {
+                            col = '#ff0';
+                        }
+
+                        $('#viewer-container').viewer('color', col, room_key);
+                        $('#viewer-container').viewer('show', room_key);
 
                         $('#viewer-container').viewer('color', col, room_key);
                         $('#viewer-container').viewer('show', room_key);
