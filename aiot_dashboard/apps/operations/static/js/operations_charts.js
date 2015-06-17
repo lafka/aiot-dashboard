@@ -91,7 +91,7 @@ $(function() {
                 var circuit = rec.circuits[ci];
                 var vals = [];
                 $(circuit.kwh).each(function(i) {
-                    vals.push([circuit.kwh[i][0], circuit.kwh[i][1] * 60]);
+                    vals.push([circuit.kwm[i][0], circuit.kwm[i][1]]);
                 });
                 
                 graph_data.push({
@@ -101,7 +101,7 @@ $(function() {
             });
             graph_data.push({
                 label: 'Max',
-                data: [[0, rec.max_month * 60], [24, rec.max_month * 60]],
+                data: [[0, rec.max_month], [24, rec.max_month]],
                 stack: false,
                 lines: {
                     fill: false
@@ -124,7 +124,7 @@ $(function() {
                     },
                     yaxis: {
                         tickFormatter: function formatter(val, axis) {
-                            return "" + val + " kWm";
+                            return "" + val + " kWh";
                         }
                     },
                     legend: {

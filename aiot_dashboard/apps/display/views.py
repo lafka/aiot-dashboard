@@ -83,6 +83,7 @@ class DataSseView(EventsSseView):
                 circuits.append({
                     'name': circuit.name,
                     'kwh': self._build_kwh_for_devices(circuit.devices.all()),
+                    'kwm': self._build_kwh_for_devices(circuit.devices.all(), cls=TsKwm, avg=True),
                 })
             data.append({
                 'type': 'graph',
@@ -123,17 +124,21 @@ class DataSseView(EventsSseView):
             self.last_power = datetime.datetime.utcnow()
         return data
 
-    def _build_kwh_for_devices(self, devices=None):
+    def _build_kwh_for_devices(self, devices=None, cls=TsKwh, avg=False):
         today = get_today()
         data = []
 
         for h in self.graph_range:
             dte = today + datetime.timedelta(hours=h)
-            qs = TsKwh.objects.filter(datetime__gte=dte,
-                                      datetime__lt=dte + datetime.timedelta(hours=1))
+            qs = cls.objects.filter(datetime__gte=dte,
+                                    datetime__lt=dte + datetime.timedelta(hours=1))
             if devices:
                 qs = qs.filter(device_key__in=devices)
-            data.append([h, self._get_aggregate_sum(qs)])
+                
+            if not avg:
+                data.append([h, self._get_aggregate_sum(qs)])
+            else:
+                data.append([h, self._get_aggregate_avg(qs)])
         return data
 
     def _build_energy_productivity_for_network(self):
