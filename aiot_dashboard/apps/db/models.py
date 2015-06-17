@@ -144,9 +144,9 @@ class Room(models.Model):
         return 0
 
     def subjective_evaluation(self):
-        ts = TsSubjectiveEvaluation.get_all_ts(self.devices.first()).values_list('value')
-        if ts:
-            return sum(i[0] for i in ts)/len(ts)
+        evaluations = TsSubjectiveEvaluation.get_all_ts(self.devices.first())
+        if evaluations.count():
+            return sum(evaluation.value for evaluation in evaluations) / len(evaluations)
 
 class RoomType(models.Model):
     description = models.TextField()
