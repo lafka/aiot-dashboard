@@ -4,7 +4,14 @@ $(function() {
     var mode = 0; // 0 = Occupied, 1 = Time usage, 2 = Quality
 
     function setMode(new_mode) {
-        mode = parseInt(new_mode);
+    	mode = parseInt(new_mode);
+    	
+    	// Refresh immediately if we have stored records
+    	if($box.data('lastRoomRecs') !== undefined) {
+    		$.each($box.data('lastRoomRecs'), function(k, v) {
+    			$box.data('updateFunc')(v);
+    		});
+    	}
         
         var $button = $box.find('.buttons ul .btn').eq(mode);
         $box.find('.buttons ul .active').removeClass('active');
@@ -123,6 +130,13 @@ $(function() {
                     }
 
                     var room_key = rec.key;
+                    
+                    var lastRoomRecs = $box.data('lastRoomRecs');
+                    if(lastRoomRecs === undefined)
+                    	lastRoomRecs = {}
+                    
+                    lastRoomRecs[room_key] = rec;
+                    $box.data('lastRoomRecs', lastRoomRecs);
 
                     if(mode === 0) {
                         // Set color based on occupied (red = movement, green = not movement)
