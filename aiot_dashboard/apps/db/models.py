@@ -113,9 +113,12 @@ class Room(models.Model):
             return None
 
     def current_manminutes(self):
-        ts = self.get_latest_ts(TsPersonsInside)
-        if ts:
-            return ts.value
+        try:
+            ts = self.get_latest_ts(TsPersonsInside)
+            if ts:
+                return ts.value
+        except TsPersonsInside.DoesNotExist:
+            pass
         return 0
 
     def current_productivity(self):

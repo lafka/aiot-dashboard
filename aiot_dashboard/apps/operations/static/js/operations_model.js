@@ -153,5 +153,5 @@ $(function() {
         }
     }
 
-    //initModelBox();
+    initModelBox();
 });

@@ -177,5 +177,6 @@ class DataSseView(EventsSseView):
         for circuit in PowerCircuit.objects.all().prefetch_related('devices'):
             val = TsKwm.objects.filter(id__in=TsKwm.objects.filter(device_key__in=circuit.devices.all())\
                                        .order_by('-datetime')[:10]).aggregate(Avg('value'))['value__avg']
-            total += val
+            if val:
+                total += val
         return math.ceil(total * 60) if total else 0
