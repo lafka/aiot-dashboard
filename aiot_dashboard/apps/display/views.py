@@ -134,7 +134,7 @@ class DataSseView(EventsSseView):
                                     datetime__lt=dte + datetime.timedelta(hours=1))
             if devices:
                 qs = qs.filter(device_key__in=devices)
-                
+
             if not avg:
                 data.append([h, self._get_aggregate_sum(qs)])
             else:

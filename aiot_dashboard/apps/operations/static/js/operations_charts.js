@@ -91,7 +91,7 @@ $(function() {
                 var circuit = rec.circuits[ci];
                 var vals = [];
                 $(circuit.kwh).each(function(i) {
-                    vals.push([circuit.kwm[i][0], circuit.kwm[i][1]]);
+                    vals.push([circuit.kwm[i][0], circuit.kwm[i][1] * 60]);
                 });
                 
                 graph_data.push({
