@@ -8,7 +8,7 @@ CREATE TABLE room (
     key TEXT PRIMARY KEY NOT NULL,
     name TEXT NOT NULL,
     room_type_id INTEGER REFERENCES room_type(id),
-    floor INTEGER default 0
+    floor INTEGER default 0,
     manminutes_capacity INTEGER NOT NULL,
     area numeric(6, 2) DEFAULT 0
 );
