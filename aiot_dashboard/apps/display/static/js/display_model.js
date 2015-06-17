@@ -53,10 +53,7 @@ $(function() {
 
         // Load the Viewer API
         bimsync.load();
-        bimsync.setOnLoadCallback(createViewer);
-
-        // Callback that loads a viewer access token URL
-        function createViewer() {
+        bimsync.setOnLoadCallback(function() {
             var $viewer = $('#viewer-container');
             $viewer.viewer('loadurl', 'https://api.bimsync.com/1.0/viewer/access?token=' + token);
 
@@ -107,50 +104,53 @@ $(function() {
                     }
 
                     var room_key = rec.key;
+                    var col;
 
                     if(mode === 0) {
                         // Set color based on occupied (red = movement, green = not movement)
                         col = rec.occupied ? '#FF0000' : '#00FF00';
 
-                        $('#viewer-container').viewer('color', col, room_key);
-                        $('#viewer-container').viewer('show', room_key);
+                        $viewer.viewer('color', col, room_key);
+                        $viewer.viewer('show', room_key);
                     } else if(mode == 1) {
                         col = rec.co2 < 1000 ? '#0f0' : '#ff0';
                         if(rec.co2 > 1500) {
                             col = '#f00';
                         }
 
-                        $('#viewer-container').viewer('color', col, room_key);
-                        $('#viewer-container').viewer('show', room_key);
+                        $viewer.viewer('color', col, room_key);
+                        $viewer.viewer('show', room_key);
                     } else if(mode == 2) {
                         col = rec.temperature < 20 ? '#00f' : '#0f0';
                         if(rec.temperature > 23) {
                             col = '#f00';
                         }
 
-                        $('#viewer-container').viewer('color', col, room_key);
-                        $('#viewer-container').viewer('show', room_key);
+                        $viewer.viewer('color', col, room_key);
+                        $viewer.viewer('show', room_key);
                     }
                     else {
                         if(rec.subjective_evaluation === null) {
-                            col = '#999';
-                        }
-                        else if(rec.subjective_evaluation < -0.2) {
-                            col = '#f00';
-                        }
-                        else if(rec.subjective_evaluation > 0.2) {
-                            col = '#0f0';
+                            $viewer.viewer('translucent', room_key);
                         }
                         else {
-                            col = '#ff0';
-                        }
+                            if(rec.subjective_evaluation < -0.2) {
+                                col = '#f00';
+                            }
+                            else if(rec.subjective_evaluation > 0.2) {
+                                col = '#0f0';
+                            }
+                            else {
+                                col = '#ff0';
+                            }
 
-                        $('#viewer-container').viewer('color', col, room_key);
-                        $('#viewer-container').viewer('show', room_key);
+                            $viewer.viewer('color', col, room_key);
+                            $viewer.viewer('show', room_key);
+                        }
                     }
                 });
             });
-        }
+        });
     }
 
     initModelBox();
