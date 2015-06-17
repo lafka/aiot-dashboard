@@ -9,14 +9,14 @@ class TimeSeriesMixin(object):
     @classmethod
     def get_ts_between(cls, start, end, device=None):
         if device:
-            return cls.objects.filter(datetime__gte=start, datetime__lt=end, device_key=device.key).order_by('-datetime')
-        return cls.objects.filter(datetime__gte=start, datetime__lt=end).order_by('-datetime')
+            return cls.objects.filter(datetime__gte=start, datetime__lt=end, device_key=device.key)
+        return cls.objects.filter(datetime__gte=start, datetime__lt=end)
 
     @classmethod
     def get_all_ts(cls, device=None):
         if device:
-            return cls.objects.filter(device_key=device.key).order_by('-datetime')
-        return cls.objects.order_by('-datetime')
+            return cls.objects.filter(device_key=device.key)
+        return cls.objects.all()
 
 
 class Deviations(models.Model):
