@@ -8,6 +8,7 @@ var flot_timeseries_by_type = {};
 
 function get_timeseries_by_type(type) {
     var timeseries = flot_timeseries_by_type[type];
+
     if (!timeseries) {
         timeseries = {
             label: type,
@@ -41,14 +42,25 @@ function plot_overview_graph() {
         flot_timeseries.push(timeseries);
     });
 
-    $.plot($('#graph'), flot_timeseries, {
-        xaxis: {
-            mode: 'time'
-        },
-        yaxis: {
-            show: false
-        }
-    });
+    $graph_container = $('#graph');
+
+    var plot = $graph_container.data('plot');
+
+    if (plot) {
+        plot.setData(flot_timeseries);
+        plot.setupGrid();
+        plot.draw();
+    }
+    else {
+        $.plot($graph_container, flot_timeseries, {
+            xaxis: {
+                mode: 'time'
+            },
+            yaxis: {
+                show: false
+            }
+        });
+    }
 }
 
 function plot_detailed_graphs() {
@@ -57,23 +69,33 @@ function plot_detailed_graphs() {
         var sensor_timeseries = get_timeseries_by_type(type);
         sensor_timeseries.color = type_obj.color;
 
-        $.plot($('#graph-' + type), [sensor_timeseries], {
-            xaxis: {
-                mode: 'time'
-            },
-            yaxis: {
-                show: true,
-                tickFormatter: function (value) {
-                    if (type_obj.decimals) {
-                        value = value.toFixed(2);
+        $graph_container = $('#graph-' + type);
+        var plot = $graph_container.data('plot');
+
+        if (plot) {
+            plot.setData([sensor_timeseries]);
+            plot.setupGrid();
+            plot.draw();
+        }
+        else {
+            $.plot($graph_container, [sensor_timeseries], {
+                xaxis: {
+                    mode: 'time'
+                },
+                yaxis: {
+                    show: true,
+                    tickFormatter: function (value) {
+                        if (type_obj.decimals) {
+                            value = value.toFixed(2);
+                        }
+                        else {
+                            value = '' + value;
+                        }
+                        return value + type_obj.unit_suffix;
                     }
-                    else {
-                        value = '' + value;
-                    }
-                    return value + type_obj.unit_suffix;
                 }
-            }
-        });
+            });
+        }
     });
 }
 

@@ -10,14 +10,14 @@ class TimeSeriesMixin(object):
     @classmethod
     def get_ts_between(cls, start, end, device=None):
         if device:
-            return cls.objects.filter(datetime__gte=start, datetime__lt=end, device_key=device.key).order_by('-datetime')
-        return cls.objects.filter(datetime__gte=start, datetime__lt=end).order_by('-datetime')
+            return cls.objects.filter(datetime__gte=start, datetime__lt=end, device_key=device.key)
+        return cls.objects.filter(datetime__gte=start, datetime__lt=end)
 
     @classmethod
     def get_all_ts(cls, device=None):
         if device:
-            return cls.objects.filter(device_key=device.key).order_by('-datetime')
-        return cls.objects.order_by('-datetime')
+            return cls.objects.filter(device_key=device.key)
+        return cls.objects.all()
 
 
 class Deviations(models.Model):
@@ -174,11 +174,9 @@ class Room(models.Model):
         return 0
 
     def subjective_evaluation(self):
-        ts = TsSubjectiveEvaluation.get_all_ts(self.devices.first()).values_list('value')
-        try:
-            return sum(i[0] for i in ts) / len(ts)
-        except ZeroDivisionError:
-            return 0
+        evaluations = TsSubjectiveEvaluation.get_all_ts(self.devices.first())
+        if evaluations.count():
+            return sum(evaluation.value for evaluation in evaluations) / len(evaluations)
 
 class RoomType(models.Model):
     description = models.TextField()
