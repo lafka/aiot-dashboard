@@ -5,6 +5,7 @@ aiot.events = {};
 
 function EventManager(config) {
     this.config = config;
+    this.source = null;
 }
 
 EventManager.prototype.build_url = function() {
@@ -25,6 +26,11 @@ EventManager.prototype.build_url = function() {
     }
     if (this.config.stream) {
         params.push('stream=true');
+    }
+    if (this.config.params !== undefined) {
+    	$.each(this.config.params, function(k, v) {
+    		params.push(k + '=' + encodeURIComponent(v));
+    	});
     }
 
     var query_seperator = this.config.url.indexOf('?') >= 0 ? '&' : '?';
@@ -57,6 +63,8 @@ EventManager.prototype.start = function() {
     var url = this.build_url();
 
     var source = new EventSource(url);
+    self.source = source;
+
     source.onmessage = function(e) {
         self.trigger_callback('on_message', [e]);
         var events = JSON.parse(e.data);
@@ -76,6 +84,14 @@ EventManager.prototype.start = function() {
     };
 
     /* TODO: Handle errors gracefully here .. */
+};
+
+EventManager.prototype.stop = function() {
+	if(this.source !== null) {
+		this.source.close();
+		this.source = null;
+		console.log("Stopped source");
+	}
 };
 
 ns.EventManager = EventManager;

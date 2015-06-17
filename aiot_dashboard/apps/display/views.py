@@ -9,7 +9,7 @@ from django.views.generic.base import TemplateView
 
 from aiot_dashboard.apps.db.models import Room, PowerCircuit, TsKwm, TsKwh, TsEnergyProductivity, Deviations, TsKwhNetwork
 from aiot_dashboard.core.sse import EventsSseView
-from aiot_dashboard.core.utils import get_today
+from aiot_dashboard.core.utils import get_today, get_start_of_week
 
 
 class BimView(TemplateView):
@@ -27,9 +27,12 @@ class DataSseView(EventsSseView):
     rooms = []
     last_power = None
     last_current_kwh = None
+    time_range = None
+    use_current = True
 
     def dispatch(self, request, *args, **kwargs):
         self._build_graph_range(request)
+        self._build_time_range(request)
         return EventsSseView.dispatch(self, request, *args, **kwargs)
 
     def get_events(self):
@@ -40,6 +43,22 @@ class DataSseView(EventsSseView):
         data = self._build_graph_msg(data)
         data = self._build_current_kwh_msg(data)
         return data
+
+    def _build_time_range(self, request):
+        range = request.REQUEST.get('time_range', 'today')
+        if range not in ['today', 'last_7', 'last_week']:
+            raise Exception("Bad time_range")
+
+        if range == 'today':
+            self.time_range = (get_today(), None)
+            self.use_current = True
+        elif range == 'last_7':
+            self.time_range = (get_today() - datetime.timedelta(days=7), None)
+            self.use_current = False
+        else:
+            start = get_start_of_week(get_today() - datetime.timedelta(days=7))
+            self.time_range = (start, start + datetime.timedelta(days=7))
+            self.use_current = False
 
     def _build_graph_range(self, request):
         self.graph_range = range(int(request.REQUEST.get('graph_start', 7)),
@@ -54,15 +73,16 @@ class DataSseView(EventsSseView):
                 'occupied': room.current_movement(),
                 'co2': room.current_co2(),
                 'temperature': room.current_temperature(),
-                'productivity': "%s%%" % room.current_productivity(),
-                'quality_index': room.deviation_minutes_today([Deviations.DeviationType.TEMPERATURE,
-                                                               Deviations.DeviationType.CO2,
-                                                               Deviations.DeviationType.HUMIDITY]),
+                'productivity': "%s%%" % room.current_productivity() if self.use_current else room.calc_productivity(self.time_range[0], self.time_range[1]),
+                'quality_index': room.deviation_minutes_for_range(self.time_range[0], self.time_range[1],
+                                                                  [Deviations.DeviationType.TEMPERATURE,
+                                                                   Deviations.DeviationType.CO2,
+                                                                   Deviations.DeviationType.HUMIDITY]),
                 'subjective_evaluation': room.subjective_evaluation(),
                 'deviations': {
-                    'temperature': room.deviation_minutes_today([Deviations.DeviationType.TEMPERATURE]),
-                    'co2': room.deviation_minutes_today([Deviations.DeviationType.CO2]),
-                    'humidity': room.deviation_minutes_today([Deviations.DeviationType.HUMIDITY])
+                    'temperature': room.deviation_minutes_for_range(self.time_range[0], self.time_range[1], [Deviations.DeviationType.TEMPERATURE]),
+                    'co2': room.deviation_minutes_for_range(self.time_range[0], self.time_range[1], [Deviations.DeviationType.CO2]),
+                    'humidity': room.deviation_minutes_for_range(self.time_range[0], self.time_range[1], [Deviations.DeviationType.HUMIDITY])
                 }
             })
 

@@ -6,7 +6,44 @@ $(function() {
     var max_z_index = 200;
     var focus_offset = 100;
     var $focused_box = null;
+    var $filters = $('#filters');
 
+    function buildParamsFromFilter() {
+    	params = {};
+		$('#filters li').each(function() {
+			var $sel = $(this).find('.active:first');
+			if($sel.length > 0) {
+				params[$(this).attr('data-param')] = $sel.find('a:first').attr('data-value');
+			}
+		});
+		return params;
+    }
+
+    var event_manager = new aiot.events.EventManager({
+        on_event: function(event) {
+            $('.box').each(function() {
+                if($(this).data('updateFunc') !== undefined)
+                    $(this).data('updateFunc')(event);
+            });
+        },
+        url: Urls.operations_data_update(),
+        graph_start: 0,
+        graph_end: 25,
+        stream: true,
+        params: buildParamsFromFilter()
+    });
+    event_manager.start();
+    
+    function initFilters() {
+    	$('#filters a').click(function() {
+    		$(this).closest('li').find('.active').removeClass('active');
+    		$(this).closest('div').addClass('active');
+    		event_manager.stop();
+    		
+    		event_manager.config.params = buildParamsFromFilter();
+    		event_manager.start();
+    	});
+    }    
     function calcSizes() {
         // Get the operations panel as big as we can
         var height = $(window).height() - ($('#top').outerHeight(true) + $('footer').outerHeight(true)) - 30;
@@ -133,9 +170,9 @@ $(function() {
             setTimeout(updatePlots, n);
         }
     }
-    
     $(window).resize(calcSizes);
-    
+       
     calcSizes();
     initBoxHover();
+    initFilters();
 });

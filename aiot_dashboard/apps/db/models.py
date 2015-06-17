@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from django.db import models
 from django.utils import timezone
-from django.db.models.aggregates import Sum
+from django.db.models.aggregates import Sum, Avg
 
 class TimeSeriesMixin(object):
     @classmethod
@@ -126,6 +126,17 @@ class Room(models.Model):
     def current_productivity(self):
         return int((self.current_manminutes() / self.manminutes_capacity) * 100)
 
+    def calc_productivity(self, start, end):
+        qs = TsPersonsInside.objects.filter(device_key__in=self.devices.all())
+        if start:
+            qs = qs.filter(datetime__gte=start)
+        if end:
+            qs = qs.filter(datetime__lt=end)
+        val = qs.aggregate(Avg('value'))['value__avg']
+        if val:
+            return int((val / self.manminutes_capacity) * 100)
+        return 0
+
     def deviation_minutes_today(self, deviation_types):
         today = timezone.now().replace(hour=0, minute=0, second=0)
         return Deviations.objects.filter(device_key__in=self.devices.all(),
@@ -133,9 +144,11 @@ class Room(models.Model):
                                          datetime__gte=today).count()
 
     def deviation_minutes_for_range(self, start, end, deviation_types=None):
-        qs = Deviations.objects.filter(device_key__in=self.devices.all(),
-                                       datetime__gte=start,
-                                       datetime__lt=end)
+        qs = Deviations.objects.filter(device_key__in=self.devices.all())
+        if start:
+            qs = qs.filter(datetime__gte=start)
+        if end:
+            qs = qs.filter(datetime__lt=end)
         if deviation_types:
             qs = qs.filter(deviation_type__in=deviation_types)
 

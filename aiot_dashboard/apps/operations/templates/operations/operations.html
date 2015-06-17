@@ -19,6 +19,7 @@
 {% endblock %}
 
 {% block javascript %}
+<script type="text/javascript" src="{% static 'js/events/event_manager.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/operations.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/operations_stats.js' %}"></script>
 
@@ -33,23 +34,27 @@
 <script type="text/javascript" src="{% static 'justGage.1.0.1/raphael.2.1.0.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'justGage.1.0.1/justgage.dev.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/operations_gauge.js' %}"></script>
-
-<script type="text/javascript" src="{% static 'js/events/event_manager.js' %}"></script>
-<script type="text/javascript">
-$(function() {
-    var event_manager = new aiot.events.EventManager({
-        on_event: function(event) {
-            $('.box').each(function() {
-                if($(this).data('updateFunc') !== undefined)
-                    $(this).data('updateFunc')(event);
-            });
-        },
-        url: Urls.operations_data_update(),
-        graph_start: 0,
-        graph_end: 25,
-        stream: true
-    });
-    event_manager.start();
-});
-</script>
 {% endblock %}
+
+
+{% block filters %}
+<div class="block">
+    <div class="page-header">
+        <h2>Filter</h2>
+    </div>
+</div>
+<ul id="filters">
+    <li data-param='time_range'>
+        <h3>Time</h3>
+        <div class="active">
+            <a href="javascript:;" data-value='today'>Today</a>
+        </div>
+        <div>
+            <a href="javascript:;" data-value='last_7'>Last 7 Days</a>
+        </div>
+        <div>
+            <a href="javascript:;" data-value='last_week'>Last Week</a>
+        </div>
+    </li>
+</ul>
+{% endblock filters %}

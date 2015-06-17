@@ -46,6 +46,10 @@ footer .links li.active a { font-weight: bold; }
     border-right: 1px solid #e5e5e5;
 }
 
+#filters .active {
+    font-weight: bold;
+}
+
 li.active a { font-weight: bold; }
 
 .deviation-list .deviation {
