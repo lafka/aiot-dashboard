@@ -73,6 +73,8 @@ class Room(models.Model):
     room_type = models.ForeignKey('RoomType', blank=True, null=True, related_name='rooms')
     area = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     devices = models.ManyToManyField('Device', through='MapDeviceRoom')
+    manminutes_capacity = models.IntegerField()
+
 
     class Meta:
         managed = False
@@ -98,7 +100,7 @@ class Room(models.Model):
         return 0
 
     def current_productivity(self):
-        return int((self.current_manminutes() / self.room_type.manminutes_capacity) * 100)
+        return int((self.current_manminutes() / self.manminutes_capacity) * 100)
 
     def deviation_minutes_today(self, deviation_type):
         today = timezone.now().replace(hour=0, minute=0, second=0)
@@ -150,7 +152,6 @@ class Room(models.Model):
 
 class RoomType(models.Model):
     description = models.TextField()
-    manminutes_capacity = models.IntegerField()
 
     class Meta:
         managed = False
