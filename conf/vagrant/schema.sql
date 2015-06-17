@@ -1,16 +1,16 @@
 -- Main entities
 CREATE TABLE room_type (
     id SERIAL PRIMARY KEY,
-    description TEXT NOT NULL,
-    manminutes_capacity INTEGER NOT NULL
+    description TEXT NOT NULL
 );
 
 CREATE TABLE room (
     key TEXT PRIMARY KEY NOT NULL,
     name TEXT NOT NULL,
     room_type_id INTEGER REFERENCES room_type(id),
-    area numeric(6, 2) DEFAULT 0,
     floor INTEGER default 0
+    manminutes_capacity INTEGER NOT NULL,
+    area numeric(6, 2) DEFAULT 0
 );
 
 CREATE TABLE device (
@@ -162,24 +162,19 @@ AS
 -- View for room productivity calculations
 CREATE VIEW
     ts_room_productivity
-AS
+AS  
     SELECT
-        ts_persons_inside.datetime, ts_persons_inside.device_key, (ts_persons_inside.value / room_type.manminutes_capacity) AS value
+        ts_persons_inside.datetime, ts_persons_inside.device_key, (ts_persons_inside.value / room.manminutes_capacity) AS value
     FROM
         ts_persons_inside
     INNER JOIN
         map_device_room
-    ON
+    ON  
         ts_persons_inside.device_key = map_device_room.device_key
     INNER JOIN
         room
-    ON
-        room.key = map_device_room.room_key
-    INNER JOIN
-        room_type
-    ON
-        room.room_type_id = room_type.id;
-
+    ON  
+        room.key = map_device_room.room_key;
 
 -- Deviations
 CREATE TABLE deviations (
