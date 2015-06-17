@@ -88,7 +88,6 @@ $(function() {
 
                 setMode(2);
                 $box.data('updateFunc', function(rec) {
-                    console.log(rec);
                     ts = new Date().getTime();
                     if (last_mode_change === 0) {
                         last_mode_change = ts;
@@ -133,7 +132,10 @@ $(function() {
                         $('#viewer-container').viewer('show', room_key);
                     }
                     else {
-                        if(rec.subjective_evaluation < -0.2) {
+                        if(rec.subjective_evaluation === null) {
+                            col = '#999';
+                        }
+                        else if(rec.subjective_evaluation < -0.2) {
                             col = '#f00';
                         }
                         else if(rec.subjective_evaluation > 0.2) {
@@ -142,9 +144,6 @@ $(function() {
                         else {
                             col = '#ff0';
                         }
-
-                        $('#viewer-container').viewer('color', col, room_key);
-                        $('#viewer-container').viewer('show', room_key);
 
                         $('#viewer-container').viewer('color', col, room_key);
                         $('#viewer-container').viewer('show', room_key);
