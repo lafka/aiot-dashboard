@@ -47,7 +47,10 @@ class Command(BaseCommand):
             return rt
 
     def _create_room(self, data):
-        obj, _ = Room.objects.get_or_create(key=data['objectId'])
+        try:
+            obj = Room.objects.get(key=data['objectId'])
+        except Room.DoesNotExist:
+            obj = Room(key=data['objectId'])
         obj.name = data['name']
         obj.area = random.randrange(5.0, 50.0)
 
