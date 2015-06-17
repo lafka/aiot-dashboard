@@ -38,12 +38,11 @@ class Command(BaseCommand):
                 return rec['value']
         return None
 
-    def _get_room_type(self, value, capacity):
+    def _get_room_type(self, value):
         try:
             return RoomType.objects.get(description=value)
         except RoomType.DoesNotExist:
             rt = RoomType(description=value)
-            rt.manminutes_capacity = capacity
             rt.save()
             return rt
 
@@ -60,7 +59,9 @@ class Command(BaseCommand):
         if longname:
             if not capacity:
                 capacity = random.randint(4, 18)
-            obj.room_type = self._get_room_type(longname, capacity)
+            obj.room_type = self._get_room_type(longname)
+
+        obj.manminutes_capacity = capacity
 
         obj.save()
         return obj
