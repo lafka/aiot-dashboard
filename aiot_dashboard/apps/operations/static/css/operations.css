@@ -10,10 +10,10 @@
     cursor: pointer;
 }
 #operations .box h2 {
-	padding: 0px; margin: 0px 0px 20px;
-	padding: 4px;
-	background: #eee;
-	font-size: 14px; font-weight: bold;
+    padding: 0px; margin: 0px 0px 20px;
+    padding: 4px;
+    background: #eee;
+    font-size: 14px; font-weight: bold;
 }
 #stats ul { list-style: none; padding: 0px; margin: 0px; }
 #stats li { float: left; width: 50%; padding: 5px; }
@@ -38,39 +38,39 @@
     z-index: 10;
 }
 .box .buttons {
-	/*float: right;*/
+    /*float: right;*/
 }
 .box .buttons ul {
     position: absolute;
     z-index: 10;
-	
+    
     padding: 0px; margin: 0px;
-	margin-top: 60px;
-	opacity: 0.8;
+    margin-top: 60px;
+    opacity: 0.8;
 }
 .box .buttons li {
-	display: block;
+    display: block;
 }
 .box .buttons .btn {
-	display: block;
+    display: block;
     background: #fff;
-	border: 1px solid #eee;
-	border-radius: 8px;
-	width: 150px;
-	text-align: left;
-	margin-bottom: 4px;
-	margin-right: 4px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    width: 150px;
+    text-align: left;
+    margin-bottom: 4px;
+    margin-right: 4px;
 }
 .box .buttons .btn_bim {
-	margin-top: 30px;
+    margin-top: 30px;
 }
 .box .buttons .btn.active {
-	background: #484;
-	color: #fff;
+    background: #484;
+    color: #fff;
 }
 .box .buttons i {
-	display: inline-block;
-	min-width: 16px;
+    display: inline-block;
+    min-width: 16px;
 }
 #graphs .buttons .btn, #graphs .buttons .btn, #graphs .buttons li {
     display: inline-block;

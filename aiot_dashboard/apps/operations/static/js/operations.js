@@ -43,16 +43,16 @@ $(function() {
             var $box = $(this);
 
             var clickHandler = function(e) {
-            	if( e.target !== this ) 
-            		return;
+                if( e.target !== this ) 
+                    return;
 
-            	if($focused_box == null || $box.attr('id') != $focused_box.attr('id')) {
-            		unfocusOtherBoxes($box);
-            		focusBox($box);
-            	} else {
-            		$focused_box = null;
-            		unfocusBox($box);
-            	}
+                if($focused_box === null || $box.attr('id') != $focused_box.attr('id')) {
+                    unfocusOtherBoxes($box);
+                    focusBox($box);
+                } else {
+                    $focused_box = null;
+                    unfocusBox($box);
+                }
             };
             
             $(this).prepend("<div class='focusbox'><i class='fa fa-chevron-circle-down'></i></div>");
@@ -61,13 +61,13 @@ $(function() {
         });
     }
     function unfocusOtherBoxes($box) {
-    	$operations.find('.box').each(function() {
-    		if($box.attr('id') != $(this).attr('id'))
-    			unfocusBox($(this));
-    	});
+        $operations.find('.box').each(function() {
+            if($box.attr('id') != $(this).attr('id'))
+                unfocusBox($(this));
+        });
     }
     function focusBox($box) {
-    	$focused_box = $box;
+        $focused_box = $box;
         $box.css('z-index', z_index);
         z_index += 1;
         if(z_index > max_z_index)
@@ -80,19 +80,19 @@ $(function() {
             'left': $box.data('left') > 0 ? focus_offset : 0,
             'font-size': 14
         }, 500, function() {
-        	$box.find('.graph').trigger('plot');
+            $box.find('.graph').trigger('plot');
         });
         $box.find('h2').animate({
             'font-size': 22
         }, 500);
         $box.find('#viewer-container').each(function() {
-        	if($(this).data('original_top') === undefined)
-        		$(this).data('original_top', $(this).position().top);
-        	if($(this).data('original_left') === undefined)
-        		$(this).data('original_left', $(this).position().left);
-        	$(this).animate({
-            	'top': '0px',
-            	'left': '0px'
+            if($(this).data('original_top') === undefined)
+                $(this).data('original_top', $(this).position().top);
+            if($(this).data('original_left') === undefined)
+                $(this).data('original_left', $(this).position().left);
+            $(this).animate({
+                'top': '0px',
+                'left': '0px'
             }, 500);
         });
         $box.find('.focusbox i').removeClass('fa-chevron-circle-down');
@@ -115,9 +115,9 @@ $(function() {
             'font-size': 14
         }, 500);
         $box.find('#viewer-container').each(function() {
-        	$(this).animate({
-            	'top': '' + $(this).data('original_top') + 'px',
-            	'left': '' + $(this).data('original_left') + 'px'        	
+            $(this).animate({
+                'top': '' + $(this).data('original_top') + 'px',
+                'left': '' + $(this).data('original_left') + 'px'           
             }, 500);
         });
         $box.find('.focusbox i').removeClass('fa-chevron-circle-up');
@@ -125,10 +125,11 @@ $(function() {
         graphResizer($box);
     }
     function graphResizer($box) {
+        function updatePlots() {
+            $box.find('.graph').trigger('plot');
+        }
         for(n = 0; n < 500; n += 100) {
-        	setTimeout(function() {
-        		$box.find('.graph').trigger('plot');
-        	}, n);
+            setTimeout(updatePlots, n);
         }
     }
     

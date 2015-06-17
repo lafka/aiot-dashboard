@@ -26,7 +26,7 @@ $(function() {
                 $legend.find('ul')
                     .append('<li><div class="color_block" style="background-color: #0f0;"></div> < 30</li>')
                     .append('<li><div class="color_block" style="background-color: #ff0;"></div> 30 - 70</li>')
-                	.append('<li><div class="color_block" style="background-color: #f00;"></div> > 70</li>');
+                    .append('<li><div class="color_block" style="background-color: #f00;"></div> > 70</li>');
             }
 
             $legend.animate({
@@ -44,23 +44,23 @@ $(function() {
         
         $buttons.find('.btn').css('margin-left', '-' + $buttons.width() + 'px');
         setTimeout(function() {
-        	var i = 0;
-        	$buttons.find('.btn').each(function() {
-        		var $this = $(this);
-        		
-        		setTimeout(function() {
+            var i = 0;
+            $buttons.find('.btn').each(function() {
+                var $this = $(this);
+                
+                setTimeout(function() {
                     $this.animate({
-                    	'margin-left': '0px'
+                        'margin-left': '0px'
                     }, 1000);
-        		}, i * 200);
-        		i++;
-        	});
+                }, i * 200);
+                i++;
+            });
         }, 1000);
         
         $buttons.find('.btn').click(function() {
-        	var mode = $(this).attr('data-mode');
-        	if(mode !== undefined)
-        		setMode(mode);
+            var mode = $(this).attr('data-mode');
+            if(mode !== undefined)
+                setMode(mode);
         });
     }
 
@@ -135,11 +135,11 @@ $(function() {
 
                         $('#viewer-container').viewer('color', col, room_key);
                         if(rec.worse_5)
-                        	$('#viewer-container').viewer('show', room_key);
+                            $('#viewer-container').viewer('show', room_key);
                         else
-                        	$('#viewer-container').viewer('hide', room_key);
+                            $('#viewer-container').viewer('hide', room_key);
                     } else {
-                    	p = parseInt(rec.productivity);
+                        p = parseInt(rec.productivity);
                         col = p < 30 ? '#0f0' : '#ff0';
                         if(p > 70) {
                             col = '#f00';

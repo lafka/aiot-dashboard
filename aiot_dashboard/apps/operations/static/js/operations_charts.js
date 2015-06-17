@@ -22,10 +22,10 @@ $(function() {
         
         $box.find('.graph').hide();
         $box.find('.graph').each(function() {
-        	if(mode == parseInt($(this).attr('data-mode'))) {
-        		$(this).show();
-        		$(this).trigger('plot');
-        	}
+            if(mode == parseInt($(this).attr('data-mode'))) {
+                $(this).show();
+                $(this).trigger('plot');
+            }
         });
     }
 
@@ -41,14 +41,14 @@ $(function() {
         initDeviationsPerRoomGraph();
         initButtons();
 
-    	$box.data('updateFunc', function(rec) {
+        $box.data('updateFunc', function(rec) {
             if (rec.type !== 'graph') {
                 return;
             }
             $box.find('.graph').each(function() {
-            	$(this).data('updateFunc')(rec);
+                $(this).data('updateFunc')(rec);
             });
-    	});
+        });
         
         setMode(0);
     }
@@ -61,37 +61,37 @@ $(function() {
         
         $buttons.find('.btn').css('margin-left', '-' + $buttons.width() + 'px');
         setTimeout(function() {
-        	var i = 0;
-        	$buttons.find('.btn').each(function() {
-        		var $this = $(this);
-        		
-        		setTimeout(function() {
+            var i = 0;
+            $buttons.find('.btn').each(function() {
+                var $this = $(this);
+                
+                setTimeout(function() {
                     $this.animate({
-                    	'margin-left': '0px'
+                        'margin-left': '0px'
                     }, 1000);
-        		}, i * 200);
-        		i++;
-        	});
+                }, i * 200);
+                i++;
+            });
         }, 1000);
         
         $buttons.find('.btn').click(function() {
-        	var mode = $(this).attr('data-mode');
-        	if(mode !== undefined)
-        		setMode(mode);
+            var mode = $(this).attr('data-mode');
+            if(mode !== undefined)
+                setMode(mode);
         });
     }
     
     function initKwhGraph() {
-    	$box.append('<div class="kwm_graph graph" data-mode="0" style="width: 100%; height: 85%; margin-top: 40px; display: none;"></div>')
-    	var $kwm_graph = $box.find(".kwm_graph:first");
-    	
-    	$kwm_graph.data('updateFunc', function(rec) {
+        $box.append('<div class="kwm_graph graph" data-mode="0" style="width: 100%; height: 85%; margin-top: 40px; display: none;"></div>');
+        var $kwm_graph = $box.find(".kwm_graph:first");
+        
+        $kwm_graph.data('updateFunc', function(rec) {
             var graph_data = [];
             $(rec.circuits).each(function(ci) {
                 var circuit = rec.circuits[ci];
                 var vals = [];
                 $(circuit.kwh).each(function(i) {
-                	vals.push([circuit.kwh[i][0], circuit.kwh[i][1] * 60]);
+                    vals.push([circuit.kwh[i][0], circuit.kwh[i][1] * 60]);
                 });
                 
                 graph_data.push({
@@ -131,22 +131,22 @@ $(function() {
                         show: true,
                         backgroundOpacity: 0.5
                     }
-                });            	
+                });             
             });
             $kwm_graph.trigger('plot');
         });
     }
     
     function initDeviationsTotalGraph() {
-    	$box.append('<div class="deviations_graph graph" data-mode="1" style="width: 100%; height: 85%; margin-top: 40px; display: none;"></div>')
-    	var $dev_graph = $box.find(".deviations_graph:first");
-    	
-    	$dev_graph.data('updateFunc', function(rec) {
+        $box.append('<div class="deviations_graph graph" data-mode="1" style="width: 100%; height: 85%; margin-top: 40px; display: none;"></div>');
+        var $dev_graph = $box.find(".deviations_graph:first");
+        
+        $dev_graph.data('updateFunc', function(rec) {
             var graph_data = [];
             
             graph_data.push({
-            	label: 'total',
-            	data: rec.deviations.total
+                label: 'total',
+                data: rec.deviations.total
             });
 
             $dev_graph.unbind('plot');
@@ -164,24 +164,24 @@ $(function() {
                         ticks: time_ticks
                     },
                     legend: {
-                    	show: false
+                        show: false
                     }
-                });            	
+                });             
             });
             $dev_graph.trigger('plot');
-        });    	
+        });     
     }
 
     function initDeviationsPerRoomGraph() {
-    	$box.append('<div class="dpr_graph graph" data-mode="2" style="width: 100%; height: 85%; margin-top: 40px; display: none;"></div>')
-    	var $dpr_graph = $box.find(".dpr_graph:first");
-    	
-    	$dpr_graph.data('updateFunc', function(rec) {
+        $box.append('<div class="dpr_graph graph" data-mode="2" style="width: 100%; height: 85%; margin-top: 40px; display: none;"></div>');
+        var $dpr_graph = $box.find(".dpr_graph:first");
+        
+        $dpr_graph.data('updateFunc', function(rec) {
             var graph_data = [];
 
             graph_data.push({
-            	label: 'rooms',
-            	data: rec.deviations.rooms
+                label: 'rooms',
+                data: rec.deviations.rooms
             });
 
             $dpr_graph.unbind('plot');
@@ -193,21 +193,21 @@ $(function() {
                             show: false,
                         },
                         bars: {
-                        	show: true,
-        					barWidth: 0.6,
-        					align: "center"
+                            show: true,
+                            barWidth: 0.6,
+                            align: "center"
                         }
                     },
                     xaxis: {
-                    	mode: "categories",
-        				tickLength: 0
-        			},
+                        mode: "categories",
+                        tickLength: 0
+                    },
                     yaxis: {
                     },
                     legend: {
                         show: false,
                     }
-                });            	
+                });             
             });
             $dpr_graph.trigger('plot');
         });
