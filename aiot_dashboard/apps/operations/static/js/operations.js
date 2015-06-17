@@ -55,7 +55,7 @@ $(function() {
                 }
             };
             
-            $(this).prepend("<div class='focusbox'><i class='fa fa-chevron-circle-down'></i></div>");
+            $(this).prepend("<div class='focusbox'><i class='fa fa-plus'></i></div>");
             $(this).click(clickHandler);
             $(this).find('.focusbox i').click(clickHandler);
         });
@@ -95,8 +95,8 @@ $(function() {
                 'left': '0px'
             }, 500);
         });
-        $box.find('.focusbox i').removeClass('fa-chevron-circle-down');
-        $box.find('.focusbox i').addClass('fa-chevron-circle-up');
+        $box.find('.focusbox i').removeClass('fa-plus');
+        $box.find('.focusbox i').addClass('fa-minus');
         
         graphResizer($box);
     }
@@ -120,13 +120,14 @@ $(function() {
                 'left': '' + $(this).data('original_left') + 'px'           
             }, 500);
         });
-        $box.find('.focusbox i').removeClass('fa-chevron-circle-up');
-        $box.find('.focusbox i').addClass('fa-chevron-circle-down');
+        $box.find('.focusbox i').removeClass('fa-minus');
+        $box.find('.focusbox i').addClass('fa-plus');
         graphResizer($box);
     }
     function graphResizer($box) {
         function updatePlots() {
             $box.find('.graph').trigger('plot');
+            $box.trigger('update_layout');
         }
         for(n = 0; n < 500; n += 100) {
             setTimeout(updatePlots, n);

@@ -30,6 +30,10 @@
 <script type="text/javascript" src="{% static 'js/flot/jquery.flot.categories.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/operations_charts.js' %}"></script>
 
+<script type="text/javascript" src="{% static 'justGage.1.0.1/raphael.2.1.0.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'justGage.1.0.1/justgage.dev.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/operations_gauge.js' %}"></script>
+
 <script type="text/javascript" src="{% static 'js/events/event_manager.js' %}"></script>
 <script type="text/javascript">
 $(function() {
@@ -40,7 +44,7 @@ $(function() {
                     $(this).data('updateFunc')(event);
             });
         },
-        url: Urls.display_data_update(),
+        url: Urls.operations_data_update(),
         graph_start: 0,
         graph_end: 25,
         stream: true

@@ -78,3 +78,21 @@
 #graphs .buttons ul {
     margin-top: 0px;
 }
+#gauge_warning {
+	color: #fff;
+	padding: 8px;
+	background: #f00;
+	position: absolute;
+	font-size: 14px;
+	z-index: 15;
+	text-align: center;
+	bottom: 0px;
+	border-radius: 8px;
+	box-sizing: border-box;
+	display: none;
+	margin-bottom: 10px;
+}
+#gauge_warning h3 {
+	margin: 0px; padding: 0px;
+	font-size: 16px;
+}
