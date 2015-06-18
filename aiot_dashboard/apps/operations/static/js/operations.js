@@ -21,6 +21,7 @@ $(function() {
 
     var event_manager = new aiot.events.EventManager({
         on_event: function(event) {
+        	hideSpinner();
             $('.box').each(function() {
                 if($(this).data('updateFunc') !== undefined) {
                     $(this).data('updateFunc')(event);
@@ -41,10 +42,22 @@ $(function() {
             $(this).closest('div').addClass('active');
             event_manager.stop();
 
+            showSpinner();
+
             event_manager.config.params = buildParamsFromFilter();
             event_manager.start();
         });
     }
+    
+    function showSpinner() {
+    	$('#spinner:hidden').fadeIn('fast');
+    	$('#spinner i').css('left', '' + (($('#spinner').width() / 2) - ($('#spinner i').width()/2)) + 'px');
+    	$('#spinner i').css('top', '' + (($('#spinner').height() / 2) - ($('#spinner i').height()/2)) + 'px');
+    }
+    function hideSpinner() {
+    	$('#spinner:visible').fadeOut('fast');
+    }
+    
     function calcSizes() {
         // Get the operations panel as big as we can
         var height = $(window).height() - ($('#top').outerHeight(true) + $('footer').outerHeight(true)) - 30;
