@@ -45,7 +45,7 @@ class DataSseView(EventsSseView):
         return data
 
     def _build_time_range(self, request):
-        range = request.REQUEST.get('time_range', 'today')
+        range = request.GET.get('time_range', 'today')
         if range not in ['today', 'last_7', 'last_week']:
             raise Exception("Bad time_range")
 
@@ -53,16 +53,17 @@ class DataSseView(EventsSseView):
             self.time_range = (get_today(), None)
             self.use_current = True
         elif range == 'last_7':
-            self.time_range = (get_today() - datetime.timedelta(days=7), None)
+            start = get_today() - datetime.timedelta(days=7)
+            self.time_range = (start, datetime.datetime.utcnow())
             self.use_current = False
         else:
-            start = get_start_of_week(get_today() - datetime.timedelta(days=7))
+            start = get_start_of_week(get_today())
             self.time_range = (start, start + datetime.timedelta(days=7))
             self.use_current = False
 
     def _build_graph_range(self, request):
-        self.graph_range = range(int(request.REQUEST.get('graph_start', 7)),
-                                 int(request.REQUEST.get('graph_end', 18)))
+        self.graph_range = range(int(request.GET.get('graph_start', 7)),
+                                 int(request.GET.get('graph_end', 18)))
 
     def _build_rooms_msg(self, data=[]):
         for room in self.rooms:
