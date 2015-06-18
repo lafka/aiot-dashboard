@@ -19,7 +19,7 @@ $(function() {
 
         $legend.animate({
             'margin-left': '-300px'
-        }, 500);
+        }, 100);
         setTimeout(function() {
             $legend.html('<div class="icon"></div><ul></ul>');
             if(mode === 0) { // Occupied
@@ -38,8 +38,8 @@ $(function() {
 
             $legend.animate({
                 'margin-left': '10px'
-            }, 500);
-        }, 501);
+            }, 100);
+        }, 200);
     }
 
     function initButtons() {
@@ -58,7 +58,7 @@ $(function() {
                 setTimeout(function() {
                     $this.animate({
                         'margin-left': '0px'
-                    }, 1000);
+                    }, 200);
                 }, i * 200);
                 i++;
             });
