@@ -49,6 +49,9 @@ $(function() {
                 return;
             }
 
+            if(rec.data.current / rec.data.max >= 0.95) {
+            	showWarning();
+            }
             g.refresh(rec.data.current, rec.data.max);
         });
 
