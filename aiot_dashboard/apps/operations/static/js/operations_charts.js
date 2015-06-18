@@ -11,7 +11,7 @@ $(function() {
         return str;
     };
 
-    var mode = -1; // 0 = kWm, 1 = Deviations, 2 = Deviations per Room
+    var mode = -1; // 0 = kW, 1 = Deviations, 2 = Deviations per Room
 
     function setMode(new_mode) {
         mode = parseInt(new_mode, 10);
@@ -55,7 +55,7 @@ $(function() {
 
     function initButtons() {
         var $buttons = $box.find('.buttons');
-        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_kwm" data-mode="0"><i class="fa fa-bolt"></i> kWm</button></li>');
+        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_kwm" data-mode="0"><i class="fa fa-bolt"></i> kW</button></li>');
         $box.find('.buttons ul').append('<li><button class="btn btn-default btn_deviations" data-mode="1"><i class="fa fa-exclamation-triangle"></i> Total Deviations</button></li>');
         $box.find('.buttons ul').append('<li><button class="btn btn-default btn_deviations_room" data-mode="2"><i class="fa fa-bar-chart"></i> Room Deviations</button></li>');
 
