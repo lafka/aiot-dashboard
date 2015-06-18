@@ -38,7 +38,7 @@ $(function() {
 
                 updateRoom(room, rec);
             }
-            
+
             // Sort
             $box_list_li = $box_list.children('li');
             $box_list_li.sort(function(a,b){

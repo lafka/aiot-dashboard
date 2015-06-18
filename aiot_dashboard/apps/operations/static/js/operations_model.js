@@ -4,15 +4,15 @@ $(function() {
     var mode = 0; // 0 = Occupied, 1 = Time usage, 2 = Quality
 
     function setMode(new_mode) {
-    	mode = parseInt(new_mode);
-    	
-    	// Refresh immediately if we have stored records
-    	if($box.data('lastRoomRecs') !== undefined) {
-    		$.each($box.data('lastRoomRecs'), function(k, v) {
-    			$box.data('updateFunc')(v);
-    		});
-    	}
-        
+        mode = parseInt(new_mode, 10);
+
+        // Refresh immediately if we have stored records
+        if($box.data('lastRoomRecs') !== undefined) {
+            $.each($box.data('lastRoomRecs'), function(k, v) {
+                $box.data('updateFunc')(v);
+            });
+        }
+
         var $button = $box.find('.buttons ul .btn').eq(mode);
         $box.find('.buttons ul .active').removeClass('active');
         $button.addClass('active');
@@ -41,20 +41,20 @@ $(function() {
             }, 500);
         }, 501);
     }
-    
+
     function initButtons() {
         var $buttons = $box.find('.buttons');
         $box.find('.buttons ul').append('<li><button class="btn btn-default btn_kwm" data-mode="0"><i class="fa fa-users"></i> Availability</button></li>');
         $box.find('.buttons ul').append('<li><button class="btn btn-default btn_worst" data-mode="1"><i class="fa fa-arrow-down"></i> Worst 5</button></li>');
         $box.find('.buttons ul').append('<li><button class="btn btn-default btn_productivity" data-mode="2"><i class="fa fa-wrench"></i> Productivity</button></li>');
         $box.find('.buttons ul').append('<li><button class="btn btn-default btn_bim"><i class="fa fa-arrow-right"></i> Go to TotalBIM</button></li>');
-        
+
         $buttons.find('.btn').css('margin-left', '-' + $buttons.width() + 'px');
         setTimeout(function() {
             var i = 0;
             $buttons.find('.btn').each(function() {
                 var $this = $(this);
-                
+
                 setTimeout(function() {
                     $this.animate({
                         'margin-left': '0px'
@@ -63,32 +63,30 @@ $(function() {
                 i++;
             });
         }, 1000);
-        
+
         $buttons.find('.btn').click(function() {
             var mode = $(this).attr('data-mode');
-            if(mode !== undefined)
+            if(mode !== undefined) {
                 setMode(mode);
+            }
         });
     }
 
     function initModelBox() {
         var token = $box.attr('data-token');
-        
+
         var max_width = $box.data('max_width');
         var max_height = $box.data('max_height');
         var w_offset = (max_width - $box.width())/2;
         var h_offset = (max_height - $box.height())/2;
-        
+
         $box.append('<div class="spinner"><i class="fa fa-spin fa-spinner"></i></div><div class="buttons"><ul></ul></div><div class="legend"></div><div id="viewer-container" style="position: relative; width: ' + max_width + 'px; height: ' + max_height + 'px; margin: auto;"></div>');
         $legend = $box.find('.legend:first');
         $legend.css('margin-left', '-300px');
 
         // Load the Viewer API
         bimsync.load();
-        bimsync.setOnLoadCallback(createViewer);
-
-        // Callback that loads a viewer access token URL
-        function createViewer() {
+        bimsync.setOnLoadCallback(function() {
             var $viewer = $('#viewer-container');
             $viewer.css('top', '-' + h_offset + 'px');
             $viewer.css('left', '-' + w_offset + 'px');
@@ -97,7 +95,7 @@ $(function() {
             // Make model translucent, otherwise we can't actually see much
             $viewer.bind('viewer.load', function() {
                 $('#model .spinner').remove();
-                
+
                 // Buttons
                 initButtons();
 
@@ -130,11 +128,12 @@ $(function() {
                     }
 
                     var room_key = rec.key;
-                    
+
                     var lastRoomRecs = $box.data('lastRoomRecs');
-                    if(lastRoomRecs === undefined)
-                    	lastRoomRecs = {}
-                    
+                    if(lastRoomRecs === undefined) {
+                        lastRoomRecs = {};
+                    }
+
                     lastRoomRecs[room_key] = rec;
                     $box.data('lastRoomRecs', lastRoomRecs);
 
@@ -148,12 +147,14 @@ $(function() {
                         col = rec.worse_5 ? '#f00' : '#0f0';
 
                         $('#viewer-container').viewer('color', col, room_key);
-                        if(rec.worse_5)
+                        if(rec.worse_5) {
                             $('#viewer-container').viewer('show', room_key);
-                        else
+                        }
+                        else {
                             $('#viewer-container').viewer('hide', room_key);
+                        }
                     } else {
-                        p = parseInt(rec.productivity);
+                        p = parseInt(rec.productivity, 10);
                         col = p < 30 ? '#0f0' : '#ff0';
                         if(p > 70) {
                             col = '#f00';
@@ -164,7 +165,7 @@ $(function() {
                     }
                 });
             });
-        }
+        });
     }
 
     initModelBox();

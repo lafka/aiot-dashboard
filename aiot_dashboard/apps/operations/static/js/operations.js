@@ -9,21 +9,22 @@ $(function() {
     var $filters = $('#filters');
 
     function buildParamsFromFilter() {
-    	params = {};
-		$('#filters li').each(function() {
-			var $sel = $(this).find('.active:first');
-			if($sel.length > 0) {
-				params[$(this).attr('data-param')] = $sel.find('a:first').attr('data-value');
-			}
-		});
-		return params;
+        params = {};
+        $('#filters li').each(function() {
+            var $sel = $(this).find('.active:first');
+            if($sel.length > 0) {
+                params[$(this).attr('data-param')] = $sel.find('a:first').attr('data-value');
+            }
+        });
+        return params;
     }
 
     var event_manager = new aiot.events.EventManager({
         on_event: function(event) {
             $('.box').each(function() {
-                if($(this).data('updateFunc') !== undefined)
+                if($(this).data('updateFunc') !== undefined) {
                     $(this).data('updateFunc')(event);
+                }
             });
         },
         url: Urls.operations_data_update(),
@@ -33,23 +34,23 @@ $(function() {
         params: buildParamsFromFilter()
     });
     event_manager.start();
-    
+
     function initFilters() {
-    	$('#filters a').click(function() {
-    		$(this).closest('li').find('.active').removeClass('active');
-    		$(this).closest('div').addClass('active');
-    		event_manager.stop();
-    		
-    		event_manager.config.params = buildParamsFromFilter();
-    		event_manager.start();
-    	});
-    }    
+        $('#filters a').click(function() {
+            $(this).closest('li').find('.active').removeClass('active');
+            $(this).closest('div').addClass('active');
+            event_manager.stop();
+
+            event_manager.config.params = buildParamsFromFilter();
+            event_manager.start();
+        });
+    }
     function calcSizes() {
         // Get the operations panel as big as we can
         var height = $(window).height() - ($('#top').outerHeight(true) + $('footer').outerHeight(true)) - 30;
         var width = $operations.width();
         $operations.height(height);
-        
+
         var box_count = $operations.find('.box').length;
         var rows = box_count / 2;
         box_width = width/2;
@@ -59,7 +60,7 @@ $(function() {
             var $box = $(this);
             $box.width(box_width - 16);
             $box.height(box_height - 16);
-            
+
             var top = Math.floor(i/2) * box_height;
             var left = (i % 2) * box_width;
             $box.css('top', '' + top + 'px');
@@ -67,10 +68,10 @@ $(function() {
             $box.data('top', top);
             $box.data('left', left);
             $box.css('font-size', '10px');
-            
+
             $box.data('max_width', $operations.width() - focus_offset);
             $box.data('max_height', $operations.height() - focus_offset);
-            
+
             i++;
         });
         $focused_box = null;
@@ -80,8 +81,9 @@ $(function() {
             var $box = $(this);
 
             var clickHandler = function(e) {
-                if( e.target !== this ) 
+                if( e.target !== this ) {
                     return;
+                }
 
                 if($focused_box === null || $box.attr('id') != $focused_box.attr('id')) {
                     unfocusOtherBoxes($box);
@@ -91,7 +93,7 @@ $(function() {
                     unfocusBox($box);
                 }
             };
-            
+
             $(this).prepend("<div class='focusbox'><i class='fa fa-plus'></i></div>");
             $(this).click(clickHandler);
             $(this).find('.focusbox i').click(clickHandler);
@@ -99,16 +101,18 @@ $(function() {
     }
     function unfocusOtherBoxes($box) {
         $operations.find('.box').each(function() {
-            if($box.attr('id') != $(this).attr('id'))
+            if($box.attr('id') != $(this).attr('id')) {
                 unfocusBox($(this));
+            }
         });
     }
     function focusBox($box) {
         $focused_box = $box;
         $box.css('z-index', z_index);
         z_index += 1;
-        if(z_index > max_z_index)
+        if(z_index > max_z_index) {
             z_index = 100;
+        }
 
         $box.animate({
             'width': $operations.width() - focus_offset,
@@ -123,10 +127,12 @@ $(function() {
             'font-size': 22
         }, 500);
         $box.find('#viewer-container').each(function() {
-            if($(this).data('original_top') === undefined)
+            if($(this).data('original_top') === undefined) {
                 $(this).data('original_top', $(this).position().top);
-            if($(this).data('original_left') === undefined)
+            }
+            if($(this).data('original_left') === undefined) {
                 $(this).data('original_left', $(this).position().left);
+            }
             $(this).animate({
                 'top': '0px',
                 'left': '0px'
@@ -134,7 +140,7 @@ $(function() {
         });
         $box.find('.focusbox i').removeClass('fa-plus');
         $box.find('.focusbox i').addClass('fa-minus');
-        
+
         graphResizer($box);
     }
     function unfocusBox($box) {
@@ -154,7 +160,7 @@ $(function() {
         $box.find('#viewer-container').each(function() {
             $(this).animate({
                 'top': '' + $(this).data('original_top') + 'px',
-                'left': '' + $(this).data('original_left') + 'px'           
+                'left': '' + $(this).data('original_left') + 'px'
             }, 500);
         });
         $box.find('.focusbox i').removeClass('fa-minus');
@@ -171,7 +177,7 @@ $(function() {
         }
     }
     $(window).resize(calcSizes);
-       
+
     calcSizes();
     initBoxHover();
     initFilters();

@@ -14,15 +14,15 @@ $(function() {
     var mode = -1; // 0 = kWm, 1 = Deviations, 2 = Deviations per Room
 
     function setMode(new_mode) {
-        mode = parseInt(new_mode);
-        
+        mode = parseInt(new_mode, 10);
+
         var $button = $box.find('.buttons ul .btn').eq(mode);
         $box.find('.buttons ul .active').removeClass('active');
         $button.addClass('active');
-        
+
         $box.find('.graph').hide();
         $box.find('.graph').each(function() {
-            if(mode == parseInt($(this).attr('data-mode'))) {
+            if(mode == parseInt($(this).attr('data-mode'), 10)) {
                 $(this).show();
                 $(this).trigger('plot');
             }
@@ -49,22 +49,22 @@ $(function() {
                 $(this).data('updateFunc')(rec);
             });
         });
-        
+
         setMode(0);
     }
-    
+
     function initButtons() {
         var $buttons = $box.find('.buttons');
         $box.find('.buttons ul').append('<li><button class="btn btn-default btn_kwm" data-mode="0"><i class="fa fa-bolt"></i> kWm</button></li>');
         $box.find('.buttons ul').append('<li><button class="btn btn-default btn_deviations" data-mode="1"><i class="fa fa-exclamation-triangle"></i> Total Deviations</button></li>');
         $box.find('.buttons ul').append('<li><button class="btn btn-default btn_deviations_room" data-mode="2"><i class="fa fa-bar-chart"></i> Room Deviations</button></li>');
-        
+
         $buttons.find('.btn').css('margin-left', '-' + $buttons.width() + 'px');
         setTimeout(function() {
             var i = 0;
             $buttons.find('.btn').each(function() {
                 var $this = $(this);
-                
+
                 setTimeout(function() {
                     $this.animate({
                         'margin-left': '0px'
@@ -73,18 +73,19 @@ $(function() {
                 i++;
             });
         }, 1000);
-        
+
         $buttons.find('.btn').click(function() {
             var mode = $(this).attr('data-mode');
-            if(mode !== undefined)
+            if(mode !== undefined) {
                 setMode(mode);
+            }
         });
     }
-    
+
     function initKwhGraph() {
         $box.append('<div class="kwm_graph graph" data-mode="0" style="width: 100%; height: 85%; margin-top: 40px; display: none;"></div>');
         var $kwm_graph = $box.find(".kwm_graph:first");
-        
+
         $kwm_graph.data('updateFunc', function(rec) {
             var graph_data = [];
             $(rec.circuits).each(function(ci) {
@@ -93,7 +94,7 @@ $(function() {
                 $(circuit.kwh).each(function(i) {
                     vals.push([circuit.kwm[i][0], circuit.kwm[i][1] * 60]);
                 });
-                
+
                 graph_data.push({
                     label: circuit.name,
                     data: vals
@@ -131,19 +132,19 @@ $(function() {
                         show: true,
                         backgroundOpacity: 0.5
                     }
-                });             
+                });
             });
             $kwm_graph.trigger('plot');
         });
     }
-    
+
     function initDeviationsTotalGraph() {
         $box.append('<div class="deviations_graph graph" data-mode="1" style="width: 100%; height: 85%; margin-top: 40px; display: none;"></div>');
         var $dev_graph = $box.find(".deviations_graph:first");
-        
+
         $dev_graph.data('updateFunc', function(rec) {
             var graph_data = [];
-            
+
             graph_data.push({
                 label: 'total',
                 data: rec.deviations.total
@@ -166,16 +167,16 @@ $(function() {
                     legend: {
                         show: false
                     }
-                });             
+                });
             });
             $dev_graph.trigger('plot');
-        });     
+        });
     }
 
     function initDeviationsPerRoomGraph() {
         $box.append('<div class="dpr_graph graph" data-mode="2" style="width: 100%; height: 85%; margin-top: 40px; display: none;"></div>');
         var $dpr_graph = $box.find(".dpr_graph:first");
-        
+
         $dpr_graph.data('updateFunc', function(rec) {
             var graph_data = [];
 
@@ -190,7 +191,7 @@ $(function() {
                     series: {
                         stack: false,
                         lines: {
-                            show: false,
+                            show: false
                         },
                         bars: {
                             show: true,
@@ -205,9 +206,9 @@ $(function() {
                     yaxis: {
                     },
                     legend: {
-                        show: false,
+                        show: false
                     }
-                });             
+                });
             });
             $dpr_graph.trigger('plot');
         });
