@@ -38,7 +38,7 @@ $(function() {
             value: 0,
             min: 0,
             max: 100,
-            title: "Energiforbruk nå (kW)",
+            title: "Power consumption (kW)",
             minLabelMinFontSize: 16,
             maxLabelMinFontSize: 16,
             relativeGaugeSize: true

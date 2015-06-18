@@ -16,8 +16,8 @@ $(function() {
 
     function initGraphs() {
         $all_boxes.html('<div class="graph" style="width: 100%; height: 85%;"></div>');
-        $box_prod.prepend("<h2>Energiutnyttelse</h2>");
-        $box_kwh.prepend("<h2>Energiforbruk</h2>");
+        $box_prod.prepend("<h2>Power utilization</h2>");
+        $box_kwh.prepend("<h2>Power consumption</h2>");
 
         for(h = 7; h < 18; h++) {
             time_ticks.push([h, ("" + h).lpad("0", 2) + ":00"]);
@@ -112,7 +112,7 @@ $(function() {
             value: 0,
             min: 0,
             max: 100,
-            title: "Energiforbruk nå (kW)",
+            title: "Power consumption (kW)",
             minLabelMinFontSize: 20,
             maxLabelMinFontSize: 20
         });

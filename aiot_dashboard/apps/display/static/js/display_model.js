@@ -15,8 +15,8 @@ $(function() {
             if(mode === 0) {
                 $legend.find('.icon').html("<i class='fa fa-users'></i>");
                 $legend.find('ul')
-                    .append('<li><div class="color_block" style="background-color: #f00;"></div> opptatt</li>')
-                    .append('<li><div class="color_block" style="background-color: #0f0;"></div> tom</li>');
+                    .append('<li><div class="color_block" style="background-color: #f00;"></div> occupied</li>')
+                    .append('<li><div class="color_block" style="background-color: #0f0;"></div> empty</li>');
             } else if(mode == 1) {
                 $legend.find('.icon').html("<div class='co2'></div>");
                 $legend.find('ul')
@@ -32,9 +32,9 @@ $(function() {
              } else {
                 $legend.find('.icon').html("<div class='subjective_evaluation'></div>");
                 $legend.find('ul')
-                    .append('<li><div class="color_block" style="background-color: #0f0;"></div> Bra </li>')
+                    .append('<li><div class="color_block" style="background-color: #0f0;"></div> Good </li>')
                     .append('<li><div class="color_block" style="background-color: #ff0;"></div> OK </li>')
-                    .append('<li><div class="color_block" style="background-color: #f00;"></div> Dårlig </li>');
+                    .append('<li><div class="color_block" style="background-color: #f00;"></div> Bad </li>');
 
              }
 
