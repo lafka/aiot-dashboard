@@ -17,7 +17,7 @@ $(function() {
     function initGraphs() {
         $all_boxes.html('<div class="graph" style="width: 100%; height: 85%;"></div>');
         $box_prod.prepend("<h2>Energiutnyttelse</h2>");
-        $box_kwh.prepend("<h2>Energiforbruk (kWh)</h2>");
+        $box_kwh.prepend("<h2>Energiforbruk</h2>");
 
         for(h = 7; h < 18; h++) {
             time_ticks.push([h, ("" + h).lpad("0", 2) + ":00"]);
@@ -66,7 +66,7 @@ $(function() {
                 },
                 yaxis: {
                     tickFormatter: function formatter(val, axis) {
-                        return "" + val + " kWh";
+                        return "" + val + " kW";
                     }
                 },
                 legend: {
@@ -112,7 +112,7 @@ $(function() {
             value: 0,
             min: 0,
             max: 100,
-            title: "Energiforbruk nå (kWh)",
+            title: "Energiforbruk nå (kW)",
             minLabelMinFontSize: 20,
             maxLabelMinFontSize: 20
         });
