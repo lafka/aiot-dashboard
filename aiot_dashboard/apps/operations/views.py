@@ -7,7 +7,7 @@ from django.utils import timezone
 
 from aiot_dashboard.apps.display.views import BimView, DataSseView
 from aiot_dashboard.apps.db.models import TsKwm, TsKwh, PowerCircuit, Room
-from aiot_dashboard.core.utils import to_epoch_mili, widen_or_clamp_series
+from aiot_dashboard.core.utils import to_epoch_mili, widen_or_clamp_series, get_start_of_month
 
 
 class OperationsView(BimView):
@@ -54,7 +54,8 @@ class OperationsSseView(DataSseView):
             min_epoch = circuit_min_epoch if min_epoch is None else min(circuit_min_epoch, min_epoch)
             max_epoch = circuit_max_epoch if max_epoch is None else max(circuit_max_epoch, max_epoch)
 
-        max_month_series = self._get_max_kwh_for_time_range(start, end)
+        start_month = get_start_of_month(start)
+        max_month_series = self._get_max_kwh_for_time_range(start_month, end)
         widen_or_clamp_series(max_month_series, min_epoch, max_epoch)
 
         data.append({

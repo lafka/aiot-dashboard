@@ -13,6 +13,11 @@ def get_start_of_week(dte):
         dte -= datetime.timedelta(days=1)
     return dte
 
+def get_start_of_month(dte):
+    now = timezone.localtime(timezone.now())
+    return datetime.datetime(now.year, now.month, 1).replace(tzinfo=now.tzinfo)
+
+
 def to_epoch_mili(dt):
     """Converts Python `datetime` object to an UTC epoch in miliseconds (to be
     used with `flot`)
