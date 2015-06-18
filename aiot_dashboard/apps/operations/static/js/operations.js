@@ -95,7 +95,6 @@ $(function() {
             };
 
             $(this).prepend("<div class='focusbox'><i class='fa fa-plus'></i></div>");
-            $(this).click(clickHandler);
             $(this).find('.focusbox i').click(clickHandler);
         });
     }

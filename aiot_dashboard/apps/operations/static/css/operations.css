@@ -7,13 +7,16 @@
     background: #fff;
     overflow-y: hidden;
     overflow-x: hidden;
-    cursor: pointer;
 }
+
 #operations .box h2 {
     padding: 0px; margin: 0px 0px 20px;
     padding: 4px;
     background: #eee;
     font-size: 14px; font-weight: bold;
+}
+#operations .focusbox {
+    cursor: pointer;
 }
 #stats ul { list-style: none; padding: 0px; margin: 0px; }
 #stats li { float: left; width: 50%; padding: 5px; }
