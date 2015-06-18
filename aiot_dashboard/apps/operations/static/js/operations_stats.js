@@ -10,9 +10,9 @@ $(function() {
             boxHtml += '<div class="temperature"><span></span></div>';
             boxHtml += '<div class="co2"><span></span></div>';
             boxHtml += '<div class="humidity"><span></span></div>';
+            boxHtml += '<div class="quality_index"><i class="fa fa-exclamation-triangle"></i><span></span></div>';
+            boxHtml += '<div class="power_consumption"><i class="fa fa-bolt"></i><span></span></div>';
             boxHtml += '</div>';
-            boxHtml += '<div class="quality_index fa fa-exclamation-triangle"></div>';
-            boxHtml += '<div class="power_consumption fa fa-bolt"></div>';
             boxHtml += '</li>';
             $box_list.append(boxHtml);
         }
@@ -21,8 +21,8 @@ $(function() {
 
     function updateRoom(room, data) {
         room.find('.room_name').html(data.name);
-        room.find('.quality_index').html(data.quality_index);
-        room.find('.power_consumption').html(data.power_consumption.toFixed(0) + ' W');
+        room.find('.quality_index span').html(data.quality_index);
+        room.find('.power_consumption span').html("<nobr>" + data.power_consumption.toFixed(0) + " W</nobr>");
         room.attr('data-quality-index', data.quality_index);
         $.each(data.deviations, function(k, v) {
             room.find('.' + k).find('span').html(v);
