@@ -68,7 +68,7 @@ $(function() {
                 setTimeout(function() {
                     $this.animate({
                         'margin-left': '0px'
-                    }, 1000);
+                    }, 200);
                 }, i * 200);
                 i++;
             });
