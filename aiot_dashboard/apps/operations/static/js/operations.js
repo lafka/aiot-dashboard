@@ -50,9 +50,10 @@ $(function() {
     }
     
     function showSpinner() {
+    	$('#spinner').css('margin-left', '' + $('#sidebar').width() + 'px');
     	$('#spinner:hidden').fadeIn('fast');
-    	$('#spinner i').css('left', '' + (($('#spinner').width() / 2) - ($('#spinner i').width()/2)) + 'px');
-    	$('#spinner i').css('top', '' + (($('#spinner').height() / 2) - ($('#spinner i').height()/2)) + 'px');
+    	$('#spinner i').css('left', '' + (($(window).width() / 2) - ($('#spinner i').width()/2)) + 'px');
+    	$('#spinner i').css('top', '' + (($(window).height() / 2) - ($('#spinner i').height()/2)) + 'px');
     }
     function hideSpinner() {
     	$('#spinner:visible').fadeOut('fast');
