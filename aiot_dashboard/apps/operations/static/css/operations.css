@@ -37,9 +37,9 @@
     margin-left: 20px;
 }
 #stats li .deviations i {
-	position: absolute;
-	width: 20px;
-	text-align: center;
+    position: absolute;
+    width: 20px;
+    text-align: center;
 }
 
 
@@ -104,37 +104,37 @@
     margin-top: 0px;
 }
 #gauge_warning {
-	color: #fff;
-	padding: 8px;
-	background: #f00;
-	position: absolute;
-	font-size: 14px;
-	z-index: 15;
-	text-align: center;
-	bottom: 0px;
-	border-radius: 8px;
-	box-sizing: border-box;
-	display: none;
-	margin-bottom: 10px;
+    color: #fff;
+    padding: 8px;
+    background: #f00;
+    position: absolute;
+    font-size: 14px;
+    z-index: 15;
+    text-align: center;
+    bottom: 0px;
+    border-radius: 8px;
+    box-sizing: border-box;
+    display: none;
+    margin-bottom: 10px;
 }
 #gauge_warning h3 {
-	margin: 0px; padding: 0px;
-	font-size: 16px;
+    margin: 0px; padding: 0px;
+    font-size: 16px;
 }
 
 #spinner {
-	display: none;
-	position: fixed;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	left: 0;
-	background: #ccc;
-	opacity: 0.5;
-	z-index: 600;
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: #ccc;
+    opacity: 0.5;
+    z-index: 600;
 }
 #spinner i {
-	position: absolute;
-	font-size: 100px;
-	color: #000;
+    position: absolute;
+    font-size: 100px;
+    color: #000;
 }

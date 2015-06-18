@@ -37,39 +37,39 @@ $(function() {
 
         $box.data('updateFunc', function(rec) {
             if(rec.type == 'room') {
-            	$box_list2.find('li').each(function() {
-            		$(this).appendTo($box_list);
-            	});
-            	
+                $box_list2.find('li').each(function() {
+                    $(this).appendTo($box_list);
+                });
+                
                 var room_key = rec.key;
                 var room = getOrCreateRoom(room_key);
 
                 updateRoom(room, rec);
 
-	            // Sort
-	            $box_list_li = $box_list.children('li');
-	            $box_list_li.sort(function(a,b){
-	                var an = parseInt(a.getAttribute('data-quality-index')),
-	                    bn = parseInt(b.getAttribute('data-quality-index'));
-	
-	                if(an < bn) {
-	                    return 1;
-	                }
-	                if(an > bn) {
-	                    return -1;
-	                }
-	                return 0;
-	            });
-	
-	            $box_list_li = $box_list.children('li');
-	            var len = $box_list_li.length;
-	            if(len > 0) {
-	            	split = Math.ceil(len/2);
-	            	
-	            	$box_list_li.slice(split).each(function() {
-	            		$(this).appendTo($box_list2);
-	            	});
-	            }
+                // Sort
+                $box_list_li = $box_list.children('li');
+                $box_list_li.sort(function(a,b){
+                    var an = parseInt(a.getAttribute('data-quality-index')),
+                        bn = parseInt(b.getAttribute('data-quality-index'));
+    
+                    if(an < bn) {
+                        return 1;
+                    }
+                    if(an > bn) {
+                        return -1;
+                    }
+                    return 0;
+                });
+    
+                $box_list_li = $box_list.children('li');
+                var len = $box_list_li.length;
+                if(len > 0) {
+                    split = Math.ceil(len/2);
+                    
+                    $box_list_li.slice(split).each(function() {
+                        $(this).appendTo($box_list2);
+                    });
+                }
             }
         });
     }

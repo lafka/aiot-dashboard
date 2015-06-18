@@ -21,7 +21,7 @@ $(function() {
 
     var event_manager = new aiot.events.EventManager({
         on_event: function(event) {
-        	hideSpinner();
+            hideSpinner();
             $('.box').each(function() {
                 if($(this).data('updateFunc') !== undefined) {
                     $(this).data('updateFunc')(event);
@@ -50,13 +50,13 @@ $(function() {
     }
     
     function showSpinner() {
-    	$('#spinner').css('margin-left', '' + $('#sidebar').width() + 'px');
-    	$('#spinner:hidden').fadeIn('fast');
-    	$('#spinner i').css('left', '' + (($(window).width() / 2) - ($('#spinner i').width()/2)) + 'px');
-    	$('#spinner i').css('top', '' + (($(window).height() / 2) - ($('#spinner i').height()/2)) + 'px');
+        $('#spinner').css('margin-left', '' + $('#sidebar').width() + 'px');
+        $('#spinner:hidden').fadeIn('fast');
+        $('#spinner i').css('left', '' + (($(window).width() / 2) - ($('#spinner i').width()/2)) + 'px');
+        $('#spinner i').css('top', '' + (($(window).height() / 2) - ($('#spinner i').height()/2)) + 'px');
     }
     function hideSpinner() {
-    	$('#spinner:visible').fadeOut('fast');
+        $('#spinner:visible').fadeOut('fast');
     }
     
     function calcSizes() {
