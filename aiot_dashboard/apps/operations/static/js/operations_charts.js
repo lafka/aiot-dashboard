@@ -88,21 +88,17 @@ $(function() {
 
         $kwm_graph.data('updateFunc', function(rec) {
             var graph_data = [];
-            $(rec.circuits).each(function(ci) {
-                var circuit = rec.circuits[ci];
-                var vals = [];
-                $(circuit.kwh).each(function(i) {
-                    vals.push([circuit.kwm[i][0], circuit.kwm[i][1] * 60]);
-                });
 
+            $(rec.circuits).each(function(ci, circuit) {
                 graph_data.push({
                     label: circuit.name,
-                    data: vals
+                    data: circuit.series
                 });
             });
+
             graph_data.push({
                 label: 'Max',
-                data: [[0, rec.max_month], [24, rec.max_month]],
+                data: rec.max_month.series,
                 stack: false,
                 lines: {
                     fill: false
@@ -121,11 +117,11 @@ $(function() {
                         }
                     },
                     xaxis: {
-                        ticks: time_ticks
+                        mode: 'time'
                     },
                     yaxis: {
                         tickFormatter: function formatter(val, axis) {
-                            return "" + val + " kWh";
+                            return val + " kW";
                         }
                     },
                     legend: {
@@ -134,6 +130,7 @@ $(function() {
                     }
                 });
             });
+
             $kwm_graph.trigger('plot');
         });
     }

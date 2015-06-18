@@ -28,6 +28,7 @@
 
 <script type="text/javascript" src="{% static 'js/flot/jquery.flot.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/flot/jquery.flot.stack.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/flot/jquery.flot.time.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/flot/jquery.flot.categories.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/operations_charts.js' %}"></script>
 
@@ -43,6 +44,7 @@
         <h2>Filter</h2>
     </div>
 </div>
+
 <ul id="filters">
     <li data-param='time_range'>
         <h3>Time</h3>
@@ -53,7 +55,7 @@
             <a href="javascript:;" data-value='last_7'>Last 7 Days</a>
         </div>
         <div>
-            <a href="javascript:;" data-value='last_week'>Last Week</a>
+            <a href="javascript:;" data-value='last_week'>This Week</a>
         </div>
     </li>
 </ul>

@@ -19,3 +19,14 @@ def to_epoch_mili(dt):
     """
     dt = timezone.localtime(dt)
     return calendar.timegm(dt.timetuple()) * 1000
+
+def widen_or_clamp_series(series, start_epoch, end_epoch):
+    if not series:
+        return
+
+    series[0][0] = start_epoch
+
+    if len(series) == 1:
+        series.append([end_epoch, series[0][1]])
+    else:
+        series[-1][0] = end_epoch
