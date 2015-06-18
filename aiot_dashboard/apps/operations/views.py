@@ -21,4 +21,4 @@ class OperationsSseView(DataSseView):
             start = now - datetime.timedelta(minutes=10)
 
         total = TsKwm.objects.filter(datetime__gte=start, datetime__lte=now).aggregate(Avg('value'))['value__avg']
-        return math.ceil(total * 60) if total else 0
+        return 4 * math.ceil(total * 60) if total else 0
