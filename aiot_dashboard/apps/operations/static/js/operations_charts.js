@@ -1,8 +1,6 @@
 $(function() {
     var $box = $('#graphs');
 
-    var time_ticks = [];
-
     String.prototype.lpad = function(padString, length) {
         var str = this;
         while (str.length < length) {
@@ -31,10 +29,6 @@ $(function() {
 
     function initGraphs() {
         $box.append('<div class="buttons"><ul></ul></div>');
-
-        for(h = 0; h < 24; h+=2) {
-            time_ticks.push([h, ("" + h).lpad("0", 2) + ":00"]);
-        }
 
         initKwhGraph();
         initDeviationsTotalGraph();
@@ -151,15 +145,13 @@ $(function() {
             $dev_graph.bind('plot', function() {
                 $.plot($dev_graph, graph_data, {
                     series: {
-                        stack: true,
                         lines: {
-                            show: true,
                             fill: true,
                             steps: true
                         }
                     },
                     xaxis: {
-                        ticks: time_ticks
+                        mode: 'time'
                     },
                     legend: {
                         show: false
@@ -186,7 +178,6 @@ $(function() {
             $dpr_graph.bind('plot', function() {
                 $.plot($dpr_graph, graph_data, {
                     series: {
-                        stack: false,
                         lines: {
                             show: false
                         },
@@ -199,8 +190,6 @@ $(function() {
                     xaxis: {
                         mode: "categories",
                         tickLength: 0
-                    },
-                    yaxis: {
                     },
                     legend: {
                         show: false

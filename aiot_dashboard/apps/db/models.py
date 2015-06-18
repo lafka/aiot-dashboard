@@ -20,7 +20,7 @@ class TimeSeriesMixin(object):
         return cls.objects.all()
 
 
-class Deviations(models.Model):
+class Deviations(models.Model, TimeSeriesMixin):
     class DeviationType:
         HUMIDITY = 'moist'
         CO2 = 'co2'

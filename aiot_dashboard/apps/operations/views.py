@@ -6,7 +6,7 @@ from django.db import connection
 from django.utils import timezone
 
 from aiot_dashboard.apps.display.views import BimView, DataSseView
-from aiot_dashboard.apps.db.models import TsKwm, TsKwh, PowerCircuit
+from aiot_dashboard.apps.db.models import TsKwm, TsKwh, PowerCircuit, Room
 from aiot_dashboard.core.utils import to_epoch_mili, widen_or_clamp_series
 
 
@@ -54,42 +54,76 @@ class OperationsSseView(DataSseView):
             min_epoch = circuit_min_epoch if min_epoch is None else min(circuit_min_epoch, min_epoch)
             max_epoch = circuit_max_epoch if max_epoch is None else max(circuit_max_epoch, max_epoch)
 
-        max_month = self._get_max_kwh_for_time_range(start, end)
-        widen_or_clamp_series(max_month['series'], min_epoch, max_epoch)
+        max_month_series = self._get_max_kwh_for_time_range(start, end)
+        widen_or_clamp_series(max_month_series, min_epoch, max_epoch)
 
         data.append({
             'type': 'graph',
             'circuits': circuits,
-            'max_month': max_month,
+            'max_month': {
+                'series': max_month_series
+            },
             'deviations': self._build_room_deviations()
         })
 
         self.last_power = datetime.datetime.utcnow()
         return data
 
-    def _get_max_kwh_for_time_range(self, start, end):
-        cur = connection.cursor()
-        cur.execute("""
-            SELECT
-                date_trunc('month', datetime) AS dt_month,
-                max(value) AS value
-            FROM
-                ts_kwh_network
-            WHERE
-                datetime BETWEEN %(start)s AND %(end)s
-            GROUP BY
-                dt_month
-            ORDER BY
-                dt_month
-        """, {
-            'start': start,
-            'end': end,
-        })
-
-        series = []
-        for row in cur.fetchall():
-            series.append([to_epoch_mili(row[0]), row[1]])
+    def _build_room_deviations(self):
+        start, end = self.time_range
+        if self.use_current:
+            end = timezone.now()
 
         return {
-            'series': series,
+            'total': self._get_total_deviations(start, end),
+            'rooms': self._get_room_deviations(start, end)
         }
+
+    def _get_max_kwh_for_time_range(self, start, end):
+        series = []
+
+        with connection.cursor() as cur:
+            cur.execute("""
+                SELECT date_trunc('month', datetime) AS dt_month, MAX(value) AS value
+                FROM ts_kwh_network
+                WHERE datetime BETWEEN %(start)s AND %(end)s
+                GROUP BY dt_month
+                ORDER BY dt_month
+            """, {
+                'start': start,
+                'end': end,
+            })
+
+            for row in cur.fetchall():
+                series.append([to_epoch_mili(row[0]), row[1]])
+
+        return series
+
+    def _get_room_deviations(self, start, end):
+        series = []
+
+        for room in Room.get_active_rooms():
+            room_deviations = room.deviation_minutes_for_range(start, end)
+            series.append([room.name, room_deviations])
+
+        return series
+
+    def _get_total_deviations(self, start, end):
+        series = []
+
+        with connection.cursor() as cur:
+            cur.execute("""
+                SELECT date_trunc('hour', datetime) AS dt_hour, COUNT(*) AS value
+                FROM deviations
+                WHERE datetime BETWEEN %(start)s AND %(end)s
+                GROUP BY dt_hour
+                ORDER BY dt_hour
+            """, {
+                'start': start,
+                'end': end,
+            })
+
+            for row in cur.fetchall():
+                series.append([to_epoch_mili(row[0]), row[1]])
+
+        return series
