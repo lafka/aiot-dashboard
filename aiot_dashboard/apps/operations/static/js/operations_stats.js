@@ -1,6 +1,7 @@
 $(function() {
     var $box = $('#stats');
     var $box_list = null;
+    var $box_list2 = null;
 
     function getOrCreateRoom(key) {
         if($box_list.find('li[data-rec-id=' + key + ']').length === 0) {
@@ -30,33 +31,46 @@ $(function() {
     }
 
     function initStatsBox() {
-        $box.append('<h2>Rooms</h2><ul></ul>');
+        $box.append('<h2>Rooms</h2><ul></ul><ul></ul>');
         $box_list = $box.find('ul:first');
+        $box_list2 = $box.find('ul').eq(1);
 
         $box.data('updateFunc', function(rec) {
             if(rec.type == 'room') {
+            	$box_list2.find('li').each(function() {
+            		$(this).appendTo($box_list);
+            	});
+            	
                 var room_key = rec.key;
                 var room = getOrCreateRoom(room_key);
 
                 updateRoom(room, rec);
+
+	            // Sort
+	            $box_list_li = $box_list.children('li');
+	            $box_list_li.sort(function(a,b){
+	                var an = parseInt(a.getAttribute('data-quality-index')),
+	                    bn = parseInt(b.getAttribute('data-quality-index'));
+	
+	                if(an < bn) {
+	                    return 1;
+	                }
+	                if(an > bn) {
+	                    return -1;
+	                }
+	                return 0;
+	            });
+	
+	            $box_list_li = $box_list.children('li');
+	            var len = $box_list_li.length;
+	            if(len > 0) {
+	            	split = Math.ceil(len/2);
+	            	
+	            	$box_list_li.slice(split).each(function() {
+	            		$(this).appendTo($box_list2);
+	            	});
+	            }
             }
-
-            // Sort
-            $box_list_li = $box_list.children('li');
-            $box_list_li.sort(function(a,b){
-                var an = a.getAttribute('data-quality-index'),
-                    bn = b.getAttribute('data-quality-index');
-
-                if(an < bn) {
-                    return 1;
-                }
-                if(an > bn) {
-                    return -1;
-                }
-                return 0;
-            });
-
-            $box_list_li.detach().appendTo($box_list);
         });
     }
 
