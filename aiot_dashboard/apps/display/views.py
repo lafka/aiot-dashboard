@@ -67,6 +67,9 @@ class DataSseView(EventsSseView):
 
     def _build_rooms_msg(self, data=[]):
         for room in self.rooms:
+            network_consumption = self._get_current_kwh_for_current_period()
+            room_consumption = float(network_consumption) * (float(room.area) / 33000.) * 1000. # in W, not kW
+
             data.append({
                 'type': 'room',
                 'key': room.key,
@@ -84,7 +87,8 @@ class DataSseView(EventsSseView):
                     'temperature': room.deviation_minutes_for_range(self.time_range[0], self.time_range[1], [Deviations.DeviationType.TEMPERATURE]),
                     'co2': room.deviation_minutes_for_range(self.time_range[0], self.time_range[1], [Deviations.DeviationType.CO2]),
                     'humidity': room.deviation_minutes_for_range(self.time_range[0], self.time_range[1], [Deviations.DeviationType.HUMIDITY])
-                }
+                },
+                'power_consumption': room_consumption,
             })
 
         data = sorted(data, key=lambda x: x['quality_index'] if 'quality_index' in x else 0, reverse=True)
