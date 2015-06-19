@@ -16,12 +16,15 @@ class BimView(TemplateView):
     def get_context_data(self, **kwargs):
         data = TemplateView.get_context_data(self, **kwargs)
         data['model_token'] = settings.BIMSYNC_TOKEN
+        if self.request.method == 'GET' and 'bim_only' in self.request.GET:
+            data['bim_only'] = True
+        else:
+            data['bim_only'] = False
         return data
 
 
 class DisplayView(BimView):
     template_name = "display/display.html"
-
 
 class DataSseView(EventsSseView):
     rooms = []
