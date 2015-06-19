@@ -196,7 +196,7 @@ class DataSseView(EventsSseView):
 
     def _get_max_kwh_for_current_month(self):
         today = get_today()
-        month_start = datetime.datetime(today.year, today.month, 1)
+        month_start = datetime.datetime(today.year, today.month, 1).replace(tzinfo=today.tzinfo)
         max_kwh = TsKwhNetwork.get_max_record_for_period(month_start, month_start + relativedelta(months=1))
         return max_kwh.value if max_kwh is not None else 0
 
