@@ -3,7 +3,7 @@ from django.conf import settings
 from django.views.generic.base import RedirectView
 
 urlpatterns = [
-    url(r'^$', RedirectView.as_view(pattern_name='room_overview'), name='frontpage'),
+    url(r'^$', RedirectView.as_view(pattern_name='room_overview', permanent=False), name='frontpage'),
     url(r'^display/', include('aiot_dashboard.apps.display.urls')),
     url(r'^rooms/', include('aiot_dashboard.apps.rooms.urls')),
     url(r'^power-meters/', include('aiot_dashboard.apps.power_meters.urls')),
