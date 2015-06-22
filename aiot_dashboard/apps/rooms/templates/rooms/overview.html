@@ -64,8 +64,8 @@
 {% endblock %}
 
 {% block javascript %}
-<script src="{% static 'js/events/event_manager.js' %}"></script>
-<script src="{% static 'js/rooms/overview.js' %}"></script>
+<script src="{% static 'js/events/event_manager.js' %}?v1"></script>
+<script src="{% static 'js/rooms/overview.js' %}?v1"></script>
 <script>
     var event_manager = new aiot.events.EventManager({
         on_event: aiot.rooms.overview.on_event,

@@ -17,8 +17,8 @@
 {% endblock %}
 
 {% block javascript %}
-<script src="{% static 'js/events/event_manager.js' %}"></script>
-<script src="{% static 'js/power_meters/overview.js' %}"></script>
+<script src="{% static 'js/events/event_manager.js' %}?v1"></script>
+<script src="{% static 'js/power_meters/overview.js' %}?v1"></script>
 <script>
     var event_manager = new aiot.events.EventManager({
         on_event: aiot.power_meters.overview.on_event,
