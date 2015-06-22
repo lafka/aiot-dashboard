@@ -24,7 +24,7 @@
         {% block header %}
         {% endblock %}
     </head>
-    <body class="">
+    <body {% if bim_only %}class="display_body"{% endif %}>
         <div class="box" id="model" data-token="{{ model_token }}">
         </div>
         <div class="box" id="stats">
