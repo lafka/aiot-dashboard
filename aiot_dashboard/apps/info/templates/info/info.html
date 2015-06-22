@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header %}
+<style>
+    .symbols li {
+        list-style-type: none;
+        padding: 20px;
+    }
+    .symbols img {
+        height: 30px;
+        width: 30px;
+        margin-right: 50px;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+    <h1>Symbol explanations</h1>
+    <ul class="symbols">
+        <li>
+            <img src="/static/images/display/icon-subjective_evaluation.png" /> Subjective evaluation from students
+        </li>
+        <li>
+            <img src="/static/images/display/icon-co2.png" /> Co2 level measured in ppm
+        </li>
+        <li>
+            <img src="/static/images/display/icon-humidity.png" /> Humidity percentage
+        </li>
+        <li>
+            <img src="/static/images/display/icon-temperature.png" /> Temperature measured in Celcius
+        </li>
+    </ul>
+
+{% endblock %}
