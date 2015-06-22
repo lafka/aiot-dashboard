@@ -43,6 +43,9 @@ class OperationsSseView(DataSseView):
             for instance in TsKwh.get_ts_between(start, end, device=circuit.devices.first()):
                 series.append([to_epoch_mili(instance.datetime), instance.value])
 
+            if not series:
+                continue
+
             circuits.append({
                 'name': circuit.name,
                 'series': series
