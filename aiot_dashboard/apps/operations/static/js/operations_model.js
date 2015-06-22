@@ -25,15 +25,15 @@ $(function() {
             if(mode === 0) { // Occupied
                 $legend.find('.icon').html("<i class='fa fa-users'></i>");
                 $legend.find('ul')
-                    .append('<li><div class="color_block" style="background-color: #f00;"></div> available</li>')
-                    .append('<li><div class="color_block" style="background-color: #0f0;"></div> occupied</li>');
+                    .append('<li><div class="color_block" style="background-color: #0f0;"></div> available</li>')
+                    .append('<li><div class="color_block" style="background-color: #f00;"></div> occupied</li>');
             } else if(mode == 1) {
             } else {
                 $legend.find('.icon').html("<i class='fa fa-wrench'></i>");
                 $legend.find('ul')
-                    .append('<li><div class="color_block" style="background-color: #0f0;"></div> < 30</li>')
+                    .append('<li><div class="color_block" style="background-color: #f00;"></div> < 30</li>')
                     .append('<li><div class="color_block" style="background-color: #ff0;"></div> 30 - 70</li>')
-                    .append('<li><div class="color_block" style="background-color: #f00;"></div> > 70</li>');
+                    .append('<li><div class="color_block" style="background-color: #0f0;"></div> > 70</li>');
             }
 
             $legend.animate({
@@ -155,9 +155,9 @@ $(function() {
                         }
                     } else {
                         p = parseInt(rec.productivity, 10);
-                        col = p < 30 ? '#0f0' : '#ff0';
+                        col = p < 30 ? '#f00' : '#ff0';
                         if(p > 70) {
-                            col = '#f00';
+                            col = '#0f0';
                         }
 
                         $('#viewer-container').viewer('color', col, room_key);
