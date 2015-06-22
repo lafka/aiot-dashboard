@@ -22,6 +22,10 @@
 #stats li { padding: 5px; color: #888; }
 #stats li div { display: inline-block; }
 
+#operations .fa-smiley {
+    background: url('../images/display/icon-subjective_evaluation.png') left center no-repeat;
+}
+
 #stats li .room_name {
     width: 20%;
 }

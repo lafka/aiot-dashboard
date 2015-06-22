@@ -28,6 +28,7 @@ $(function() {
                     .append('<li><div class="color_block" style="background-color: #0f0;"></div> available</li>')
                     .append('<li><div class="color_block" style="background-color: #f00;"></div> occupied</li>');
             } else if(mode == 1) {
+            } else if(mode == 2) {
             } else {
                 $legend.find('.icon').html("<i class='fa fa-wrench'></i>");
                 $legend.find('ul')
@@ -45,8 +46,9 @@ $(function() {
     function initButtons() {
         var $buttons = $box.find('.buttons');
         $box.find('.buttons ul').append('<li><button class="btn btn-default btn_kwm" data-mode="0"><i class="fa fa-users"></i> Availability</button></li>');
-        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_worst" data-mode="1"><i class="fa fa-arrow-down"></i> Worst 5</button></li>');
-        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_productivity" data-mode="2"><i class="fa fa-wrench"></i> Productivity</button></li>');
+        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_worst_deviations" data-mode="1"><i class="fa fa-exclamation-triangle"></i> Worst 5</button></li>');
+        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_worst_subjective_evaluation" data-mode="2"><i class="fa fa-smiley">&nbsp;</i> Worst 5</button></li>');
+        $box.find('.buttons ul').append('<li><button class="btn btn-default btn_productivity" data-mode="3"><i class="fa fa-wrench"></i> Productivity</button></li>');
         $box.find('.buttons ul').append('<li><button class="btn btn-default btn_bim"><i class="fa fa-arrow-right"></i> Go to TotalBIM</button></li>');
 
         $buttons.find('.btn').css('margin-left', '-' + $buttons.width() + 'px');
@@ -144,10 +146,20 @@ $(function() {
                         $('#viewer-container').viewer('color', col, room_key);
                         $('#viewer-container').viewer('show', room_key);
                     } else if(mode == 1) {
-                        col = rec.worse_5 ? '#f00' : '#0f0';
+                        col = rec.worst_5_deviations ? '#f00' : '#0f0';
 
                         $('#viewer-container').viewer('color', col, room_key);
-                        if(rec.worse_5) {
+                        if(rec.worst_5_deviations) {
+                            $('#viewer-container').viewer('show', room_key);
+                        }
+                        else {
+                            $('#viewer-container').viewer('hide', room_key);
+                        }
+                    } else if(mode == 2) {
+                        col = rec.worst_5_subjective_evaluation ? '#f00' : '#0f0';
+
+                        $('#viewer-container').viewer('color', col, room_key);
+                        if(rec.worst_5_subjective_evaluation) {
                             $('#viewer-container').viewer('show', room_key);
                         }
                         else {

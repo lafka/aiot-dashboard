@@ -94,13 +94,18 @@ class DataSseView(EventsSseView):
                 'power_consumption': room_consumption,
             })
 
-        data = sorted(data, key=lambda x: x['quality_index'] if 'quality_index' in x else 0, reverse=True)
+        room_recs = [rec for rec in data if rec['type'] == 'room']
 
-        i = 0
-        for rec in data:
-            if rec['type'] == 'room':
-                rec['worse_5'] = i < 5
-                i += 1
+        recs_with_qi = sorted([rec for rec in room_recs if 'quality_index' in rec], key=lambda x: x['quality_index'], reverse=True)
+        recs_with_se = sorted([rec for rec in room_recs if 'subjective_evaluation' in rec], key=lambda x: x['subjective_evaluation'])
+
+        for rec in recs_with_qi[:5]:
+            rec['worst_5_deviations'] = True
+
+        for rec in recs_with_se[:5]:
+            rec['worst_5_subjective_evaluation'] = True
+
+        data.sort(key=lambda x: x['quality_index'] if 'quality_index' in x else 0, reverse=True)
 
         return data
 
